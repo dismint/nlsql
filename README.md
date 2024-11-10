@@ -64,6 +64,12 @@ The first step is to create topics from the natural language of each query. The 
 
 ## Mapping
 
+The final step is to map the generated topics to their respective column(s) in the SQL query. The topics are the same from the previous step, and the columns are generated from the result of parsing with the [`sql_metadata`](https://pypi.org/project/sql_metadata/) library, which provides a variety of information from columns and their aliases to tables and subqueries.
+
+If the query is well formatted SQL, the library will be able to easily parse it into its columns. However there is at one current entry in the dataset that cannot parse due to the usage of RegEx (INDEX 11)
+
+The results are again run with `gpt-4o` to pair them appropriately. Verification can be done on the output file as described below.
+
 ## Final Output
 
 The final output is generated as a JSON file that contains a list of mappings from topics to columns in the same order as they were given in the input query.

@@ -3,7 +3,6 @@ import sql_metadata
 import rich_click
 import sqlparse
 import openai
-import rich
 import time
 import json
 import os

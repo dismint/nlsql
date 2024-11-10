@@ -1,0 +1,474 @@
+[
+  {
+    "building key": ["FCLT_BUILDING_ADDRESS.FCLT_BUILDING_KEY"],
+    "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+    "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+    "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"]
+  },
+  {
+    "activity titles": ["iap_subject_detail.activity_title"],
+    "locations": ["iap_subject_session.session_location"],
+    "term start date": [
+      "academic_terms_all.term_start_date",
+      "term_start_date"
+    ],
+    "supervisor name": ["iap_subject_person.person_name", "Leader"]
+  },
+  {
+    "course instructor names": ["LIBRARY_COURSE_INSTRUCTOR.instructor_name"],
+    "course titles": ["LIBRARY_SUBJECT_OFFERED.subject_title"],
+    "amount of material": ["LIBRARY_RESERVE_CATALOG.catalog_isbn"],
+    "course instructor key": [
+      "LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY",
+      "LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_COURSE_INSTRUCTOR_KEY"
+    ],
+    "subject offered key": [
+      "LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY",
+      "LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_SUBJECT_OFFERED_KEY"
+    ]
+  },
+  {
+    "room": ["fac_rooms.Room"],
+    "floor": ["fac_rooms.floor"],
+    "building key": ["fac_building_address.BUILDING_KEY"],
+    "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["fac_building_address.CITY"],
+    "state": ["fac_building_address.STATE"],
+    "postal code": ["fac_building_address.POSTAL_CODE"],
+    "Professor Lily Knapp's office": ["office_location"]
+  },
+  {
+    "full room names": ["FCLT_ROOMS.ROOM_FULL_NAME"],
+    "building names": ["BUILDINGS.BUILDING_NAME"],
+    "street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+    "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+    "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"],
+    "subjects": ["DEPARTMENT_NAME"],
+    "Computer Science students": ["DEPARTMENT_NAME"]
+  },
+  {
+    "term code": ["subject_offered.TERM_CODE"],
+    "subject title": ["subject_offered.subject_title"],
+    "room": ["FCLT_ROOMS.room"],
+    "floor": ["FCLT_ROOMS.floor"],
+    "building key": ["BUILDINGS.BUILDING_KEY"],
+    "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+    "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+    "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"],
+    "formats": ["subject_offered.form_type"],
+    "number of enrolled students": ["subject_offered.num_enrolled_students"]
+  },
+  {
+    "subject titles": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"],
+    "material titles": ["tip_material.title"],
+    "ISBN numbers": ["tip_material.isbn"],
+    "new shelf prices": ["tip_material.new_shelf_price"],
+    "total costs": [
+      "SUM(tm.new_shelf_price) OVER(PARTITION BY tso.SUBJECT_TITLE)"
+    ]
+  },
+  {
+    "building name": ["BUILDING_NAME_LONG"],
+    "built year": ["year_built"],
+    "number of employees": ["num_employees"]
+  },
+  {
+    "building key": ["FCLT_BUILDING.FCLT_BUILDING_KEY"],
+    "building name": ["FCLT_BUILDING.BUILDING_NAME"],
+    "number of courses": [
+      "cis_course_catalog.subject_id",
+      "cis_course_catalog.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
+    ],
+    "Center for International Studies": [
+      "cis_course_catalog.subject_id",
+      "cis_course_catalog.SUBJECT_ID"
+    ]
+  },
+  {
+    "name": ["building_name"],
+    "building": [
+      "building_name",
+      "fclt_building_key",
+      "fclt_building.fclt_building_key"
+    ],
+    "students": ["full_name"],
+    "number": ["num_students"]
+  },
+  {
+    "name": ["FAC_BUILDING.BUILDING_NAME", "highest_floor"],
+    "floor": ["FAC_FLOOR.FLOOR", "highest_floor"],
+    "building": ["FAC_FLOOR.BUILDING_KEY", "FAC_BUILDING.FAC_BUILDING_KEY"]
+  },
+  {
+    "IAP category": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+    "academic year": ["TIME_DAY.ACADEMIC_YEAR"],
+    "category name": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+    "total fee collected": ["Total_Fee"],
+    "total number of IAP subjects": ["Total_Subjects"],
+    "minimum enrollment": ["Min_Attendance"],
+    "maximum enrollment": ["Max_Attendance"]
+  },
+  {
+    "sponsor": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+    "sponsor name": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+    "sessions": ["Total_Sessions"],
+    "enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"],
+    "fee": ["Min_Fee", "Max_Fee"]
+  },
+  {
+    "email": ["IAP_SUBJECT_PERSON.PERSON_EMAIL"],
+    "name": ["IAP_SUBJECT_PERSON.PERSON_NAME"],
+    "academic year": ["TIME_DAY.ACADEMIC_YEAR"],
+    "number of IAP subjects": ["Total_Subjects"],
+    "fees": ["Min_Fee", "Max_Fee"],
+    "course enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"]
+  },
+  {
+    "term code": ["IAP_SUBJECT_DETAIL.TERM_CODE"],
+    "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+    "IAP sessions": ["Total_Sessions"],
+    "fee collected": ["Total_Fee"],
+    "enrollment": ["Min_Enrollment", "Max_Enrollment"]
+  },
+  {
+    "building name": ["BUILDINGS.BUILDING_NAME"],
+    "number of subjects": ["Total_Subjects"],
+    "fee": ["Total_Fee"],
+    "session length": ["Min_Sessions", "Max_Sessions"]
+  },
+  {
+    "subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+    "fee": ["IAP_SUBJECT_DETAIL.FEE"],
+    "sessions": [
+      "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+      "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+    ]
+  },
+  {
+    "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+    "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+    "full name of the department": ["SIS_DEPARTMENT.DEPARTMENT_FULL_NAME"],
+    "course level": ["SIS_COURSE_DESCRIPTION.COURSE_LEVEL"],
+    "total number of courses": ["Total_Courses"],
+    "total number of degree-granting courses": ["Total_Degree_Granting_Courses"]
+  },
+  {
+    "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+    "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+    "department code": ["SIS_DEPARTMENT.DEPARTMENT_CODE"],
+    "department name": ["SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"],
+    "phone numbers": ["Total_Phone_Numbers"]
+  },
+  {
+    "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+    "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+    "DLC key": ["SIS_DEPARTMENT.DLC_KEY"],
+    "graduate level": ["GRADUATE_LEVEL"],
+    "total number of SIS subjects": ["Total_Subjects"],
+    "course numbers": ["Min_Course_Number", "Max_Course_Number"],
+    "total number of departments": ["Total_Departments"]
+  },
+  {
+    "building component": ["BUILDING_COMPONENT"],
+    "building name": ["BUILDINGS.BUILDING_NAME"],
+    "square footage": ["Total_Square_Footage"],
+    "number of floors": ["Total_Number_Of_Floors"],
+    "number of rooms": ["Total_Rooms"],
+    "number of facility organizations": ["Total_Number_FCLT"],
+    "number of supervisors": ["Total_Supervisors"],
+    "number of supervisees": ["Total_Supervisees"]
+  },
+  {
+    "DLC key": ["SPACE_UNIT.DLC_KEY"],
+    "name of the DLC": ["DLC_NAME"],
+    "total number of floors": ["Total_Number_Of_Floors"],
+    "total square footage": ["Total_Square_Footage"],
+    "total number of facility organizations": ["Total_Number_Facility"],
+    "total number of supervisors": ["Total_Supervisors"],
+    "total number of supervisees": ["Total_Supervisees"]
+  },
+  {
+    "department name": ["TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"],
+    "TIP subjects": ["TIP_SUBJECT_OFFERED.SUBJECT_ID", "Total_Subjects"],
+    "enrolled students": [
+      "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+      "Total_Enrolled_Students"
+    ],
+    "rental new price": [
+      "TIP_MATERIAL.RENTAL_NEW_PRICE",
+      "Min_Rental_New_Price",
+      "Max_Rental_New_Price"
+    ]
+  },
+  {
+    "courses": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+    "academic term": ["ACADEMIC_TERMS.IS_CURRENT_TERM"],
+    "academic year": ["COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR"],
+    "term code": ["COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"],
+    "hgn code": ["SUBJECT_OFFERED.HGN_CODE"],
+    "types of courses": ["TOTAL_COURSES"],
+    "units": ["AVERAGE_UNITS"],
+    "department name": ["COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"],
+    "person in charge": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+    "email address": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"]
+  },
+  {
+    "IAP subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+    "titles": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+    "categories": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+    "session titles": ["IAP_SUBJECT_SESSION.SESSION_TITLE"],
+    "session start time": ["IAP_SUBJECT_SESSION.SESSION_START_TIME"],
+    "session end time": ["IAP_SUBJECT_SESSION.SESSION_END_TIME"],
+    "sponsors": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+    "total number of sessions": ["Total_Sessions"]
+  },
+  {
+    "department names": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+    "SIS subject code": ["SIS_SUBJECT_CODE.SUBJECT_CODE"],
+    "subject code descriptions": ["SIS_SUBJECT_CODE.SUBJECT_CODE_DESC"],
+    "graduate level": ["SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL"],
+    "total number of courses per department": ["Total_Courses"]
+  },
+  {
+    "term": [
+      "TERM_CODE",
+      "TERM_DESCRIPTION",
+      "IS_CURRENT_TERM2",
+      "Total_SUBJECTS"
+    ],
+    "term code": ["TERM_CODE"],
+    "term description": ["TERM_DESCRIPTION"],
+    "current": ["IS_CURRENT_TERM2"],
+    "types of CIS courses": ["Total_SUBJECTS"]
+  },
+  {
+    "author": ["AUTHOR"],
+    "school name": ["STUDENT_DEPARTMENT.SCHOOL_NAME"],
+    "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+    "total record counts": ["Total_Record_Count"],
+    "total number of types of courses": ["Total_Subject"]
+  },
+  {
+    "course number": ["TIP_SUBJECT_OFFERED.COURSE_NUMBER"],
+    "subject title": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"],
+    "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+    "new shelf price": [
+      "Total_New_Price",
+      "Min_New_Price",
+      "Max_New_Price",
+      "TIP_MATERIAL.NEW_SHELF_PRICE"
+    ],
+    "used shelf price": [
+      "Total_Used_Price",
+      "Min_Used_Price",
+      "Max_Used_Price",
+      "TIP_MATERIAL.USED_SHELF_PRICE"
+    ],
+    "number of schools": ["Total_Num_Schools"],
+    "number of materials": ["Total_Num_Materials"],
+    "TIP subject": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"]
+  },
+  {
+    "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+    "materials": ["Total_Materials"],
+    "subjects": ["Total_Subjects"],
+    "schools": ["Total_Num_Schools"]
+  },
+  {
+    "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+    "term status": ["ACADEMIC_TERMS_ALL.IS_CURRENT_TERM"],
+    "types of TIP subjects": ["TIP_SUBJECT_OFFERED.COURSE_NUMBER"],
+    "materials needed": ["TIP_MATERIAL.isbn"],
+    "enrolled students": ["TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+    "schools": ["OFFER_SCHOOL_NAME"],
+    "term code": [
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "TIP_SUBJECT_OFFERED.TERM_CODE"
+    ]
+  },
+  {
+    "building name": ["BUILDINGS.BUILDING_NAME"],
+    "building number": ["BUILDINGS.BUILDING_NUMBER"],
+    "street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["FAC_BUILDING_ADDRESS.CITY"],
+    "state": ["FAC_BUILDING_ADDRESS.STATE"],
+    "department name": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+    "assignable square footage": ["BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE"],
+    "total square footage": ["Total_Square_Footage"],
+    "average square footage": ["Avg_Square_Footage_Per_Room"]
+  },
+  {
+    "term descriptions": ["ACADEMIC_TERMS.TERM_DESCRIPTION"],
+    "subject titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+    "prerequisites": ["COURSE_CATALOG_SUBJECT_OFFERED.PREREQUISITES"],
+    "types of subjects": ["Total_Subjects"],
+    "term code": [
+      "ACADEMIC_TERMS.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
+    ],
+    "instructor": ["COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"],
+    "types of courses": ["Experience"]
+  },
+  {
+    "rooms": ["FAC_ROOMS.ROOM_FULL_NAME"],
+    "building names": ["FAC_BUILDING.BUILDING_NAME"],
+    "floor numbers": ["FAC_FLOOR.FLOOR"],
+    "organizations": ["FAC_ORGANIZATION.ORGANIZATION_NAME"],
+    "departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+    "room area": ["FAC_ROOMS.AREA"],
+    "assignable floor area": ["FAC_FLOOR.ASSIGNABLE_AREA"],
+    "building": ["PERC_OF_ASG_BUILDING", "FAC_BUILDING.ASSIGNABLE_AREA"]
+  },
+  {
+    "rooms": ["ROOM_FULL_NAME"],
+    "building names": ["FAC_BUILDING.BUILDING_NAME"],
+    "floor numbers": ["FAC_FLOOR.FLOOR"],
+    "organizations": ["FAC_ORGANIZATION.ORGANIZATION_NAME"],
+    "departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+    "room area": ["AREA"],
+    "floor area": ["FLOOR_AREA", "PERC_OF_FLOOR"],
+    "building": ["BUILDING_AREA", "PERC_OF_BUILDING"]
+  },
+  {
+    "academic year": ["ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"],
+    "instructors names": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+    "courses": ["SUBJECT_OFFERED.COURSE_NUMBER"],
+    "types of courses": ["Total_Courses"]
+  },
+  {
+    "building names": ["FAC_BUILDING.BUILDING_NAME"],
+    "department names": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+    "organizations": ["FAC_ORGANIZATION.ORGANIZATION"],
+    "highest floor number": ["MAX_FLOOR"],
+    "lowest floor number": ["MIN_FLOOR"],
+    "number of rooms": ["Total_Rooms"],
+    "building key": ["FAC_BUILDING.FAC_BUILDING_KEY"]
+  },
+  {
+    "students": [
+      "MIT_STUDENT_DIRECTORY.FULL_NAME",
+      "MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS",
+      "SIS_DEPARTMENT.DEPARTMENT_NAME",
+      "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
+      "SIS_DEPARTMENT.SCHOOL_NAME"
+    ],
+    "full names": ["MIT_STUDENT_DIRECTORY.FULL_NAME"],
+    "emails": ["MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS"],
+    "department names": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+    "department phone numbers": [
+      "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER"
+    ],
+    "school names": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+    "total number of students per department": ["Total_Students_DEPT"],
+    "total number of students per school": ["Total_Students_SCHOOLS"]
+  },
+  {
+    "titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+    "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+    "fall terms": ["ACADEMIC_TERMS_ALL.TERM_CODE"],
+    "instructor names": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+    "instructor emails": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"],
+    "total number of types of subjects": ["Total_Subjects"],
+    "per instructor": ["COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"]
+  },
+  {
+    "building names": ["BUILDINGS.BUILDING_NAME"],
+    "departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+    "gross square footage": ["BUILDINGS.BLDG_GROSS_SQUARE_FOOTAGE"],
+    "assignable square footage": [
+      "BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE",
+      "Avg_Square_Footage"
+    ],
+    "building key": ["BUILDINGS.BUILDING_KEY"]
+  },
+  {
+    "titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+    "descriptions": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_DESCRIPTION"],
+    "faculty names": [
+      "COURSE_CATALOG_SUBJECT_OFFERED.RESPONSIBLE_FACULTY_NAME"
+    ],
+    "email address": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"],
+    "building name": ["BUILDINGS.BUILDING_NAME"],
+    "room name": ["FAC_ROOMS.ROOM_FULL_NAME"],
+    "floor level": ["FAC_FLOOR.LEVEL_ID"],
+    "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "number of types of courses": ["Total_Courses"],
+    "department": ["COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_CODE"]
+  },
+  {
+    "term code": [
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
+    ],
+    "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+    "attribute description": [
+      "COURSE_CATALOG_SUBJECT_OFFERED.HASS_ATTRIBUTE_DESC"
+    ],
+    "department name": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+    "school name": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+    "number of subjects": ["Total_Subjects"]
+  },
+  {
+    "building name": ["FAC_BUILDING.BUILDING_NAME"],
+    "height": ["FAC_BUILDING.BUILDING_HEIGHT"],
+    "street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "city": ["FAC_BUILDING_ADDRESS.CITY"],
+    "state": ["FAC_BUILDING_ADDRESS.STATE"],
+    "postal code": ["FAC_BUILDING_ADDRESS.POSTAL_CODE"],
+    "gross square footage": ["FAC_BUILDING.EXT_GROSS_AREA"],
+    "assignable square footage": ["FAC_BUILDING.ASSIGNABLE_AREA"],
+    "floor level": ["SMALLEST_FLOOR", "HIGHEST_FLOOR"],
+    "total area": ["Total_Room_Area"],
+    "building key": ["FAC_BUILDING.FAC_BUILDING_KEY"]
+  },
+  {
+    "category title": ["CIP.CATEGORY_TITLE"],
+    "version": ["CIP.VERSION"],
+    "department name": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+    "school name": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+    "course level": ["SIS_COURSE_DESCRIPTION.COURSE_LEVEL"],
+    "CIP category code": ["CIP.CATEGORY_CODE"]
+  },
+  {
+    "library materials": ["LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"],
+    "publication years": ["LIBRARY_RESERVE_CATALOG.CATALOG_YEAR"],
+    "materials status": ["LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"],
+    "course name": ["LIBRARY_COURSE_INSTRUCTOR.COURSE_NAME"]
+  },
+  {
+    "library reserve materials": [
+      "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"
+    ],
+    "publication years": ["LIBRARY_RESERVE_CATALOG.CATALOG_YEAR"],
+    "course instructor": ["LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME"],
+    "enrolled students": ["LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"]
+  },
+  {
+    "material_status": ["LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"],
+    "term_description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+    "total_number_of_courses": ["Total_Courses"],
+    "total_number_of_materials": ["Total_Materials"],
+    "occurences_in_departments": ["LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_CODE"],
+    "occurences_in_school": ["LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"],
+    "total_number_of_instructors": ["Total_Instructors"],
+    "library_material_status_code": [
+      "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS_CODE"
+    ],
+    "term_code": [
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "LIBRARY_SUBJECT_OFFERED.TERM_CODE"
+    ]
+  },
+  {
+    "space units": ["SPACE_UNIT.SPACE_UNIT"],
+    "floor": ["SPACE_FLOOR.FLOOR"],
+    "building name": ["BUILDINGS.BUILDING_NAME"],
+    "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+    "space usage": ["SPACE_USAGE.SPACE_USAGE"]
+  }
+]
+

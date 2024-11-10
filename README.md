@@ -8,6 +8,12 @@
 
 # Overview 🗺️
 
+<div align="center">
+  
+![](imgs/running.png)
+
+</div>
+
 This project aims to map natural language to its SQL counterpart by associating topics in NL to columns in SQL. The project is built entirely using Python 3 and was run in an x86-64 Linux development environment. The project should run locally cross platform. To develop locally, make sure to catch up on the dependencies:
 
 ```bash

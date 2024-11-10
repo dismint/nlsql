@@ -25,12 +25,15 @@ ANNOTATED_FILE = annotated.json
 MAPPED_FILE    = mapped.json
 ```
 
-
-
-
 # Implementation 🔬
 
 NLSQL consists of two main steps, which can be selected from the CLI. They can run independently, but `annotate` must be run to generate a `annotated.json` before `map` can be used.
+
+<div align="center">
+  
+![](imgs/cli.png)
+
+</div>
 
 ## Annotation
 

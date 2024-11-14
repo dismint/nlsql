@@ -1,0 +1,4 @@
+API_KEY=<API_KEY>
+DATA_FILE=queries.json
+ANNOTATED_FILE=annotated.json
+MAPPED_FILE=mapped.json

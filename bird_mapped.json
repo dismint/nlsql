@@ -1,0 +1,587 @@
+[
+    {
+        "colors": [
+            "cards.colors"
+        ],
+        "ID": [
+            "cards.id"
+        ],
+        "format": [
+            "legalities.format"
+        ]
+    },
+    {
+        "constructor names": [
+            "constructors.name"
+        ],
+        "points": [
+            "constructorStandings.points"
+        ],
+        "race": [
+            "constructorStandings.raceId"
+        ]
+    },
+    {
+        "names": [
+            "player_name"
+        ],
+        "football players": [
+            "player_name"
+        ],
+        "height": [
+            "height"
+        ]
+    },
+    {
+        "cards": [
+            "cards.name"
+        ],
+        "language": [
+            "foreign_data.language"
+        ]
+    },
+    {
+        "customers": [
+            "disp.account_id",
+            "account.account_id"
+        ],
+        "statement": [
+            "account.frequency"
+        ],
+        "issuance": [
+            "account.frequency"
+        ]
+    },
+    {
+        "Los Angeles": [
+            "County Name"
+        ],
+        "schools": [
+            "CDSCode"
+        ],
+        "free meals": [
+            "Free Meal Count (K-12)"
+        ],
+        "free or reduced price meals": [],
+        "K-12": [
+            "Free Meal Count (K-12)"
+        ]
+    },
+    {
+        "comments": [
+            "posts.CommentCount"
+        ],
+        "posts": [
+            "posts.CommentCount"
+        ],
+        "owner": [
+            "users.DisplayName",
+            "posts.OwnerUserId",
+            "users.Id"
+        ]
+    },
+    {
+        "schools": [
+            "satscores.sname"
+        ],
+        "location": [
+            "frpm.District Name"
+        ],
+        "math score": [
+            "satscores.AvgScrMath"
+        ],
+        "assessment": [
+            "satscores.AvgScrMath"
+        ],
+        "funding type": [
+            "frpm.Charter Funding Type"
+        ]
+    },
+    {
+        "name": [
+            "sets.name"
+        ],
+        "set number": [
+            "set_translations.id"
+        ],
+        "translation": [
+            "set_translations.translation"
+        ]
+    },
+    {
+        "circuits": [
+            "circuitId"
+        ],
+        "Melbourne": [],
+        "Australia": [
+            "country"
+        ]
+    },
+    {
+        "transaction": [
+            "trans.amount"
+        ],
+        "client": [
+            "account.account_id",
+            "trans.account_id"
+        ],
+        "card": [
+            "account.date"
+        ]
+    },
+    {
+        "patient": [
+            "Patient.ID",
+            "Laboratory.ID"
+        ],
+        "lactate dehydrogenase": [
+            "Laboratory.LDH"
+        ],
+        "date": [
+            "Patient.First Date"
+        ]
+    },
+    {
+        "budget category": [
+            "budget.category"
+        ],
+        "expense name": [
+            "expense.expense_description"
+        ]
+    },
+    {
+        "cards": [
+            "name"
+        ],
+        "set": [
+            "id"
+        ],
+        "language": [
+            "language"
+        ]
+    },
+    {
+        "posts": [
+            "posts.Id"
+        ],
+        "score": [
+            "posts.Score"
+        ],
+        "percentage": [],
+        "user": [
+            "users.Age",
+            "users.Id",
+            "posts.OwnerUserId"
+        ]
+    },
+    {
+        "crimes": [
+            "A16"
+        ],
+        "regions": [
+            "A3"
+        ],
+        "year": []
+    },
+    {
+        "Michael Schumacher": [
+            "drivers.forename",
+            "drivers.surname"
+        ],
+        "races": [
+            "races.raceId",
+            "driverStandings.raceId"
+        ],
+        "Sepang International Circuit": [
+            "circuits.name"
+        ]
+    },
+    {
+        "post ID": [
+            "posts.Id"
+        ],
+        "comments": [
+            "comments.Text"
+        ],
+        "post title": [
+            "posts.Title"
+        ]
+    },
+    {
+        "accounts": [
+            "account.account_id"
+        ],
+        "orders": [
+            "trans.account_id"
+        ],
+        "household payment": [
+            "trans.k_symbol"
+        ],
+        "Pisek": [
+            "district.A2"
+        ]
+    },
+    {
+        "cards": [
+            "id"
+        ],
+        "set": [
+            "setCode",
+            "code",
+            "name"
+        ],
+        "converted mana cost": [
+            "convertedManaCost"
+        ]
+    },
+    {
+        "constructor": [
+            "constructors.name"
+        ],
+        "points": [
+            "constructorResults.points"
+        ],
+        "Grand Prix": [
+            "races.name"
+        ],
+        "year": [
+            "races.year"
+        ],
+        "name": [
+            "constructors.name"
+        ],
+        "nationality": [
+            "constructors.nationality"
+        ]
+    },
+    {
+        "customers": [
+            "yearmonth.CustomerID",
+            "customers.CustomerID"
+        ],
+        "consumption": [
+            "yearmonth.Consumption"
+        ],
+        "year": [
+            "yearmonth.Date"
+        ]
+    },
+    {
+        "test takers": [
+            "satscores.NumTstTakr"
+        ],
+        "school": [
+            "satscores.cds",
+            "schools.CDSCode"
+        ],
+        "mailing city address": [
+            "schools.MailCity"
+        ]
+    },
+    {
+        "drivers": [
+            "drivers.forename",
+            "drivers.surname"
+        ],
+        "position": [
+            "driverStandings.position"
+        ]
+    },
+    {
+        "drivers": [
+            "drivers.driverId"
+        ],
+        "nationality": [
+            "drivers.nationality"
+        ],
+        "disqualification": [
+            "status.status"
+        ]
+    },
+    {
+        "players": [
+            "Player.player_name"
+        ],
+        "crossing actions": [
+            "Player_Attributes.crossing"
+        ]
+    },
+    {
+        "molecules": [
+            "atom.element"
+        ],
+        "ID": [
+            "atom.atom_id"
+        ],
+        "silicon": [
+            "atom.element"
+        ]
+    },
+    {
+        "view count": [
+            "posts.ViewCount"
+        ],
+        "posts": [
+            "posts.Title",
+            "comments.Text"
+        ],
+        "tag": [
+            "posts.Tags"
+        ],
+        "title": [
+            "posts.Title"
+        ],
+        "comments": [
+            "comments.Text"
+        ],
+        "scores": []
+    },
+    {
+        "cards": [],
+        "power": [
+            "power"
+        ],
+        "foil": [
+            "hasFoil"
+        ],
+        "deck": [
+            "duelDeck"
+        ]
+    },
+    {
+        "circuit": [
+            "circuits.name"
+        ],
+        "2009 Spanish Grand Prix": [
+            "races.year",
+            "races.name"
+        ]
+    },
+    {
+        "power": [
+            "superpower.power_name"
+        ],
+        "height": [
+            "superhero.height_cm",
+            "height_cm"
+        ]
+    },
+    {
+        "accounts": [
+            "district.district_id",
+            "account.district_id"
+        ],
+        "issuance": [
+            "account.frequency"
+        ],
+        "transaction": [
+            "account.frequency"
+        ],
+        "East Bohemia region": [
+            "district.A3"
+        ]
+    },
+    {
+        "players": [
+            "id"
+        ],
+        "crossing actions": [
+            "crossing"
+        ],
+        "player id": [
+            "id"
+        ]
+    },
+    {
+        "budgets": [
+            "budget_id"
+        ],
+        "Food": [
+            "category"
+        ],
+        "budgeted amount": [
+            "amount"
+        ]
+    },
+    {
+        "accounts": [
+            "account_id",
+            "account.date"
+        ],
+        "Beroun": [
+            "district.A2"
+        ]
+    },
+    {
+        "team_fifa_api_id": [
+            "team_fifa_api_id"
+        ],
+        "build-up play speed": [
+            "buildUpPlaySpeed"
+        ]
+    },
+    {
+        "cards": [
+            "cards.borderColor",
+            "cards.setCode"
+        ],
+        "set": [
+            "sets.code",
+            "sets.name"
+        ],
+        "border color": [
+            "cards.borderColor"
+        ]
+    },
+    {
+        "zip code": [
+            "member.zip"
+        ],
+        "member": [
+            "member.member_id",
+            "expense.link_to_member"
+        ]
+    },
+    {
+        "district Id": [
+            "district.district_id",
+            "account.district_id"
+        ],
+        "account": [
+            "order.account_id",
+            "account.account_id"
+        ],
+        "order id": [
+            "order.order_id"
+        ]
+    },
+    {
+        "users": [
+            "id"
+        ],
+        "badge": [
+            "Name"
+        ]
+    },
+    {
+        "atom id2": [
+            "connected.atom_id2"
+        ],
+        "element": [
+            "atom.element"
+        ]
+    },
+    {
+        "outpatient": [
+            "Patient.Admission"
+        ],
+        "creatinine phosphokinase": [
+            "Laboratory.CPK"
+        ],
+        "ids": [
+            "Patient.ID",
+            "Laboratory.ID"
+        ]
+    },
+    {
+        "cards": [
+            "id"
+        ],
+        "original type": [
+            "originalType"
+        ],
+        "subtype": [
+            "subtypes"
+        ]
+    },
+    {
+        "date": [
+            "OpenDate"
+        ],
+        "schools": [
+            "School"
+        ],
+        "county": [
+            "County"
+        ]
+    },
+    {
+        "atoms": [
+            "atom.atom_id"
+        ],
+        "molecule": [
+            "atom.molecule_id",
+            "molecule.molecule_id"
+        ],
+        "element": [
+            "atom.element"
+        ],
+        "hydrogen": [
+            "atom.element"
+        ],
+        "carcinogenic compound": [
+            "molecule.label"
+        ]
+    },
+    {
+        "fastest lap": [
+            "results.fastestLap"
+        ],
+        "Lewis Hamilton": [
+            "drivers.forename",
+            "drivers.surname"
+        ],
+        "2008 Australian Grand Prix": [
+            "races.name",
+            "races.year"
+        ]
+    },
+    {
+        "name": [
+            "Name"
+        ],
+        "badges": [
+            "Name"
+        ],
+        "users": [],
+        "timestamp": []
+    },
+    {
+        "full name": [
+            "forename",
+            "surname"
+        ],
+        "Wikipedia page link": [
+            "url"
+        ],
+        "date of birth": [
+            "dob"
+        ],
+        "German drivers": [
+            "nationality"
+        ]
+    },
+    {
+        "expansion type": [
+            "type"
+        ],
+        "set name": [
+            "translation"
+        ]
+    },
+    {
+        "patients": [
+            "Patient.ID",
+            "Laboratory.ID"
+        ],
+        "gender": [
+            "Patient.SEX"
+        ],
+        "white blood cells": [
+            "Laboratory.WBC"
+        ],
+        "fibrinogen level": [
+            "Laboratory.FG"
+        ]
+    }
+]

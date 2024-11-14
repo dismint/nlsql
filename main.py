@@ -2,6 +2,7 @@ from rich.console import Console
 import sql_metadata
 import rich_click
 import sqlparse
+import random
 import openai
 import time
 import json
@@ -22,7 +23,7 @@ if not ANNOTATED_FILE:
     console.print("ANNOTATED_FILE not set in .env\nDefault: annotated.json")
     ANNOTATED_FILE = "annotated.json"
 
-def annotate_queries():
+def annotate_queries(sample=True):
     global ANNOTATED_FILE
     global client
 
@@ -33,6 +34,8 @@ def annotate_queries():
 
     with open(DATA_FILE) as f:
         data = json.loads(f.read())
+        if sample and len(data) > 50:
+            data = random.sample(data, 50)
 
     annotated_data = []
 

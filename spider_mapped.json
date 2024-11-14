@@ -1,0 +1,248 @@
+[
+  {
+    "name": ["Name"],
+    "years of work": ["Year_of_Work"]
+  },
+  {
+    "package choice": ["package_option"],
+    "series name": ["series_name"],
+    "TV channel": ["hight_definition_TV"],
+    "high definition TV": ["hight_definition_TV"]
+  },
+  {
+    "continents": ["Continent"],
+    "speak": ["country.Code", "countrylanguage.CountryCode"],
+    "Chinese": ["countrylanguage.Language", "Chinese"]
+  },
+  {
+    "flights": ["SourceAirport"]
+  },
+  {
+    "employee": [],
+    "names": ["name"],
+    "age": ["age"]
+  },
+  {
+    "arriving date": ["Dogs.date_arrived"],
+    "departing date": ["Dogs.date_departed"],
+    "dogs": ["Dogs.dog_id"],
+    "treatment": ["Treatments.dog_id"]
+  },
+  {
+    "models": ["MODEL_LIST.model", "CAR_NAMES.model"],
+    "cards": ["CAR_NAMES.MakeId", "CARS_DATA.id"],
+    "production_year": ["CARS_DATA.year"]
+  },
+  {
+    "singers": ["singer.singer_id", "singer_in_concert.singer_id"],
+    "names": ["singer.name"],
+    "concerts": ["singer_in_concert.singer_id"]
+  },
+  {
+    "years of founding": ["Year_of_Founded"],
+    "orchestras": ["orchestra.Orchestra_ID", "performance.Orchestra_ID"],
+    "performances": ["performance.Orchestra_ID"]
+  },
+  {
+    "products": ["Number_products"],
+    "stores": []
+  },
+  {
+    "name": ["winner_name"],
+    "rank points": ["winner_rank_points"],
+    "winner": ["winner_name", "winner_rank_points"]
+  },
+  {
+    "names": ["name"],
+    "employees": ["name"],
+    "age": ["age"]
+  },
+  {
+    "countries": ["CountryCode"],
+    "Spanish": ["Spanish"],
+    "percentage of people": ["Percentage"]
+  },
+  {
+    "first name": ["student.fname"],
+    "age": ["student.age"],
+    "students": ["student.stuid"],
+    "pet": ["has_pet.stuid"]
+  },
+  {
+    "id": ["Professionals.professional_id"],
+    "role": ["Professionals.role_code"],
+    "first name": ["Professionals.first_name"],
+    "professionals": [
+      "Professionals.professional_id",
+      "Professionals.role_code",
+      "Professionals.first_name"
+    ],
+    "treatments": ["Treatments.professional_id"]
+  },
+  {
+    "episode": ["Episode"],
+    "title": ["A Love of a Lifetime"],
+    "airdate": ["Air_Date"]
+  },
+  {
+    "concerts": ["stadium_id"],
+    "stadium": ["stadium_id"],
+    "capacity": ["capacity"]
+  },
+  {
+    "template": ["template_type_code"],
+    "type": ["template_type_code"],
+    "code": ["template_type_code"]
+  },
+  {
+    "document id": ["Paragraphs.document_id"],
+    "name": ["Documents.document_name"],
+    "paragraphs": ["Paragraphs.document_id"]
+  },
+  {
+    "language": ["countrylanguage.Language"],
+    "continent": ["country.Continent"]
+  },
+  {
+    "name": ["name"],
+    "hometown": ["hometown", "little lever urban district"]
+  },
+  {
+    "region": ["Region"],
+    "city": ["city.Name"]
+  },
+  {
+    "injuries": ["injured"]
+  },
+  {
+    "degree summary name": ["Degree_Programs.degree_summary_name"],
+    "number of students enrolled": ["Student_Enrolment.degree_program_id"]
+  },
+  {
+    "countries": ["Name"],
+    "names": ["Name"],
+    "independence date": ["IndepYear"]
+  },
+  {
+    "shop": ["shop.name"],
+    "employees": ["hiring.shop_id"]
+  },
+  {
+    "ranking points": ["ranking_points"],
+    "player": ["players.player_id", "rankings.player_id"],
+    "first name": ["players.first_name"]
+  },
+  {
+    "emails": ["email_address"],
+    "state": ["state"]
+  },
+  {
+    "names": ["winner_name", "loser_name"],
+    "winner": ["winner_name"],
+    "loser": ["loser_name"],
+    "match length": ["minutes"]
+  },
+  {},
+  {
+    "name": ["stadium.name"],
+    "capacity": ["stadium.capacity"],
+    "stadium": ["concert.stadium_id", "stadium.stadium_id"],
+    "concerts": ["concert.stadium_id"],
+    "date": ["concert.year"]
+  },
+  {
+    "names": ["winner_name", "loser_name"],
+    "loser": ["loser_name"],
+    "winner": ["winner_name"],
+    "match": ["minutes"],
+    "minutes": ["minutes"]
+  },
+  {
+    "first name": ["student.fname"],
+    "gender": ["student.sex"],
+    "student": ["student.stuid"],
+    "pet": ["has_pet.stuid"]
+  },
+  {
+    "airlines": ["AIRLINES.Airline", "AIRLINES.uid", "FLIGHTS.Airline"],
+    "flights": ["FLIGHTS.Airline", "FLIGHTS.SourceAirport"],
+    "airports": ["FLIGHTS.SourceAirport", "APG", "CVO"]
+  },
+  {
+    "cities": ["city.Name"],
+    "Asia": ["country.Continent"],
+    "official language": [
+      "countrylanguage.IsOfficial",
+      "countrylanguage.Language"
+    ]
+  },
+  {
+    "breed type": ["breed_code"],
+    "size type": ["size_code"]
+  },
+  {
+    "handedness": ["winner_hand"],
+    "winners": ["winner_name"],
+    "participation": ["winner_name"],
+    "tournament": ["tourney_name"]
+  },
+  {
+    "area codes": ["area_code"]
+  },
+  {
+    "singer name": ["singer.Name"],
+    "total sales": ["song.Sales"],
+    "songs": ["song.Sales"]
+  },
+  {
+    "document id": ["document_id"],
+    "template id": ["template_id"],
+    "description": ["Document_Description"],
+    "document name": ["document_name"]
+  },
+  {
+    "grade": ["grade"],
+    "students": ["id"],
+    "friends": ["Friend.student_id", "Highschooler.id"]
+  },
+  {
+    "grades": ["grade"],
+    "high schoolers": ["grade"]
+  },
+  {
+    "life expectancy": ["LifeExpectancy"],
+    "country": [],
+    "continent": ["Continent", "Africa"],
+    "government type": ["GovernmentForm", "Republic"]
+  },
+  {
+    "earnings": ["Earnings"],
+    "poker players": ["Earnings"]
+  },
+  {
+    "flights": ["FLIGHTS.Airline"],
+    "airline": ["AIRLINES.Airline"]
+  },
+  {
+    "horsepower": ["horsepower"],
+    "cars": ["horsepower"]
+  },
+  {
+    "grade": ["grade"],
+    "students": ["id", "Highschooler.id"],
+    "friends": ["Friend.student_id"]
+  },
+  {
+    "Airlines": ["AIRLINES.Airline", "United Airlines"],
+    "Flights": ["FLIGHTS.Airline"],
+    "Airport": ["FLIGHTS.DestAirport", "ASY"]
+  },
+  {
+    "name": ["visitor.name"],
+    "visitor": ["visitor.id", "visit.visitor_id"],
+    "museum": ["museum.Museum_ID", "visit.Museum_ID"],
+    "opened": ["museum.open_year"]
+  },
+  {}
+]
+

@@ -97,6 +97,7 @@ def map_queries():
         data = json.loads(f.read())
 
     mapping = []
+    errors = []
 
     for i, query in enumerate(data):
         console.print(f"[bold #87C3AA]{i} [#308673]/ [#87C3AA]{len(data)}\n")
@@ -125,14 +126,27 @@ def map_queries():
             mapping[-1] = json.loads(strmap)
         except:
             console.print("[red]Error parsing SQL[/red]")
+            errors.append(i)
+            mapping[-1] = {"progress": "error"}
             time.sleep(2)
 
         with open(MAPPED_FILE, "w") as f:
-            f.write(json.dumps(mapping, indent=4))
+            annotated_mappings = [
+                {
+                    "question": query["question"],
+                    "sql": query["sql"],
+                    "topics": query["topics"],
+                    "mapping": map
+                }
+                for query, map in zip(data, mapping)
+            ]
+            f.write(json.dumps(annotated_mappings, indent=4))
 
         console.clear()
 
     console.print("Done mapping queries.")
+    console.print(f"Errors: {len(errors)} => {errors}")
+
     time.sleep(2)
 
 

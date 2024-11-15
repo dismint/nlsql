@@ -22,6 +22,7 @@ ANNOTATED_FILE = os.environ.get("ANNOTATED_FILE")
 if not ANNOTATED_FILE:
     console.print("ANNOTATED_FILE not set in .env\nDefault: annotated.json")
     ANNOTATED_FILE = "annotated.json"
+ANNOTATED_FILE = f"annotations/{ANNOTATED_FILE}"
 
 def annotate_queries(sample=True):
     global ANNOTATED_FILE
@@ -31,6 +32,7 @@ def annotate_queries(sample=True):
     if not DATA_FILE:
         console.print("DATA_FILE not set in .env\nDefault: queries.json")
         DATA_FILE = "queries.json"
+    DATA_FILE = f"queries/{DATA_FILE}"
 
     with open(DATA_FILE) as f:
         data = json.loads(f.read())
@@ -84,6 +86,7 @@ def map_queries():
     if not MAPPED_FILE:
         console.print("MAPPED_FILE not set in .env\nDefault: mapped.json")
         MAPPED_FILE = "mapped.json"
+    MAPPED_FILE = f"mappings/{MAPPED_FILE}"
 
     assert(ANNOTATED_FILE is not None)
     if not os.path.exists(ANNOTATED_FILE):

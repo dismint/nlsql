@@ -1,587 +1,541 @@
 [
-    {
-        "colors": [
-            "cards.colors"
-        ],
-        "ID": [
-            "cards.id"
-        ],
-        "format": [
-            "legalities.format"
-        ]
-    },
-    {
-        "constructor names": [
-            "constructors.name"
-        ],
-        "points": [
-            "constructorStandings.points"
-        ],
-        "race": [
-            "constructorStandings.raceId"
-        ]
-    },
-    {
-        "names": [
-            "player_name"
-        ],
-        "football players": [
-            "player_name"
-        ],
-        "height": [
-            "height"
-        ]
-    },
-    {
-        "cards": [
-            "cards.name"
-        ],
-        "language": [
-            "foreign_data.language"
-        ]
-    },
-    {
-        "customers": [
-            "disp.account_id",
-            "account.account_id"
-        ],
-        "statement": [
-            "account.frequency"
-        ],
-        "issuance": [
-            "account.frequency"
-        ]
-    },
-    {
-        "Los Angeles": [
-            "County Name"
-        ],
-        "schools": [
-            "CDSCode"
-        ],
-        "free meals": [
-            "Free Meal Count (K-12)"
-        ],
-        "free or reduced price meals": [],
-        "K-12": [
-            "Free Meal Count (K-12)"
-        ]
-    },
-    {
-        "comments": [
-            "posts.CommentCount"
-        ],
-        "posts": [
-            "posts.CommentCount"
-        ],
-        "owner": [
-            "users.DisplayName",
-            "posts.OwnerUserId",
-            "users.Id"
-        ]
-    },
-    {
-        "schools": [
-            "satscores.sname"
-        ],
-        "location": [
-            "frpm.District Name"
-        ],
-        "math score": [
-            "satscores.AvgScrMath"
-        ],
-        "assessment": [
-            "satscores.AvgScrMath"
-        ],
-        "funding type": [
-            "frpm.Charter Funding Type"
-        ]
-    },
-    {
-        "name": [
-            "sets.name"
-        ],
-        "set number": [
-            "set_translations.id"
-        ],
-        "translation": [
-            "set_translations.translation"
-        ]
-    },
-    {
-        "circuits": [
-            "circuitId"
-        ],
-        "Melbourne": [],
-        "Australia": [
-            "country"
-        ]
-    },
-    {
-        "transaction": [
-            "trans.amount"
-        ],
-        "client": [
-            "account.account_id",
-            "trans.account_id"
-        ],
-        "card": [
-            "account.date"
-        ]
-    },
-    {
-        "patient": [
-            "Patient.ID",
-            "Laboratory.ID"
-        ],
-        "lactate dehydrogenase": [
-            "Laboratory.LDH"
-        ],
-        "date": [
-            "Patient.First Date"
-        ]
-    },
-    {
-        "budget category": [
-            "budget.category"
-        ],
-        "expense name": [
-            "expense.expense_description"
-        ]
-    },
-    {
-        "cards": [
-            "name"
-        ],
-        "set": [
-            "id"
-        ],
-        "language": [
-            "language"
-        ]
-    },
-    {
-        "posts": [
-            "posts.Id"
-        ],
-        "score": [
-            "posts.Score"
-        ],
-        "percentage": [],
-        "user": [
-            "users.Age",
-            "users.Id",
-            "posts.OwnerUserId"
-        ]
-    },
-    {
-        "crimes": [
-            "A16"
-        ],
-        "regions": [
-            "A3"
-        ],
-        "year": []
-    },
-    {
-        "Michael Schumacher": [
-            "drivers.forename",
-            "drivers.surname"
-        ],
-        "races": [
-            "races.raceId",
-            "driverStandings.raceId"
-        ],
-        "Sepang International Circuit": [
-            "circuits.name"
-        ]
-    },
-    {
-        "post ID": [
-            "posts.Id"
-        ],
-        "comments": [
-            "comments.Text"
-        ],
-        "post title": [
-            "posts.Title"
-        ]
-    },
-    {
-        "accounts": [
-            "account.account_id"
-        ],
-        "orders": [
-            "trans.account_id"
-        ],
-        "household payment": [
-            "trans.k_symbol"
-        ],
-        "Pisek": [
-            "district.A2"
-        ]
-    },
-    {
-        "cards": [
-            "id"
-        ],
-        "set": [
-            "setCode",
-            "code",
-            "name"
-        ],
-        "converted mana cost": [
-            "convertedManaCost"
-        ]
-    },
-    {
-        "constructor": [
-            "constructors.name"
-        ],
-        "points": [
-            "constructorResults.points"
-        ],
-        "Grand Prix": [
-            "races.name"
-        ],
-        "year": [
-            "races.year"
-        ],
-        "name": [
-            "constructors.name"
-        ],
-        "nationality": [
-            "constructors.nationality"
-        ]
-    },
-    {
-        "customers": [
-            "yearmonth.CustomerID",
-            "customers.CustomerID"
-        ],
-        "consumption": [
-            "yearmonth.Consumption"
-        ],
-        "year": [
-            "yearmonth.Date"
-        ]
-    },
-    {
-        "test takers": [
-            "satscores.NumTstTakr"
-        ],
-        "school": [
-            "satscores.cds",
-            "schools.CDSCode"
-        ],
-        "mailing city address": [
-            "schools.MailCity"
-        ]
-    },
-    {
-        "drivers": [
-            "drivers.forename",
-            "drivers.surname"
-        ],
-        "position": [
-            "driverStandings.position"
-        ]
-    },
-    {
-        "drivers": [
-            "drivers.driverId"
-        ],
-        "nationality": [
-            "drivers.nationality"
-        ],
-        "disqualification": [
-            "status.status"
-        ]
-    },
-    {
-        "players": [
-            "Player.player_name"
-        ],
-        "crossing actions": [
-            "Player_Attributes.crossing"
-        ]
-    },
-    {
-        "molecules": [
-            "atom.element"
-        ],
-        "ID": [
-            "atom.atom_id"
-        ],
-        "silicon": [
-            "atom.element"
-        ]
-    },
-    {
-        "view count": [
-            "posts.ViewCount"
-        ],
-        "posts": [
-            "posts.Title",
-            "comments.Text"
-        ],
-        "tag": [
-            "posts.Tags"
-        ],
-        "title": [
-            "posts.Title"
-        ],
-        "comments": [
-            "comments.Text"
-        ],
-        "scores": []
-    },
-    {
-        "cards": [],
-        "power": [
-            "power"
-        ],
-        "foil": [
-            "hasFoil"
-        ],
-        "deck": [
-            "duelDeck"
-        ]
-    },
-    {
-        "circuit": [
-            "circuits.name"
-        ],
-        "2009 Spanish Grand Prix": [
-            "races.year",
-            "races.name"
-        ]
-    },
-    {
-        "power": [
-            "superpower.power_name"
-        ],
-        "height": [
-            "superhero.height_cm",
-            "height_cm"
-        ]
-    },
-    {
-        "accounts": [
-            "district.district_id",
-            "account.district_id"
-        ],
-        "issuance": [
-            "account.frequency"
-        ],
-        "transaction": [
-            "account.frequency"
-        ],
-        "East Bohemia region": [
-            "district.A3"
-        ]
-    },
-    {
-        "players": [
-            "id"
-        ],
-        "crossing actions": [
-            "crossing"
-        ],
-        "player id": [
-            "id"
-        ]
-    },
-    {
-        "budgets": [
-            "budget_id"
-        ],
-        "Food": [
-            "category"
-        ],
-        "budgeted amount": [
-            "amount"
-        ]
-    },
-    {
-        "accounts": [
-            "account_id",
-            "account.date"
-        ],
-        "Beroun": [
-            "district.A2"
-        ]
-    },
-    {
-        "team_fifa_api_id": [
-            "team_fifa_api_id"
-        ],
-        "build-up play speed": [
-            "buildUpPlaySpeed"
-        ]
-    },
-    {
-        "cards": [
-            "cards.borderColor",
-            "cards.setCode"
-        ],
-        "set": [
-            "sets.code",
-            "sets.name"
-        ],
-        "border color": [
-            "cards.borderColor"
-        ]
-    },
-    {
-        "zip code": [
-            "member.zip"
-        ],
-        "member": [
-            "member.member_id",
-            "expense.link_to_member"
-        ]
-    },
-    {
-        "district Id": [
-            "district.district_id",
-            "account.district_id"
-        ],
-        "account": [
-            "order.account_id",
-            "account.account_id"
-        ],
-        "order id": [
-            "order.order_id"
-        ]
-    },
-    {
-        "users": [
-            "id"
-        ],
-        "badge": [
-            "Name"
-        ]
-    },
-    {
-        "atom id2": [
-            "connected.atom_id2"
-        ],
-        "element": [
-            "atom.element"
-        ]
-    },
-    {
-        "outpatient": [
-            "Patient.Admission"
-        ],
-        "creatinine phosphokinase": [
-            "Laboratory.CPK"
-        ],
-        "ids": [
-            "Patient.ID",
-            "Laboratory.ID"
-        ]
-    },
-    {
-        "cards": [
-            "id"
-        ],
-        "original type": [
-            "originalType"
-        ],
-        "subtype": [
-            "subtypes"
-        ]
-    },
-    {
-        "date": [
-            "OpenDate"
-        ],
-        "schools": [
-            "School"
-        ],
-        "county": [
-            "County"
-        ]
-    },
-    {
-        "atoms": [
-            "atom.atom_id"
-        ],
-        "molecule": [
-            "atom.molecule_id",
-            "molecule.molecule_id"
-        ],
-        "element": [
-            "atom.element"
-        ],
-        "hydrogen": [
-            "atom.element"
-        ],
-        "carcinogenic compound": [
-            "molecule.label"
-        ]
-    },
-    {
-        "fastest lap": [
-            "results.fastestLap"
-        ],
-        "Lewis Hamilton": [
-            "drivers.forename",
-            "drivers.surname"
-        ],
-        "2008 Australian Grand Prix": [
-            "races.name",
-            "races.year"
-        ]
-    },
-    {
-        "name": [
-            "Name"
-        ],
-        "badges": [
-            "Name"
-        ],
-        "users": [],
-        "timestamp": []
-    },
-    {
-        "full name": [
-            "forename",
-            "surname"
-        ],
-        "Wikipedia page link": [
-            "url"
-        ],
-        "date of birth": [
-            "dob"
-        ],
-        "German drivers": [
-            "nationality"
-        ]
-    },
-    {
-        "expansion type": [
-            "type"
-        ],
-        "set name": [
-            "translation"
-        ]
-    },
-    {
-        "patients": [
-            "Patient.ID",
-            "Laboratory.ID"
-        ],
-        "gender": [
-            "Patient.SEX"
-        ],
-        "white blood cells": [
-            "Laboratory.WBC"
-        ],
-        "fibrinogen level": [
-            "Laboratory.FG"
-        ]
+  {
+    "question": "Please list a patient's platelet level if it is within the normal range and if he or she is diagnosed with MCTD.",
+    "sql": "SELECT T2.PLT FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T1.Diagnosis = 'MCTD' AND T2.PLT BETWEEN 100 AND 400",
+    "topics": ["patient", "platelet level", "normal range", "diagnosis"],
+    "mapping": {
+      "patient": ["Patient.ID", "Laboratory.ID"],
+      "platelet level": ["Laboratory.PLT"],
+      "normal range": ["Laboratory.PLT"],
+      "diagnosis": ["Patient.Diagnosis"]
     }
+  },
+  {
+    "question": "Among all European Grand Prix races, what is the percentage of the races were hosted in Germany?",
+    "sql": "SELECT CAST(COUNT(CASE WHEN T1.country = 'Germany' THEN T2.circuitID END) AS REAL) * 100 / COUNT(T2.circuitId) FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T2.name = 'European Grand Prix'",
+    "topics": ["European Grand Prix", "Germany"],
+    "mapping": {
+      "European Grand Prix": ["races.name"],
+      "Germany": ["circuits.country"]
+    }
+  },
+  {
+    "question": "In which race did the fastest 1st lap time was recorded? Please indicate the time in milliseconds.",
+    "sql": "SELECT T1.milliseconds FROM lapTimes AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId WHERE T1.lap = 1 ORDER BY T1.time LIMIT 1",
+    "topics": ["race", "1st lap time", "time"],
+    "mapping": {
+      "race": ["lapTimes.raceId", "races.raceId"],
+      "1st lap time": ["lapTimes.time"],
+      "time": ["lapTimes.milliseconds"]
+    }
+  },
+  {
+    "question": "Who placed the order with the id 32423?",
+    "sql": "SELECT T3.client_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 32423",
+    "topics": ["order id"],
+    "mapping": {
+      "order id": ["order.order_id"]
+    }
+  },
+  {
+    "question": "Calculate the percentage of the cards availabe in Chinese Simplified.",
+    "sql": "SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid",
+    "topics": ["cards", "Chinese Simplified"],
+    "mapping": {
+      "cards": ["cards.id", "cards.uuid"],
+      "Chinese Simplified": ["foreign_data.language"]
+    }
+  },
+  {
+    "question": "List the bond type and the bond ID of the atom 45.",
+    "sql": "SELECT T1.bond_type, T1.bond_id FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE SUBSTR(T2.atom_id, 7, 2) = '45'",
+    "topics": ["bond type", "bond ID", "atom"],
+    "mapping": {
+      "bond type": ["bond.bond_type"],
+      "bond ID": ["bond.bond_id"],
+      "atom": ["connected.atom_id"]
+    }
+  },
+  {
+    "question": "Describe the last accessed date and location of the users who received the outliers badge.",
+    "sql": "SELECT T1.LastAccessDate, T1.Location FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T2.Name = 'outliers'",
+    "topics": ["last accessed date", "location", "users", "badge"],
+    "mapping": {
+      "last accessed date": ["users.LastAccessDate"],
+      "location": ["users.Location"],
+      "users": ["users.Id"],
+      "badge": ["badges.Name"]
+    }
+  },
+  {
+    "question": "List the players' api id who had the highest above average overall ratings in 2010.",
+    "sql": "SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1",
+    "topics": ["players' api id", "overall ratings"],
+    "mapping": {
+      "progress": "error"
+    }
+  },
+  {
+    "question": "Who among KAM's customers consumed the most? How much did it consume?",
+    "sql": "SELECT T2.CustomerID, SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "topics": ["customers"],
+    "mapping": {
+      "customers": ["customers.CustomerID"]
+    }
+  },
+  {
+    "question": "Among the superheroes with blue eyes, how many of them have the super power of \"Agility\"?",
+    "sql": "SELECT COUNT(T1.id) FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id INNER JOIN colour AS T4 ON T1.eye_colour_id = T4.id WHERE T3.power_name = 'Agility' AND T4.colour = 'Blue'",
+    "topics": ["superheroes", "blue eyes", "super power", "Agility"],
+    "mapping": {
+      "superheroes": ["superhero.id"],
+      "blue eyes": ["colour.colour"],
+      "super power": ["superpower.power_name"],
+      "Agility": ["superpower.power_name"]
+    }
+  },
+  {
+    "question": "How many male customers who were born between 1974 and 1976 have made a payment on their home in excess of $4000?",
+    "sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.district_id = T3.district_id WHERE STRFTIME('%Y', T3.birth_date) BETWEEN '1974' AND '1976' AND T3.gender = 'M' AND T1.amount > 4000 AND T1.k_symbol = 'SIPO'",
+    "topics": ["male customers", "birth year", "payment amount"],
+    "mapping": {
+      "male customers": ["client.gender"],
+      "birth year": ["client.birth_date"],
+      "payment amount": ["trans.amount"]
+    }
+  },
+  {
+    "question": "Which was Lewis Hamilton first race? What was his points recorded for his first race event?",
+    "sql": "SELECT T1.name, T2.points FROM races AS T1 INNER JOIN driverStandings AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T3.forename = 'Lewis' AND T3.surname = 'Hamilton' ORDER BY T1.year ASC LIMIT 1",
+    "topics": ["Lewis Hamilton", "race", "points"],
+    "mapping": {
+      "Lewis Hamilton": ["drivers.forename", "drivers.surname"],
+      "race": ["races.name"],
+      "points": ["driverStandings.points"]
+    }
+  },
+  {
+    "question": "Please list the patient's ID whose creatinine level is normal and whose anti Cardiolipin antibody concentration level is the highest.",
+    "sql": "SELECT T2.ID FROM Laboratory AS T1 INNER JOIN Examination AS T2 ON T1.ID = T2.ID WHERE T1.CRE < 1.5 ORDER BY T2.`aCL IgA` DESC LIMIT 1",
+    "topics": [
+      "patient ID",
+      "creatinine level",
+      "anti Cardiolipin antibody concentration level"
+    ],
+    "mapping": {
+      "patient ID": ["Examination.ID", "Laboratory.ID"],
+      "creatinine level": ["Laboratory.CRE"],
+      "anti Cardiolipin antibody concentration level": ["Examination.aCL IgA"]
+    }
+  },
+  {
+    "question": "For the set of cards with \"Ancestor's Chosen\" in it, is there a Korean version of it?",
+    "sql": "SELECT IIF(SUM(CASE WHEN T2.language = 'Korean' AND T2.translation IS NOT NULL THEN 1 ELSE 0 END) > 0, 'YES', 'NO') FROM cards AS T1 INNER JOIN set_translations AS T2 ON T2.setCode = T1.setCode WHERE T1.name = 'Ancestor''s Chosen'",
+    "topics": ["cards", "Korean version"],
+    "mapping": {
+      "cards": ["cards.setCode", "cards.name"],
+      "Korean version": [
+        "set_translations.language",
+        "set_translations.translation"
+      ]
+    }
+  },
+  {
+    "question": "What is the language and flavor text of the card that has colorpie watermark? List out the type of this card.",
+    "sql": "SELECT DISTINCT T2.language, T2.flavorText FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T2.uuid = T1.uuid WHERE T1.watermark = 'colorpie'",
+    "topics": ["language", "flavor text", "colorpie watermark", "type"],
+    "mapping": {
+      "language": ["foreign_data.language"],
+      "flavor text": ["foreign_data.flavorText"],
+      "colorpie watermark": ["cards.watermark"],
+      "type": []
+    }
+  },
+  {
+    "question": "How many loan accounts are for pre-payment of duration of 24 months with weekly issuance of statement.",
+    "sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.duration = 24 AND T1.frequency = 'POPLATEK TYDNE'",
+    "topics": ["loan accounts", "duration", "issuance of statement"],
+    "mapping": {
+      "loan accounts": ["loan.account_id", "account.account_id"],
+      "duration": ["loan.duration"],
+      "issuance of statement": ["account.frequency"]
+    }
+  },
+  {
+    "question": "Who has the highest reputation? Please give the display name.",
+    "sql": "SELECT DisplayName FROM users WHERE Reputation = ( SELECT MAX(Reputation) FROM users )",
+    "topics": ["reputation", "display name"],
+    "mapping": {
+      "reputation": ["Reputation"],
+      "display name": ["DisplayName"]
+    }
+  },
+  {
+    "question": "State what kind of expenses that Sacha Harrison incurred?",
+    "sql": "SELECT T2.expense_description FROM member AS T1 INNER JOIN expense AS T2 ON T1.member_id = T2.link_to_member WHERE T1.first_name = 'Sacha' AND T1.last_name = 'Harrison'",
+    "topics": ["expenses", "name"],
+    "mapping": {
+      "expenses": ["expense.expense_description"],
+      "name": ["member.first_name", "member.last_name"]
+    }
+  },
+  {
+    "question": "What is the disposition id of the client who made 5100 USD transaction in 1998/9/2?",
+    "sql": "SELECT T1.disp_id FROM disp AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1998-09-02' AND T2.amount = 5100",
+    "topics": ["disposition id", "client", "transaction", "USD", "date"],
+    "mapping": {
+      "disposition id": ["disp.disp_id"],
+      "client": ["disp.account_id"],
+      "transaction": ["trans.account_id"],
+      "USD": ["trans.amount"],
+      "date": ["trans.date"]
+    }
+  },
+  {
+    "question": "List the last name of members with a major in environmental engineering and include its department and college name.",
+    "sql": "SELECT T2.last_name, T1.department, T1.college FROM major AS T1 INNER JOIN member AS T2 ON T1.major_id = T2.link_to_major WHERE T2.position = 'Member' AND T1.major_name = 'Environmental Engineering'",
+    "topics": ["last name", "major", "department", "college name"],
+    "mapping": {
+      "last name": ["member.last_name"],
+      "major": ["major.major_name"],
+      "department": ["major.department"],
+      "college name": ["major.college"]
+    }
+  },
+  {
+    "question": "Which exclusively virtual schools have the top 5 highest average reading scores?",
+    "sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' ORDER BY T1.AvgScrRead DESC LIMIT 5",
+    "topics": ["schools", "average reading scores"],
+    "mapping": {
+      "schools": ["schools.School"],
+      "average reading scores": ["satscores.AvgScrRead"]
+    }
+  },
+  {
+    "question": "Among the card designed by Matthew D. Wilson, how many are available only in the paper?",
+    "sql": "SELECT COUNT(id) FROM cards WHERE artist = 'Matthew D. Wilson' AND availability = 'paper'",
+    "topics": [
+      "card",
+      "designer",
+      "Matthew D. Wilson",
+      "availability",
+      "format"
+    ],
+    "mapping": {
+      "card": ["id"],
+      "designer": ["artist"],
+      "Matthew D. Wilson": ["artist"],
+      "availability": ["availability"],
+      "format": ["availability"]
+    }
+  },
+  {
+    "question": "What is the percentage of female patient were born after 1930?",
+    "sql": "SELECT CAST(SUM(CASE WHEN STRFTIME('%Y', Birthday) > '1930' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM Patient WHERE SEX = 'F'",
+    "topics": ["gender", "patient", "birthyear"],
+    "mapping": {
+      "gender": ["SEX"],
+      "patient": ["Birthday", "SEX"],
+      "birthyear": ["Birthday"]
+    }
+  },
+  {
+    "question": "What was the anti-nucleus antibody concentration level for the patient id 3605340 on 1996/12/2?",
+    "sql": "SELECT ANA FROM Examination WHERE ID = 3605340 AND `Examination Date` = '1996-12-02'",
+    "topics": [
+      "anti-nucleus antibody concentration level",
+      "patient id",
+      "date"
+    ],
+    "mapping": {
+      "anti-nucleus antibody concentration level": ["ANA"],
+      "patient id": ["ID"],
+      "date": ["Examination Date"]
+    }
+  },
+  {
+    "question": "What is the total number of comments of all the posts owned by csgillespie?",
+    "sql": "SELECT SUM(T1.CommentCount) FROM posts AS T1 INNER JOIN users AS T2 ON T1.OwnerUserId = T2.Id WHERE T2.DisplayName = 'csgillespie'",
+    "topics": ["comments", "posts", "owner"],
+    "mapping": {
+      "comments": ["posts.CommentCount"],
+      "posts": ["posts.CommentCount", "posts.OwnerUserId"],
+      "owner": ["posts.OwnerUserId", "users.Id", "users.DisplayName"]
+    }
+  },
+  {
+    "question": "Sum up the away team goal scored by both Daan Smith and Filipe Ferreira.",
+    "sql": "SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')",
+    "topics": ["away team goal", "Daan Smith", "Filipe Ferreira"],
+    "mapping": {
+      "away team goal": ["match.away_team_goal"],
+      "Daan Smith": ["Player.player_name"],
+      "Filipe Ferreira": ["Player.player_name"]
+    }
+  },
+  {
+    "question": "List the city and state of members enrolled under electrical and computer engineering department.",
+    "sql": "SELECT city, state FROM member AS T1 INNER JOIN major AS T2 ON T2.major_id = T1.link_to_major INNER JOIN zip_code AS T3 ON T3.zip_code = T1.zip WHERE department = 'Electrical and Computer Engineering Department' AND position = 'Member'",
+    "topics": ["city", "state", "department"],
+    "mapping": {
+      "city": ["city"],
+      "state": ["state"],
+      "department": ["department"]
+    }
+  },
+  {
+    "question": "How many students in the Student_Club are from the College of Engineering?",
+    "sql": "SELECT COUNT(T1.member_id) FROM member AS T1 INNER JOIN major AS T2 ON T1.link_to_major = T2.major_id WHERE T2.college = 'College of Engineering'",
+    "topics": ["students", "Student_Club", "college"],
+    "mapping": {
+      "students": ["member.member_id"],
+      "Student_Club": ["member.member_id"],
+      "college": ["major.college"]
+    }
+  },
+  {
+    "question": "How many students of the Student_Club have attended the event \"Women's Soccer\"?",
+    "sql": "SELECT COUNT(T1.event_id) FROM event AS T1 INNER JOIN attendance AS T2 ON T1.event_id = T2.link_to_event WHERE T1.event_name = 'Women''s Soccer'",
+    "topics": ["students", "Student_Club", "event"],
+    "mapping": {
+      "students": ["attendance.link_to_event"],
+      "Student_Club": ["attendance.link_to_event"],
+      "event": ["event.event_id", "event.event_name"]
+    }
+  },
+  {
+    "question": "Which user ID has the lowest view?",
+    "sql": "SELECT Id FROM users WHERE Views = ( SELECT MIN(Views) FROM users )",
+    "topics": ["user ID", "view"],
+    "mapping": {
+      "user ID": ["Id"],
+      "view": []
+    }
+  },
+  {
+    "question": "Please list the superhero names of all the superheroes that have blue eyes and blond hair.",
+    "sql": "SELECT T1.superhero_name FROM superhero AS T1 INNER JOIN colour AS T2 ON T1.eye_colour_id = T2.id INNER JOIN colour AS T3 ON T1.hair_colour_id = T3.id WHERE T2.colour = 'Blue' AND T3.colour = 'Blond'",
+    "topics": ["superhero names", "eye color", "hair color"],
+    "mapping": {
+      "superhero names": ["superhero.superhero_name"],
+      "eye color": ["superhero.eye_colour_id", "colour.id", "colour.colour"],
+      "hair color": ["superhero.hair_colour_id", "colour.id", "colour.colour"]
+    }
+  },
+  {
+    "question": "How many of the molecules are not carcinogenic?",
+    "sql": "SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '-'",
+    "topics": ["molecules", "carcinogenic"],
+    "mapping": {
+      "molecules": ["molecule.molecule_id"],
+      "carcinogenic": ["molecule.label"]
+    }
+  },
+  {
+    "question": "What is the most common illness that doctors identified among the patients whose lab work was done between 1/1/1985, and 12/31/1995?",
+    "sql": "SELECT T2.Diagnosis FROM Examination AS T1 INNER JOIN Patient AS T2 ON T1.ID = T2.ID WHERE T1.`Examination Date` BETWEEN '1985-01-01' AND '1995-12-31' GROUP BY T2.Diagnosis ORDER BY COUNT(T2.Diagnosis) DESC LIMIT 1",
+    "topics": ["illness", "doctors", "patients", "lab work"],
+    "mapping": {
+      "illness": ["Patient.Diagnosis"],
+      "doctors": ["Examination.ID"],
+      "patients": ["Patient.ID"],
+      "lab work": ["Examination.Examination Date"]
+    }
+  },
+  {
+    "question": "List the name of leagues in which the average goals by the home team is higher than the away team in the 2009/2010 season.",
+    "sql": "SELECT t1.name FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t2.season = '2009/2010' GROUP BY t1.name HAVING (CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) - (CAST(SUM(t2.away_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) > 0",
+    "topics": [
+      "name of leagues",
+      "average goals",
+      "home team",
+      "away team",
+      "2009/2010 season"
+    ],
+    "mapping": {
+      "name of leagues": ["League.name"],
+      "average goals": ["Match.home_team_goal", "Match.away_team_goal"],
+      "home team": ["Match.home_team_goal"],
+      "away team": ["Match.away_team_goal"],
+      "2009/2010 season": ["Match.season"]
+    }
+  },
+  {
+    "question": "What is the status of card \"Cloudchaser Eagle\"?",
+    "sql": "SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.name = 'Cloudchaser Eagle'",
+    "topics": ["status", "card"],
+    "mapping": {
+      "status": ["legalities.status"],
+      "card": ["cards.name"]
+    }
+  },
+  {
+    "question": "What proportion of cards do not have a text box with a normal layout?",
+    "sql": "SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards",
+    "topics": ["cards", "text box", "layout"],
+    "mapping": {
+      "cards": [],
+      "text box": ["isTextless"],
+      "layout": ["layout"]
+    }
+  },
+  {
+    "question": "List the long name of teams with above-average build-up play passing in 2012.",
+    "sql": "SELECT DISTINCT t4.team_long_name FROM Team_Attributes AS t3 INNER JOIN Team AS t4 ON t3.team_api_id = t4.team_api_id WHERE SUBSTR(t3.`date`, 1, 4) = '2012' AND t3.buildUpPlayPassing > ( SELECT CAST(SUM(t2.buildUpPlayPassing) AS REAL) / COUNT(t1.id) FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE SUBSTR(t2.`date`, 1, 4) = '2012' )",
+    "topics": ["teams", "long name", "build-up play passing", "2012"],
+    "mapping": {
+      "teams": ["Team_Attributes.team_api_id", "Team.team_api_id"],
+      "long name": ["Team.team_long_name"],
+      "build-up play passing": ["Team_Attributes.buildUpPlayPassing"],
+      "2012": ["Team_Attributes.date"]
+    }
+  },
+  {
+    "question": "Among the comments with scores between 5 to 10, what is the percentage of the users with 0 up votes?",
+    "sql": "SELECT CAST(SUM(IIF(T1.UpVotes = 0, 1, 0)) AS REAL) / COUNT(T1.Id) AS per FROM users AS T1 INNER JOIN comments AS T2 ON T1.Id = T2.UserId WHERE T2.Score BETWEEN 5 AND 10",
+    "topics": ["comments", "scores", "users", "up votes"],
+    "mapping": {
+      "comments": ["comments.UserId", "comments.Score"],
+      "scores": ["comments.Score"],
+      "users": ["users.Id"],
+      "up votes": ["users.UpVotes"]
+    }
+  },
+  {
+    "question": "List down the uuid for legacy cards and the foreign language of these cards.",
+    "sql": "SELECT T1.uuid, T3.language FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN foreign_data AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'legacy'",
+    "topics": ["uuid", "legacy cards", "foreign language"],
+    "mapping": {
+      "uuid": ["cards.uuid"],
+      "legacy cards": ["legalities.format"],
+      "foreign language": ["foreign_data.language"]
+    }
+  },
+  {
+    "question": "How many of the molecules are carcinogenic?",
+    "sql": "SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '+'",
+    "topics": ["molecules", "carcinogenic"],
+    "mapping": {
+      "molecules": ["molecule.molecule_id"],
+      "carcinogenic": ["molecule.label"]
+    }
+  },
+  {
+    "question": "What was the highest score of the home team in the Netherlands Eredivisie league?",
+    "sql": "SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'",
+    "topics": ["score", "home team", "Netherlands Eredivisie league"],
+    "mapping": {
+      "score": ["Match.home_team_goal"],
+      "home team": ["Match.home_team_goal"],
+      "Netherlands Eredivisie league": ["League.name"]
+    }
+  },
+  {
+    "question": "What language is the set of 180 cards that belongs to the Ravnica block translated into?",
+    "sql": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180",
+    "topics": ["language", "cards", "Ravnica block"],
+    "mapping": {
+      "language": ["set_translations.language"],
+      "cards": ["sets.baseSetSize"],
+      "Ravnica block": ["sets.block"]
+    }
+  },
+  {
+    "question": "Provide the full name of the superhero named Alien.",
+    "sql": "SELECT full_name FROM superhero WHERE superhero_name = 'Alien'",
+    "topics": ["full name", "superhero name"],
+    "mapping": {
+      "full name": ["full_name"],
+      "superhero name": ["superhero_name"]
+    }
+  },
+  {
+    "question": "Which accounts placed orders for household payment in Pisek?",
+    "sql": "SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.k_symbol = 'SIPO' AND T3.A2 = 'Pisek'",
+    "topics": ["accounts", "orders", "household payment", "Pisek"],
+    "mapping": {
+      "accounts": ["account.account_id"],
+      "orders": ["trans.account_id"],
+      "household payment": ["trans.k_symbol"],
+      "Pisek": ["district.A2"]
+    }
+  },
+  {
+    "question": "Provide ID, sex and age of patient who has blood glucose (GLU) not within normal range but with total cholesterol(T-CHO) within normal range.",
+    "sql": "SELECT DISTINCT T1.ID, T1.SEX , STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T1.Birthday) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.GLU >= 180 AND T2.`T-CHO` < 250",
+    "topics": [
+      "ID",
+      "sex",
+      "age",
+      "blood glucose",
+      "GLU",
+      "total cholesterol",
+      "T-CHO"
+    ],
+    "mapping": {
+      "ID": ["Patient.ID", "Laboratory.ID"],
+      "sex": ["Patient.SEX"],
+      "age": ["Patient.Birthday"],
+      "blood glucose": ["Laboratory.GLU"],
+      "GLU": ["Laboratory.GLU"],
+      "total cholesterol": ["Laboratory.T-CHO"],
+      "T-CHO": ["Laboratory.T-CHO"]
+    }
+  },
+  {
+    "question": "Name 10 users with the badge name 'Necromancer.'",
+    "sql": "SELECT T1.DisplayName FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T2.Name = 'Necromancer' LIMIT 10",
+    "topics": ["users", "badge name"],
+    "mapping": {
+      "users": ["users.DisplayName"],
+      "badge name": ["badges.Name"]
+    }
+  },
+  {
+    "question": "Which driver created the fastest lap speed in a Formula_1 race? Please give both his forename and surname.",
+    "sql": "SELECT T1.forename, T1.surname FROM drivers AS T1 INNER JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.fastestLapTime IS NOT NULL ORDER BY T2.fastestLapSpeed DESC LIMIT 1",
+    "topics": [
+      "driver",
+      "forename",
+      "surname",
+      "fastest lap speed",
+      "Formula_1 race"
+    ],
+    "mapping": {
+      "driver": ["drivers.driverId", "results.driverId"],
+      "forename": ["drivers.forename"],
+      "surname": ["drivers.surname"],
+      "fastest lap speed": ["results.fastestLapSpeed"],
+      "Formula_1 race": []
+    }
+  },
+  {
+    "question": "Is molecule TR151 carcinogenic?",
+    "sql": "SELECT T.label FROM molecule AS T WHERE T.molecule_id = 'TR151'",
+    "topics": ["molecule", "carcinogenic"],
+    "mapping": {
+      "molecule": ["molecule.molecule_id"],
+      "carcinogenic": ["molecule.label"]
+    }
+  },
+  {
+    "question": "How many black border cards are only available on mtgo?",
+    "sql": "SELECT COUNT(id) FROM cards WHERE availability = 'mtgo' AND borderColor = 'black'",
+    "topics": ["card color", "platform availability"],
+    "mapping": {
+      "card color": ["borderColor"],
+      "platform availability": ["availability"]
+    }
+  },
+  {
+    "question": "Determine the bond type that is formed in the chemical compound containing element Tellurium.",
+    "sql": "SELECT DISTINCT T2.bond_type FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'te'",
+    "topics": ["bond type", "chemical compound", "element Tellurium"],
+    "mapping": {
+      "bond type": ["bond.bond_type"],
+      "chemical compound": ["atom.molecule_id", "bond.molecule_id"],
+      "element Tellurium": ["atom.element"]
+    }
+  }
 ]
+

@@ -1,57 +1,216 @@
 [
     {
-        "question": "What are the colors of cards from ID 1-20? What are the format of these cards?",
-        "sql": "SELECT T1.colors, T2.format FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.id BETWEEN 1 AND 20",
+        "question": "Please list a patient's platelet level if it is within the normal range and if he or she is diagnosed with MCTD.",
+        "sql": "SELECT T2.PLT FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T1.Diagnosis = 'MCTD' AND T2.PLT BETWEEN 100 AND 400",
         "topics": [
-            "colors",
-            "ID",
+            "patient",
+            "platelet level",
+            "normal range",
+            "diagnosis"
+        ]
+    },
+    {
+        "question": "Among all European Grand Prix races, what is the percentage of the races were hosted in Germany?",
+        "sql": "SELECT CAST(COUNT(CASE WHEN T1.country = 'Germany' THEN T2.circuitID END) AS REAL) * 100 / COUNT(T2.circuitId) FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T2.name = 'European Grand Prix'",
+        "topics": [
+            "European Grand Prix",
+            "Germany"
+        ]
+    },
+    {
+        "question": "In which race did the fastest 1st lap time was recorded? Please indicate the time in milliseconds.",
+        "sql": "SELECT T1.milliseconds FROM lapTimes AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId WHERE T1.lap = 1 ORDER BY T1.time LIMIT 1",
+        "topics": [
+            "race",
+            "1st lap time",
+            "time"
+        ]
+    },
+    {
+        "question": "Who placed the order with the id 32423?",
+        "sql": "SELECT T3.client_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 32423",
+        "topics": [
+            "order id"
+        ]
+    },
+    {
+        "question": "Calculate the percentage of the cards availabe in Chinese Simplified.",
+        "sql": "SELECT CAST(SUM(CASE WHEN T2.language = 'Chinese Simplified' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid",
+        "topics": [
+            "cards",
+            "Chinese Simplified"
+        ]
+    },
+    {
+        "question": "List the bond type and the bond ID of the atom 45.",
+        "sql": "SELECT T1.bond_type, T1.bond_id FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE SUBSTR(T2.atom_id, 7, 2) = '45'",
+        "topics": [
+            "bond type",
+            "bond ID",
+            "atom"
+        ]
+    },
+    {
+        "question": "Describe the last accessed date and location of the users who received the outliers badge.",
+        "sql": "SELECT T1.LastAccessDate, T1.Location FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T2.Name = 'outliers'",
+        "topics": [
+            "last accessed date",
+            "location",
+            "users",
+            "badge"
+        ]
+    },
+    {
+        "question": "List the players' api id who had the highest above average overall ratings in 2010.",
+        "sql": "SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1",
+        "topics": [
+            "players' api id",
+            "overall ratings"
+        ]
+    },
+    {
+        "question": "Who among KAM's customers consumed the most? How much did it consume?",
+        "sql": "SELECT T2.CustomerID, SUM(T2.Consumption) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+        "topics": [
+            "customers"
+        ]
+    },
+    {
+        "question": "Among the superheroes with blue eyes, how many of them have the super power of \"Agility\"?",
+        "sql": "SELECT COUNT(T1.id) FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id INNER JOIN colour AS T4 ON T1.eye_colour_id = T4.id WHERE T3.power_name = 'Agility' AND T4.colour = 'Blue'",
+        "topics": [
+            "superheroes",
+            "blue eyes",
+            "super power",
+            "Agility"
+        ]
+    },
+    {
+        "question": "How many male customers who were born between 1974 and 1976 have made a payment on their home in excess of $4000?",
+        "sql": "SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.district_id = T3.district_id WHERE STRFTIME('%Y', T3.birth_date) BETWEEN '1974' AND '1976' AND T3.gender = 'M' AND T1.amount > 4000 AND T1.k_symbol = 'SIPO'",
+        "topics": [
+            "male customers",
+            "birth year",
+            "payment amount"
+        ]
+    },
+    {
+        "question": "Which was Lewis Hamilton first race? What was his points recorded for his first race event?",
+        "sql": "SELECT T1.name, T2.points FROM races AS T1 INNER JOIN driverStandings AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T3.forename = 'Lewis' AND T3.surname = 'Hamilton' ORDER BY T1.year ASC LIMIT 1",
+        "topics": [
+            "Lewis Hamilton",
+            "race",
+            "points"
+        ]
+    },
+    {
+        "question": "Please list the patient's ID whose creatinine level is normal and whose anti Cardiolipin antibody concentration level is the highest.",
+        "sql": "SELECT T2.ID FROM Laboratory AS T1 INNER JOIN Examination AS T2 ON T1.ID = T2.ID WHERE T1.CRE < 1.5 ORDER BY T2.`aCL IgA` DESC LIMIT 1",
+        "topics": [
+            "patient ID",
+            "creatinine level",
+            "anti Cardiolipin antibody concentration level"
+        ]
+    },
+    {
+        "question": "For the set of cards with \"Ancestor's Chosen\" in it, is there a Korean version of it?",
+        "sql": "SELECT IIF(SUM(CASE WHEN T2.language = 'Korean' AND T2.translation IS NOT NULL THEN 1 ELSE 0 END) > 0, 'YES', 'NO') FROM cards AS T1 INNER JOIN set_translations AS T2 ON T2.setCode = T1.setCode WHERE T1.name = 'Ancestor''s Chosen'",
+        "topics": [
+            "cards",
+            "Korean version"
+        ]
+    },
+    {
+        "question": "What is the language and flavor text of the card that has colorpie watermark? List out the type of this card.",
+        "sql": "SELECT DISTINCT T2.language, T2.flavorText FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T2.uuid = T1.uuid WHERE T1.watermark = 'colorpie'",
+        "topics": [
+            "language",
+            "flavor text",
+            "colorpie watermark",
+            "type"
+        ]
+    },
+    {
+        "question": "How many loan accounts are for pre-payment of duration of 24 months with weekly issuance of statement.",
+        "sql": "SELECT COUNT(T2.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.duration = 24 AND T1.frequency = 'POPLATEK TYDNE'",
+        "topics": [
+            "loan accounts",
+            "duration",
+            "issuance of statement"
+        ]
+    },
+    {
+        "question": "Who has the highest reputation? Please give the display name.",
+        "sql": "SELECT DisplayName FROM users WHERE Reputation = ( SELECT MAX(Reputation) FROM users )",
+        "topics": [
+            "reputation",
+            "display name"
+        ]
+    },
+    {
+        "question": "State what kind of expenses that Sacha Harrison incurred?",
+        "sql": "SELECT T2.expense_description FROM member AS T1 INNER JOIN expense AS T2 ON T1.member_id = T2.link_to_member WHERE T1.first_name = 'Sacha' AND T1.last_name = 'Harrison'",
+        "topics": [
+            "expenses",
+            "name"
+        ]
+    },
+    {
+        "question": "What is the disposition id of the client who made 5100 USD transaction in 1998/9/2?",
+        "sql": "SELECT T1.disp_id FROM disp AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1998-09-02' AND T2.amount = 5100",
+        "topics": [
+            "disposition id",
+            "client",
+            "transaction",
+            "USD",
+            "date"
+        ]
+    },
+    {
+        "question": "List the last name of members with a major in environmental engineering and include its department and college name.",
+        "sql": "SELECT T2.last_name, T1.department, T1.college FROM major AS T1 INNER JOIN member AS T2 ON T1.major_id = T2.link_to_major WHERE T2.position = 'Member' AND T1.major_name = 'Environmental Engineering'",
+        "topics": [
+            "last name",
+            "major",
+            "department",
+            "college name"
+        ]
+    },
+    {
+        "question": "Which exclusively virtual schools have the top 5 highest average reading scores?",
+        "sql": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' ORDER BY T1.AvgScrRead DESC LIMIT 5",
+        "topics": [
+            "schools",
+            "average reading scores"
+        ]
+    },
+    {
+        "question": "Among the card designed by Matthew D. Wilson, how many are available only in the paper?",
+        "sql": "SELECT COUNT(id) FROM cards WHERE artist = 'Matthew D. Wilson' AND availability = 'paper'",
+        "topics": [
+            "card",
+            "designer",
+            "Matthew D. Wilson",
+            "availability",
             "format"
         ]
     },
     {
-        "question": "Please list the constructor names with 0 points at race 291.",
-        "sql": "SELECT T2.name FROM constructorStandings AS T1 INNER JOIN constructors AS T2 on T1.constructorId = T2.constructorId WHERE T1.points = 0 AND T1.raceId = 291",
+        "question": "What is the percentage of female patient were born after 1930?",
+        "sql": "SELECT CAST(SUM(CASE WHEN STRFTIME('%Y', Birthday) > '1930' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM Patient WHERE SEX = 'F'",
         "topics": [
-            "constructor names",
-            "points",
-            "race"
+            "gender",
+            "patient",
+            "birthyear"
         ]
     },
     {
-        "question": "Please provide the names of top three football players who are over 180 cm tall in alphabetical order.",
-        "sql": "SELECT player_name FROM Player WHERE height > 180 ORDER BY player_name LIMIT 3",
+        "question": "What was the anti-nucleus antibody concentration level for the patient id 3605340 on 1996/12/2?",
+        "sql": "SELECT ANA FROM Examination WHERE ID = 3605340 AND `Examination Date` = '1996-12-02'",
         "topics": [
-            "names",
-            "football players",
-            "height"
-        ]
-    },
-    {
-        "question": "Name all the cards which have alternative language in Japanese.",
-        "sql": "SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'",
-        "topics": [
-            "cards",
-            "language"
-        ]
-    },
-    {
-        "question": "How many customers who choose statement of weekly issuance are Owner?",
-        "sql": "SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'Owner' AND T1.frequency = 'POPLATEK TYDNE'",
-        "topics": [
-            "customers",
-            "statement",
-            "issuance"
-        ]
-    },
-    {
-        "question": "In Los Angeles how many schools have more than 500 free meals but less than 700 free or reduced price meals for K-12?",
-        "sql": "SELECT COUNT(CDSCode) FROM frpm WHERE `County Name` = 'Los Angeles' AND `Free Meal Count (K-12)` > 500 AND `Free Meal Count (K-12)` < 700",
-        "topics": [
-            "Los Angeles",
-            "schools",
-            "free meals",
-            "free or reduced price meals",
-            "K-12"
+            "anti-nucleus antibody concentration level",
+            "patient id",
+            "date"
         ]
     },
     {
@@ -64,104 +223,165 @@
         ]
     },
     {
-        "question": "Name schools in Riverside which the average of average math score for SAT is grater than 400, what is the funding type of these schools?",
-        "sql": "SELECT T1.sname, T2.`Charter Funding Type` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T2.`District Name` LIKE 'Riverside%' GROUP BY T1.sname, T2.`Charter Funding Type` HAVING CAST(SUM(T1.AvgScrMath) AS REAL) / COUNT(T1.cds) > 400",
+        "question": "Sum up the away team goal scored by both Daan Smith and Filipe Ferreira.",
+        "sql": "SELECT SUM(t2.away_team_goal) FROM Player AS t1 INNER JOIN match AS t2 ON t1.player_api_id = t2.away_player_5 WHERE t1.player_name IN ('Daan Smith', 'Filipe Ferreira')",
         "topics": [
-            "schools",
-            "location",
-            "math score",
-            "assessment",
-            "funding type"
+            "away team goal",
+            "Daan Smith",
+            "Filipe Ferreira"
         ]
     },
     {
-        "question": "What is the name of set number 5 and its translation?",
-        "sql": "SELECT T1.name, T2.translation FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.id = 5 GROUP BY T1.name, T2.translation",
+        "question": "List the city and state of members enrolled under electrical and computer engineering department.",
+        "sql": "SELECT city, state FROM member AS T1 INNER JOIN major AS T2 ON T2.major_id = T1.link_to_major INNER JOIN zip_code AS T3 ON T3.zip_code = T1.zip WHERE department = 'Electrical and Computer Engineering Department' AND position = 'Member'",
         "topics": [
-            "name",
-            "set number",
-            "translation"
+            "city",
+            "state",
+            "department"
         ]
     },
     {
-        "question": "How many circuits are there in Melbourne, Australia?",
-        "sql": "SELECT COUNT(circuitId) FROM circuits WHERE location = 'Melbourne' AND country = 'Australia'",
+        "question": "How many students in the Student_Club are from the College of Engineering?",
+        "sql": "SELECT COUNT(T1.member_id) FROM member AS T1 INNER JOIN major AS T2 ON T1.link_to_major = T2.major_id WHERE T2.college = 'College of Engineering'",
         "topics": [
-            "circuits",
-            "Melbourne",
-            "Australia"
+            "students",
+            "Student_Club",
+            "college"
         ]
     },
     {
-        "question": "What is the biggest amount of transaction that the client whose card was opened in 1996/10/21 made?",
-        "sql": "SELECT T2.amount FROM account AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T1.date = '1996-10-21' ORDER BY T2.amount DESC LIMIT 1",
+        "question": "How many students of the Student_Club have attended the event \"Women's Soccer\"?",
+        "sql": "SELECT COUNT(T1.event_id) FROM event AS T1 INNER JOIN attendance AS T2 ON T1.event_id = T2.link_to_event WHERE T1.event_name = 'Women''s Soccer'",
         "topics": [
-            "transaction",
-            "client",
+            "students",
+            "Student_Club",
+            "event"
+        ]
+    },
+    {
+        "question": "Which user ID has the lowest view?",
+        "sql": "SELECT Id FROM users WHERE Views = ( SELECT MIN(Views) FROM users )",
+        "topics": [
+            "user ID",
+            "view"
+        ]
+    },
+    {
+        "question": "Please list the superhero names of all the superheroes that have blue eyes and blond hair.",
+        "sql": "SELECT T1.superhero_name FROM superhero AS T1 INNER JOIN colour AS T2 ON T1.eye_colour_id = T2.id INNER JOIN colour AS T3 ON T1.hair_colour_id = T3.id WHERE T2.colour = 'Blue' AND T3.colour = 'Blond'",
+        "topics": [
+            "superhero names",
+            "eye color",
+            "hair color"
+        ]
+    },
+    {
+        "question": "How many of the molecules are not carcinogenic?",
+        "sql": "SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '-'",
+        "topics": [
+            "molecules",
+            "carcinogenic"
+        ]
+    },
+    {
+        "question": "What is the most common illness that doctors identified among the patients whose lab work was done between 1/1/1985, and 12/31/1995?",
+        "sql": "SELECT T2.Diagnosis FROM Examination AS T1 INNER JOIN Patient AS T2 ON T1.ID = T2.ID WHERE T1.`Examination Date` BETWEEN '1985-01-01' AND '1995-12-31' GROUP BY T2.Diagnosis ORDER BY COUNT(T2.Diagnosis) DESC LIMIT 1",
+        "topics": [
+            "illness",
+            "doctors",
+            "patients",
+            "lab work"
+        ]
+    },
+    {
+        "question": "List the name of leagues in which the average goals by the home team is higher than the away team in the 2009/2010 season.",
+        "sql": "SELECT t1.name FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t2.season = '2009/2010' GROUP BY t1.name HAVING (CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) - (CAST(SUM(t2.away_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) > 0",
+        "topics": [
+            "name of leagues",
+            "average goals",
+            "home team",
+            "away team",
+            "2009/2010 season"
+        ]
+    },
+    {
+        "question": "What is the status of card \"Cloudchaser Eagle\"?",
+        "sql": "SELECT DISTINCT T2.status FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.name = 'Cloudchaser Eagle'",
+        "topics": [
+            "status",
             "card"
         ]
     },
     {
-        "question": "For the patient with the highest lactate dehydrogenase in the normal range, when was his or her data first recorded?",
-        "sql": "SELECT T1.`First Date` FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.LDH < 500 ORDER BY T2.LDH DESC LIMIT 1",
-        "topics": [
-            "patient",
-            "lactate dehydrogenase",
-            "date"
-        ]
-    },
-    {
-        "question": "Which budget category does the expense 'Posters' fall to?",
-        "sql": "SELECT DISTINCT T2.category FROM expense AS T1 INNER JOIN budget AS T2 ON T1.link_to_budget = T2.budget_id WHERE T1.expense_description = 'Posters'",
-        "topics": [
-            "budget category",
-            "expense name"
-        ]
-    },
-    {
-        "question": "cards are not directly linked to language but through table 'set'. you need to add set in covered table & rephrase your question\nWhat are the languages available for the set that card 'Angel of Mercy' is in?",
-        "sql": "SELECT language FROM set_translations WHERE id IN ( SELECT id FROM cards WHERE name = 'Angel of Mercy' )",
+        "question": "What proportion of cards do not have a text box with a normal layout?",
+        "sql": "SELECT CAST(SUM(CASE WHEN isTextless = 1 AND layout = 'normal' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) FROM cards",
         "topics": [
             "cards",
-            "set",
-            "language"
+            "text box",
+            "layout"
         ]
     },
     {
-        "question": "Among the posts with a score of over 20, what is the percentage of them being owned by an elder user?",
-        "sql": "SELECT CAST(SUM(IIF(T2.Age > 65, 1, 0)) AS REAL) * 100 / COUNT(T1.Id) FROM posts AS T1 INNER JOIN users AS T2 ON T1.OwnerUserId = T2.Id WHERE T1.Score > 20",
+        "question": "List the long name of teams with above-average build-up play passing in 2012.",
+        "sql": "SELECT DISTINCT t4.team_long_name FROM Team_Attributes AS t3 INNER JOIN Team AS t4 ON t3.team_api_id = t4.team_api_id WHERE SUBSTR(t3.`date`, 1, 4) = '2012' AND t3.buildUpPlayPassing > ( SELECT CAST(SUM(t2.buildUpPlayPassing) AS REAL) / COUNT(t1.id) FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE SUBSTR(t2.`date`, 1, 4) = '2012' )",
         "topics": [
-            "posts",
-            "score",
-            "percentage",
-            "user"
+            "teams",
+            "long name",
+            "build-up play passing",
+            "2012"
         ]
     },
     {
-        "question": "What was the difference in the number of crimes committed in East and North Bohemia in 1996?",
-        "sql": "SELECT SUM(IIF(A3 = 'East Bohemia', A16, 0)) - SUM(IIF(A3 = 'North Bohemia', A16, 0)) FROM district",
+        "question": "Among the comments with scores between 5 to 10, what is the percentage of the users with 0 up votes?",
+        "sql": "SELECT CAST(SUM(IIF(T1.UpVotes = 0, 1, 0)) AS REAL) / COUNT(T1.Id) AS per FROM users AS T1 INNER JOIN comments AS T2 ON T1.Id = T2.UserId WHERE T2.Score BETWEEN 5 AND 10",
         "topics": [
-            "crimes",
-            "regions",
-            "year"
-        ]
-    },
-    {
-        "question": "How many times did Michael Schumacher won from races hosted in Sepang International Circuit?",
-        "sql": "SELECT SUM(T2.wins) FROM drivers AS T1 INNER JOIN driverStandings AS T2 ON T2.driverId = T1.driverId INNER JOIN races AS T3 ON T3.raceId = T2.raceId INNER JOIN circuits AS T4 ON T4.circuitId = T3.circuitId WHERE T1.forename = 'Michael' AND T1.surname = 'Schumacher' AND T4.name = 'Sepang International Circuit'",
-        "topics": [
-            "Michael Schumacher",
-            "races",
-            "Sepang International Circuit"
-        ]
-    },
-    {
-        "question": "What is the post ID and the comments commented in the post titled by \"Group differences on a five point Likert item\"?",
-        "sql": "SELECT T2.Id, T1.Text FROM comments AS T1 INNER JOIN posts AS T2 ON T1.PostId = T2.Id WHERE T2.Title = 'Group differences on a five point Likert item'",
-        "topics": [
-            "post ID",
             "comments",
-            "post title"
+            "scores",
+            "users",
+            "up votes"
+        ]
+    },
+    {
+        "question": "List down the uuid for legacy cards and the foreign language of these cards.",
+        "sql": "SELECT T1.uuid, T3.language FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid INNER JOIN foreign_data AS T3 ON T1.uuid = T3.uuid WHERE T2.format = 'legacy'",
+        "topics": [
+            "uuid",
+            "legacy cards",
+            "foreign language"
+        ]
+    },
+    {
+        "question": "How many of the molecules are carcinogenic?",
+        "sql": "SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '+'",
+        "topics": [
+            "molecules",
+            "carcinogenic"
+        ]
+    },
+    {
+        "question": "What was the highest score of the home team in the Netherlands Eredivisie league?",
+        "sql": "SELECT MAX(t2.home_team_goal) FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t1.name = 'Netherlands Eredivisie'",
+        "topics": [
+            "score",
+            "home team",
+            "Netherlands Eredivisie league"
+        ]
+    },
+    {
+        "question": "What language is the set of 180 cards that belongs to the Ravnica block translated into?",
+        "sql": "SELECT T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Ravnica' AND T1.baseSetSize = 180",
+        "topics": [
+            "language",
+            "cards",
+            "Ravnica block"
+        ]
+    },
+    {
+        "question": "Provide the full name of the superhero named Alien.",
+        "sql": "SELECT full_name FROM superhero WHERE superhero_name = 'Alien'",
+        "topics": [
+            "full name",
+            "superhero name"
         ]
     },
     {
@@ -175,285 +395,60 @@
         ]
     },
     {
-        "question": "How many cards are there in the set 'World Championship Decks 2004' with the converted mana cost as '3'.",
-        "sql": "SELECT COUNT(id) FROM cards WHERE setCode IN ( SELECT code FROM sets WHERE name = 'World Championship Decks 2004' ) AND convertedManaCost = 3",
+        "question": "Provide ID, sex and age of patient who has blood glucose (GLU) not within normal range but with total cholesterol(T-CHO) within normal range.",
+        "sql": "SELECT DISTINCT T1.ID, T1.SEX , STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T1.Birthday) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.GLU >= 180 AND T2.`T-CHO` < 250",
         "topics": [
-            "cards",
-            "set",
-            "converted mana cost"
-        ]
-    },
-    {
-        "question": "Which constructor scored most points from Monaco Grand Prix between 1980 and 2010? List the score, name and nationality of this team.",
-        "sql": "SELECT SUM(T1.points), T2.name, T2.nationality FROM constructorResults AS T1 INNER JOIN constructors AS T2 ON T1.constructorId = T2.constructorId INNER JOIN races AS T3 ON T3.raceid = T1.raceid WHERE T3.name = 'Monaco Grand Prix' AND T3.year BETWEEN 1980 AND 2010 GROUP BY T2.name ORDER BY SUM(T1.points) DESC LIMIT 1",
-        "topics": [
-            "constructor",
-            "points",
-            "Grand Prix",
-            "year",
-            "name",
-            "nationality"
-        ]
-    },
-    {
-        "question": "How many customers in KAM had a consumption of less than 30,000 for the year 2012?",
-        "sql": "SELECT COUNT(*) FROM ( SELECT T2.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Segment = 'KAM' AND SUBSTRING(T2.Date, 1, 4) = '2012' GROUP BY T2.CustomerID HAVING SUM(T2.Consumption) < 30000 ) AS t1",
-        "topics": [
-            "customers",
-            "consumption",
-            "year"
-        ]
-    },
-    {
-        "question": "How many test takers are there at the school/s whose mailing city address is in Fresno?",
-        "sql": "SELECT T1.NumTstTakr FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Fresno'",
-        "topics": [
-            "test takers",
-            "school",
-            "mailing city address"
-        ]
-    },
-    {
-        "question": "Name all drivers in the 2010 Singapore Grand Prix order by their position stands.",
-        "sql": "SELECT T3.forename, T3.surname FROM races AS T1 INNER JOIN driverStandings AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T1.name = 'Singapore Grand Prix' AND T1.year = 2010 ORDER BY T2.position ASC",
-        "topics": [
-            "drivers",
-            "position"
-        ]
-    },
-    {
-        "question": "How many American drivers have been disqualified from the race.",
-        "sql": "SELECT COUNT(T1.driverId) FROM drivers AS T1 INNER JOIN results AS T2 on T1.driverId = T2.driverId INNER JOIN status AS T3 on T2.statusId = T3.statusId WHERE T3.status = 2 AND T1.nationality = 'American'",
-        "topics": [
-            "drivers",
-            "nationality",
-            "disqualification"
-        ]
-    },
-    {
-        "question": "Which of these players performs the best in crossing actions, Alexis, Ariel Borysiuk or Arouna Kone?",
-        "sql": "SELECT t1.player_name, t2.crossing FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name IN ('Alexis', 'Ariel Borysiuk', 'Arouna Kone') ORDER BY t2.crossing DESC LIMIT 1",
-        "topics": [
-            "players",
-            "crossing actions"
-        ]
-    },
-    {
-        "question": "Identify by their ID the molecules in which there is silicon.",
-        "sql": "SELECT T.atom_id FROM atom AS T WHERE T.element = 'si'",
-        "topics": [
-            "molecules",
             "ID",
-            "silicon"
+            "sex",
+            "age",
+            "blood glucose",
+            "GLU",
+            "total cholesterol",
+            "T-CHO"
         ]
     },
     {
-        "question": "Calculate the average view count of posts tagged as 'humor' and write the title and the comments of the posts alongside their scores if applicable.",
-        "sql": "SELECT AVG(T2.ViewCount), T2.Title, T1.Text FROM comments AS T1 INNER JOIN posts AS T2 ON T1.Id = T1.PostId WHERE T2.Tags = '<humor>'",
-        "topics": [
-            "view count",
-            "posts",
-            "tag",
-            "title",
-            "comments",
-            "scores"
-        ]
-    },
-    {
-        "question": "How many cards with unknown power that can't be found in foil is in duel deck A?",
-        "sql": "SELECT SUM(CASE WHEN power LIKE '%*%' OR power IS NULL THEN 1 ELSE 0 END) FROM cards WHERE hasFoil = 0 AND duelDeck = 'a'",
-        "topics": [
-            "cards",
-            "power",
-            "foil",
-            "deck"
-        ]
-    },
-    {
-        "question": "Which circuit did the 2009 Spanish Grand Prix use?",
-        "sql": "SELECT T1.name FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T2.year = 2009 AND T2.name = 'Spanish Grand Prix'",
-        "topics": [
-            "circuit",
-            "2009 Spanish Grand Prix"
-        ]
-    },
-    {
-        "question": "List the power of superheroes with height greater than 80% of the average height of all superheroes.",
-        "sql": "SELECT T3.power_name FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id WHERE T1.height_cm * 100 > ( SELECT AVG(height_cm) FROM superhero ) * 80",
-        "topics": [
-            "power",
-            "height"
-        ]
-    },
-    {
-        "question": "How many accounts who choose issuance after transaction are staying in East Bohemia region?",
-        "sql": "SELECT COUNT(T1.district_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'East Bohemia' AND T2.frequency = 'POPLATEK PO OBRATU'",
-        "topics": [
-            "accounts",
-            "issuance",
-            "transaction",
-            "East Bohemia region"
-        ]
-    },
-    {
-        "question": "Who are the top 5 players who perform better in crossing actions? Indicate their player id.",
-        "sql": "SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5",
-        "topics": [
-            "players",
-            "crossing actions",
-            "player id"
-        ]
-    },
-    {
-        "question": "Among the budgets for Food, which one has the highest budgeted amount?",
-        "sql": "SELECT budget_id FROM budget WHERE category = 'Food' AND amount = ( SELECT MAX(amount) FROM budget )",
-        "topics": [
-            "budgets",
-            "Food",
-            "budgeted amount"
-        ]
-    },
-    {
-        "question": "How many accounts in Beroun were opened after 1996?",
-        "sql": "SELECT COUNT(account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T1.date) > '1996' AND T2.A2 = 'Beroun'",
-        "topics": [
-            "accounts",
-            "Beroun"
-        ]
-    },
-    {
-        "question": "Give the team_fifa_api_id of teams with more than 50 but less than 60 build-up play speed.",
-        "sql": "SELECT DISTINCT team_fifa_api_id FROM Team_Attributes WHERE buildUpPlaySpeed > 50 AND buildUpPlaySpeed < 60",
-        "topics": [
-            "team_fifa_api_id",
-            "build-up play speed"
-        ]
-    },
-    {
-        "question": "How many cards in the set Coldsnap have a black border color?",
-        "sql": "SELECT SUM(CASE WHEN T1.borderColor = 'black' THEN 1 ELSE 0 END) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap'",
-        "topics": [
-            "cards",
-            "set",
-            "border color"
-        ]
-    },
-    {
-        "question": "Mention the zip code of member who incurred less than 50USD.",
-        "sql": "SELECT T1.zip FROM member AS T1 INNER JOIN expense AS T2 ON T1.member_id = T2.link_to_member WHERE T2.cost < 50",
-        "topics": [
-            "zip code",
-            "member"
-        ]
-    },
-    {
-        "question": "What is the district Id of the account that placed the order with the id 33333?",
-        "sql": "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333",
-        "topics": [
-            "district Id",
-            "account",
-            "order id"
-        ]
-    },
-    {
-        "question": "How many users obtained the \"Announcer\" badge?",
-        "sql": "SELECT COUNT(id) FROM badges WHERE Name = 'Announcer'",
+        "question": "Name 10 users with the badge name 'Necromancer.'",
+        "sql": "SELECT T1.DisplayName FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T2.Name = 'Necromancer' LIMIT 10",
         "topics": [
             "users",
-            "badge"
+            "badge name"
         ]
     },
     {
-        "question": "List down atom id2 for atoms with element sulfur.",
-        "sql": "SELECT DISTINCT T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T1.element = 's'",
+        "question": "Which driver created the fastest lap speed in a Formula_1 race? Please give both his forename and surname.",
+        "sql": "SELECT T1.forename, T1.surname FROM drivers AS T1 INNER JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.fastestLapTime IS NOT NULL ORDER BY T2.fastestLapSpeed DESC LIMIT 1",
         "topics": [
-            "atom id2",
-            "element"
+            "driver",
+            "forename",
+            "surname",
+            "fastest lap speed",
+            "Formula_1 race"
         ]
     },
     {
-        "question": "List all outpatient within normal range of creatinine phosphokinase. Give me the distinct ids.",
-        "sql": "SELECT DISTINCT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.CPK < 250 AND T1.Admission = '-'",
+        "question": "Is molecule TR151 carcinogenic?",
+        "sql": "SELECT T.label FROM molecule AS T WHERE T.molecule_id = 'TR151'",
         "topics": [
-            "outpatient",
-            "creatinine phosphokinase",
-            "ids"
-        ]
-    },
-    {
-        "question": "How many cards with original type of \"Summon - Angel\" have subtype other than \"Angel\"?",
-        "sql": "SELECT COUNT(id) FROM cards WHERE originalType = 'Summon - Angel' AND subtypes != 'Angel'",
-        "topics": [
-            "cards",
-            "original type",
-            "subtype"
-        ]
-    },
-    {
-        "question": "Between 1/1/2000 to 12/31/2005, how many directly funded schools opened in the county of Stanislaus?",
-        "sql": "SELECT COUNT(School) FROM schools WHERE strftime('%Y', OpenDate) BETWEEN '2000' AND '2005' AND County = 'Stanislaus' AND FundingType = 'Directly funded'",
-        "topics": [
-            "date",
-            "schools",
-            "county"
-        ]
-    },
-    {
-        "question": "How many atoms belong to the molecule that element is hydrogen and labeled with carcinogenic compound?",
-        "sql": "SELECT COUNT(T1.atom_id) AS atomnums_h FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+' AND T1.element = 'h'",
-        "topics": [
-            "atoms",
             "molecule",
-            "element",
-            "hydrogen",
-            "carcinogenic compound"
+            "carcinogenic"
         ]
     },
     {
-        "question": "Which was the fastest lap for Lewis Hamilton in the 2008 Australian Grand Prix?",
-        "sql": "SELECT T1.fastestLap FROM results AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId INNER JOIN drivers AS T3 on T1.driverId = T3.driverId WHERE T2.name = 'Australian Grand Prix' AND T2.year = 2008 AND T3.forename = 'Lewis' AND T3.surname = 'Hamilton'",
+        "question": "How many black border cards are only available on mtgo?",
+        "sql": "SELECT COUNT(id) FROM cards WHERE availability = 'mtgo' AND borderColor = 'black'",
         "topics": [
-            "fastest lap",
-            "Lewis Hamilton",
-            "2008 Australian Grand Prix"
+            "card color",
+            "platform availability"
         ]
     },
     {
-        "question": "List out the name of badges that users obtained on 7/19/2010 7:39:08 PM.",
-        "sql": "SELECT Name FROM badges WHERE Date = '2010-07-19 19:39:08.0'",
+        "question": "Determine the bond type that is formed in the chemical compound containing element Tellurium.",
+        "sql": "SELECT DISTINCT T2.bond_type FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'te'",
         "topics": [
-            "name",
-            "badges",
-            "users",
-            "timestamp"
-        ]
-    },
-    {
-        "question": "Find the full name, Wiki Pedia page link, and date of birth of German drivers born between 1971 and 1985. List it in descending order of date of birth.",
-        "sql": "SELECT forename, surname, url, dob FROM drivers WHERE nationality = 'German' AND STRFTIME('%Y', dob) BETWEEN '1971' AND '1985' ORDER BY dob DESC",
-        "topics": [
-            "full name",
-            "Wikipedia page link",
-            "date of birth",
-            "German drivers"
-        ]
-    },
-    {
-        "question": "List the expansion type of the set \"Huiti\u00e8me \u00e9dition\".",
-        "sql": "SELECT type FROM sets WHERE code IN ( SELECT setCode FROM set_translations WHERE translation = 'Huiti\u00e8me \u00e9dition' )",
-        "topics": [
-            "expansion type",
-            "set name"
-        ]
-    },
-    {
-        "question": "Among the male patients who have a normal level of white blood cells, how many of them have an abnormal fibrinogen level?",
-        "sql": "SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.FG <= 150 OR T2.FG >= 450 AND T2.WBC > 3.5 AND T2.WBC < 9.0 AND T1.SEX = 'M'",
-        "topics": [
-            "patients",
-            "gender",
-            "white blood cells",
-            "fibrinogen level"
+            "bond type",
+            "chemical compound",
+            "element Tellurium"
         ]
     }
 ]

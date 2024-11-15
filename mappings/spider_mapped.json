@@ -1,248 +1,512 @@
 [
   {
-    "name": ["Name"],
-    "years of work": ["Year_of_Work"]
+    "question": "What languages are only used by a single country with a republic government?",
+    "sql": "SELECT T2.Language FROM country AS T1 JOIN countrylanguage AS T2 ON T1.Code  =  T2.CountryCode WHERE T1.GovernmentForm  =  \"Republic\" GROUP BY T2.Language HAVING COUNT(*)  =  1",
+    "topics": ["languages", "country", "government"],
+    "mapping": {
+      "languages": ["countrylanguage.Language"],
+      "country": ["country.Code", "countrylanguage.CountryCode"],
+      "government": ["country.GovernmentForm", "Republic"]
+    }
   },
   {
-    "package choice": ["package_option"],
-    "series name": ["series_name"],
-    "TV channel": ["hight_definition_TV"],
-    "high definition TV": ["hight_definition_TV"]
+    "question": "Find the total number of tours for each ranking date.",
+    "sql": "SELECT sum(tours) ,  ranking_date FROM rankings GROUP BY ranking_date",
+    "topics": ["tours", "ranking date"],
+    "mapping": {
+      "tours": ["tours"],
+      "ranking date": ["ranking_date"]
+    }
   },
   {
-    "continents": ["Continent"],
-    "speak": ["country.Code", "countrylanguage.CountryCode"],
-    "Chinese": ["countrylanguage.Language", "Chinese"]
+    "question": "What are the arriving date and the departing date of the dogs who have gone through a treatment?",
+    "sql": "SELECT DISTINCT T1.date_arrived ,  T1.date_departed FROM Dogs AS T1 JOIN Treatments AS T2 ON T1.dog_id  =  T2.dog_id",
+    "topics": ["arriving date", "departing date", "dogs", "treatment"],
+    "mapping": {
+      "arriving date": ["Dogs.date_arrived"],
+      "departing date": ["Dogs.date_departed"],
+      "dogs": ["Dogs.dog_id"],
+      "treatment": ["Treatments.dog_id"]
+    }
   },
   {
-    "flights": ["SourceAirport"]
+    "question": "Which professionals have done at least two types of treatments? List the professional id and cell phone.",
+    "sql": "SELECT T1.professional_id ,  T1.cell_number FROM Professionals AS T1 JOIN Treatments AS T2 ON T1.professional_id  =  T2.professional_id GROUP BY T1.professional_id HAVING count(*)  >=  2",
+    "topics": ["professional id", "cell phone"],
+    "mapping": {
+      "professional id": ["Professionals.professional_id"],
+      "cell phone": ["Professionals.cell_number"]
+    }
   },
   {
-    "employee": [],
-    "names": ["name"],
-    "age": ["age"]
+    "question": "Which countries have either English or Dutch as an official language?",
+    "sql": "SELECT * FROM country AS T1 JOIN countrylanguage AS T2 ON T1.Code  =  T2.CountryCode WHERE T2.Language  =  \"English\" AND IsOfficial  =  \"T\" UNION SELECT * FROM country AS T1 JOIN countrylanguage AS T2 ON T1.Code  =  T2.CountryCode WHERE T2.Language  =  \"Dutch\" AND IsOfficial  =  \"T\"",
+    "topics": ["countries", "English", "Dutch", "official language"],
+    "mapping": {
+      "countries": ["country.Code", "countrylanguage.CountryCode"],
+      "English": ["countrylanguage.Language", "English"],
+      "Dutch": ["countrylanguage.Language", "Dutch"],
+      "official language": ["IsOfficial"]
+    }
   },
   {
-    "arriving date": ["Dogs.date_arrived"],
-    "departing date": ["Dogs.date_departed"],
-    "dogs": ["Dogs.dog_id"],
-    "treatment": ["Treatments.dog_id"]
+    "question": "What is the earliest date of a transcript release, and what details can you tell me?",
+    "sql": "SELECT transcript_date ,  other_details FROM Transcripts ORDER BY transcript_date ASC LIMIT 1",
+    "topics": ["date", "transcript"],
+    "mapping": {
+      "date": ["transcript_date"],
+      "transcript": ["transcript_date", "other_details"]
+    }
   },
   {
-    "models": ["MODEL_LIST.model", "CAR_NAMES.model"],
-    "cards": ["CAR_NAMES.MakeId", "CARS_DATA.id"],
-    "production_year": ["CARS_DATA.year"]
+    "question": "What are the first name and last name of the professionals who have done treatment with cost below average?",
+    "sql": "SELECT DISTINCT T1.first_name ,  T1.last_name FROM Professionals AS T1 JOIN Treatments AS T2 WHERE cost_of_treatment  <  ( SELECT avg(cost_of_treatment) FROM Treatments )",
+    "topics": ["first name", "last name", "professionals", "treatment", "cost"],
+    "mapping": {
+      "first name": ["Professionals.first_name"],
+      "last name": ["Professionals.last_name"],
+      "professionals": ["Professionals.first_name", "Professionals.last_name"],
+      "treatment": ["cost_of_treatment"],
+      "cost": ["cost_of_treatment"]
+    }
   },
   {
-    "singers": ["singer.singer_id", "singer_in_concert.singer_id"],
-    "names": ["singer.name"],
-    "concerts": ["singer_in_concert.singer_id"]
+    "question": "Show all document ids, names and the number of paragraphs in each document.",
+    "sql": "SELECT T1.document_id ,  T2.document_name ,  count(*) FROM Paragraphs AS T1 JOIN Documents AS T2 ON T1.document_id  =  T2.document_id GROUP BY T1.document_id",
+    "topics": ["document_id", "document_name", "number_of_paragraphs"],
+    "mapping": {
+      "document_id": ["Paragraphs.document_id", "Documents.document_id"],
+      "document_name": ["Documents.document_name"],
+      "number_of_paragraphs": ["Paragraphs.document_id"]
+    }
   },
   {
-    "years of founding": ["Year_of_Founded"],
-    "orchestras": ["orchestra.Orchestra_ID", "performance.Orchestra_ID"],
-    "performances": ["performance.Orchestra_ID"]
+    "question": "What is the name of the winner who has won the most matches, and how many rank points does this player have?",
+    "sql": "SELECT winner_name ,  winner_rank_points FROM matches GROUP BY winner_name ORDER BY count(*) DESC LIMIT 1",
+    "topics": ["name", "matches", "rank points"],
+    "mapping": {
+      "name": ["winner_name"],
+      "matches": ["winner_name"],
+      "rank points": ["winner_rank_points"]
+    }
   },
   {
-    "products": ["Number_products"],
-    "stores": []
+    "question": "What is the total ticket expense of the visitors whose membership level is 1?",
+    "sql": "SELECT sum(t2.Total_spent) FROM visitor AS t1 JOIN visit AS t2 ON t1.id  =  t2.visitor_id WHERE t1.Level_of_membership  =  1",
+    "topics": ["ticket expense", "visitors", "membership level"],
+    "mapping": {
+      "ticket expense": ["visit.Total_spent"],
+      "visitors": ["visitor.id", "visit.visitor_id"],
+      "membership level": ["visitor.Level_of_membership"]
+    }
   },
   {
-    "name": ["winner_name"],
-    "rank points": ["winner_rank_points"],
-    "winner": ["winner_name", "winner_rank_points"]
+    "question": "Find the number of orchestras whose record format is \"CD\" or \"DVD\".",
+    "sql": "SELECT COUNT(*) FROM orchestra WHERE Major_Record_Format  =  \"CD\" OR Major_Record_Format  =  \"DVD\"",
+    "topics": ["orchestras", "record format"],
+    "mapping": {
+      "orchestras": ["Major_Record_Format"],
+      "record format": ["Major_Record_Format"]
+    }
   },
   {
-    "names": ["name"],
-    "employees": ["name"],
-    "age": ["age"]
+    "question": "What is the maximum mpg of the cars that had 8 cylinders or that were produced before 1980 ?",
+    "sql": "select max(mpg) from cars_data where cylinders  =  8 or year  <  1980",
+    "topics": ["mpg", "cylinders", "produced"],
+    "mapping": {
+      "mpg": ["mpg"],
+      "cylinders": ["cylinders"],
+      "produced": ["year"]
+    }
   },
   {
-    "countries": ["CountryCode"],
-    "Spanish": ["Spanish"],
-    "percentage of people": ["Percentage"]
+    "question": "What are the names of the singers and number of concerts for each person?",
+    "sql": "SELECT T2.name ,  count(*) FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id GROUP BY T2.singer_id",
+    "topics": ["names", "singers", "number of concerts"],
+    "mapping": {
+      "names": ["singer.name"],
+      "singers": ["singer.name"],
+      "number of concerts": ["singer_in_concert.singer_id"]
+    }
   },
   {
-    "first name": ["student.fname"],
-    "age": ["student.age"],
-    "students": ["student.stuid"],
-    "pet": ["has_pet.stuid"]
+    "question": "What is the average weight for each type of pet?",
+    "sql": "SELECT avg(weight) ,  pettype FROM pets GROUP BY pettype",
+    "topics": ["weight", "type"],
+    "mapping": {
+      "weight": ["weight"],
+      "type": ["pettype"]
+    }
   },
   {
-    "id": ["Professionals.professional_id"],
-    "role": ["Professionals.role_code"],
-    "first name": ["Professionals.first_name"],
-    "professionals": [
-      "Professionals.professional_id",
-      "Professionals.role_code",
-      "Professionals.first_name"
+    "question": "List pairs of the owner's first name and the dogs's name.",
+    "sql": "SELECT T1.first_name ,  T2.name FROM Owners AS T1 JOIN Dogs AS T2 ON T1.owner_id  =  T2.owner_id",
+    "topics": ["owner's first name", "dog's name"],
+    "mapping": {
+      "owner's first name": ["Owners.first_name"],
+      "dog's name": ["Dogs.name"]
+    }
+  },
+  {
+    "question": "What are the first, middle, and last names for everybody enrolled in a Bachelors program?",
+    "sql": "SELECT DISTINCT T1.first_name ,  T1.middle_name ,  T1.last_name FROM Students AS T1 JOIN Student_Enrolment AS T2 ON T1.student_id  =  T2.student_id JOIN Degree_Programs AS T3 ON T2.degree_program_id  =  T3.degree_program_id WHERE T3.degree_summary_name  =  'Bachelor'",
+    "topics": ["first names", "middle names", "last names", "program"],
+    "mapping": {
+      "first names": ["Students.first_name"],
+      "middle names": ["Students.middle_name"],
+      "last names": ["Students.last_name"],
+      "program": ["Degree_Programs.degree_summary_name"]
+    }
+  },
+  {
+    "question": "What is the average edispl of the cars of model volvo?",
+    "sql": "SELECT avg(T2.edispl) FROM CAR_NAMES AS T1 JOIN CARS_DATA AS T2 ON T1.MakeId  =  T2.Id WHERE T1.Model  =  'volvo';",
+    "topics": ["edispl", "model"],
+    "mapping": {
+      "edispl": ["CARS_DATA.edispl"],
+      "model": ["CAR_NAMES.Model"]
+    }
+  },
+  {
+    "question": "What is the number of cartoones written by Joseph Kuhr?",
+    "sql": "SELECT count(*) FROM Cartoon WHERE Written_by = \"Joseph Kuhr\";",
+    "topics": ["cartoones", "Joseph Kuhr"],
+    "mapping": {
+      "cartoones": ["count(*)"],
+      "Joseph Kuhr": ["Written_by"]
+    }
+  },
+  {
+    "question": "What are the country codes for countries that do not speak English?",
+    "sql": "SELECT CountryCode FROM countrylanguage EXCEPT SELECT CountryCode FROM countrylanguage WHERE LANGUAGE  =  \"English\"",
+    "topics": ["country codes", "countries", "languages"],
+    "mapping": {
+      "country codes": ["CountryCode"],
+      "countries": ["CountryCode"],
+      "languages": ["English"]
+    }
+  },
+  {
+    "question": "What are the names of all high schoolers in grade 10?",
+    "sql": "SELECT name FROM Highschooler WHERE grade  =  10",
+    "topics": ["names", "grade"],
+    "mapping": {
+      "names": ["name"],
+      "grade": ["grade"]
+    }
+  },
+  {
+    "question": "Show different citizenships and the maximum net worth of singers of each citizenship.",
+    "sql": "SELECT Citizenship ,  max(Net_Worth_Millions) FROM singer GROUP BY Citizenship",
+    "topics": ["citizenships", "net worth", "singers"],
+    "mapping": {
+      "citizenships": ["Citizenship"],
+      "net worth": ["Net_Worth_Millions"],
+      "singers": ["Citizenship", "Net_Worth_Millions"]
+    }
+  },
+  {
+    "question": "Count the number of high schoolers.",
+    "sql": "SELECT count(*) FROM Highschooler",
+    "topics": ["high schoolers"],
+    "mapping": {
+      "high schoolers": ["*"]
+    }
+  },
+  {
+    "question": "How many unique languages are spoken in the world?",
+    "sql": "SELECT count(DISTINCT LANGUAGE) FROM countrylanguage",
+    "topics": ["languages"],
+    "mapping": {}
+  },
+  {
+    "question": "Show the date and id of the transcript with at least 2 course results.",
+    "sql": "SELECT T2.transcript_date ,  T1.transcript_id FROM Transcript_Contents AS T1 JOIN Transcripts AS T2 ON T1.transcript_id  =  T2.transcript_id GROUP BY T1.transcript_id HAVING count(*)  >=  2",
+    "topics": ["date", "id", "transcript", "course results"],
+    "mapping": {
+      "date": ["Transcripts.transcript_date"],
+      "id": ["Transcript_Contents.transcript_id", "Transcripts.transcript_id"],
+      "transcript": [
+        "Transcript_Contents.transcript_id",
+        "Transcripts.transcript_id"
+      ],
+      "course results": ["Transcript_Contents.transcript_id"]
+    }
+  },
+  {
+    "question": "List the date of each treatment, together with the first name of the professional who operated it.",
+    "sql": "SELECT T1.date_of_treatment ,  T2.first_name FROM Treatments AS T1 JOIN Professionals AS T2 ON T1.professional_id  =  T2.professional_id",
+    "topics": ["date", "first name", "professional", "treatment"],
+    "mapping": {
+      "date": ["Treatments.date_of_treatment"],
+      "first name": ["Professionals.first_name"],
+      "professional": [
+        "Treatments.professional_id",
+        "Professionals.professional_id"
+      ],
+      "treatment": ["Treatments.date_of_treatment"]
+    }
+  },
+  {
+    "question": "What is the template type code for template type description \"Book\".",
+    "sql": "SELECT template_type_code FROM Ref_template_types WHERE template_type_description  =  \"Book\"",
+    "topics": ["template type code", "template type description"],
+    "mapping": {
+      "template type code": ["template_type_code"],
+      "template type description": ["template_type_description", "Book"]
+    }
+  },
+  {
+    "question": "What is the airport code of the airport with the most flights?",
+    "sql": "SELECT T1.AirportCode FROM AIRPORTS AS T1 JOIN FLIGHTS AS T2 ON T1.AirportCode  =  T2.DestAirport OR T1.AirportCode  =  T2.SourceAirport GROUP BY T1.AirportCode ORDER BY count(*) DESC LIMIT 1",
+    "topics": ["airport code", "airport", "flights"],
+    "mapping": {
+      "airport code": ["AIRPORTS.AirportCode"],
+      "airport": ["AIRPORTS.AirportCode"],
+      "flights": ["FLIGHTS.DestAirport", "FLIGHTS.SourceAirport"]
+    }
+  },
+  {
+    "question": "What are the record companies of orchestras in descending order of years in which they were founded?",
+    "sql": "SELECT Record_Company FROM orchestra ORDER BY Year_of_Founded DESC",
+    "topics": ["record companies", "orchestras", "years founded"],
+    "mapping": {
+      "record companies": ["Record_Company"],
+      "orchestras": [],
+      "years founded": ["Year_of_Founded"]
+    }
+  },
+  {
+    "question": "What is the name of country that has the shortest life expectancy in Asia?",
+    "sql": "SELECT Name FROM country WHERE Continent  =  \"Asia\" ORDER BY LifeExpectancy LIMIT 1",
+    "topics": ["country", "name", "life expectancy", "Asia"],
+    "mapping": {
+      "country": ["Continent"],
+      "name": ["Name"],
+      "life expectancy": ["LifeExpectancy"],
+      "Asia": ["Continent"]
+    }
+  },
+  {
+    "question": "What are the names of the high schoolers and how many friends does each have?",
+    "sql": "SELECT T2.name ,  count(*) FROM Friend AS T1 JOIN Highschooler AS T2 ON T1.student_id  =  T2.id GROUP BY T1.student_id",
+    "topics": ["names", "friends"],
+    "mapping": {
+      "names": ["Highschooler.name"],
+      "friends": ["Friend.student_id"]
+    }
+  },
+  {
+    "question": "Which department offers the most number of degrees? List department name and id.",
+    "sql": "SELECT T2.department_name ,  T1.department_id FROM Degree_Programs AS T1 JOIN Departments AS T2 ON T1.department_id  =  T2.department_id GROUP BY T1.department_id ORDER BY count(*) DESC LIMIT 1",
+    "topics": ["department name", "department id", "degrees offered"],
+    "mapping": {
+      "department name": ["Departments.department_name"],
+      "department id": [
+        "Degree_Programs.department_id",
+        "Departments.department_id"
+      ],
+      "degrees offered": ["Degree_Programs.department_id"]
+    }
+  },
+  {
+    "question": "Which African countries have a smaller population than that of any country in Asia?",
+    "sql": "SELECT Name FROM country WHERE Continent  =  \"Africa\"  AND population  <  (SELECT min(population) FROM country WHERE Continent  =  \"Asia\")",
+    "topics": ["African countries", "population", "country", "Asia"],
+    "mapping": {
+      "African countries": ["Name", "Continent", "Africa"],
+      "population": ["population"],
+      "country": ["Name"],
+      "Asia": ["Continent", "Asia"]
+    }
+  },
+  {
+    "question": "What are all the makers and models?",
+    "sql": "SELECT Maker ,  Model FROM MODEL_LIST;",
+    "topics": ["makers", "models"],
+    "mapping": {
+      "makers": ["Maker"],
+      "models": ["Model"]
+    }
+  },
+  {
+    "question": "Return the maximum and minimum shares for performances that do not have the type \"Live final\".",
+    "sql": "SELECT max(SHARE) ,  min(SHARE) FROM performance WHERE TYPE != \"Live final\"",
+    "topics": ["shares", "performances", "type"],
+    "mapping": {
+      "shares": ["SHARE"],
+      "performances": ["performance"],
+      "type": ["TYPE"]
+    }
+  },
+  {
+    "question": "How much does the car accelerate that makes amc hornet sportabout (sw)?",
+    "sql": "SELECT T1.Accelerate FROM CARS_DATA AS T1 JOIN CAR_NAMES AS T2 ON T1.Id  =  T2.MakeId WHERE T2.Make  =  'amc hornet sportabout (sw)';",
+    "topics": ["car", "amc hornet sportabout (sw)", "acceleration"],
+    "mapping": {
+      "car": ["CAR_NAMES.Make"],
+      "amc hornet sportabout (sw)": ["CAR_NAMES.Make"],
+      "acceleration": ["CARS_DATA.Accelerate"]
+    }
+  },
+  {
+    "question": "What are the names of people who do not play poker?",
+    "sql": "SELECT Name FROM people WHERE People_ID NOT IN (SELECT People_ID FROM poker_player)",
+    "topics": ["names", "poker"],
+    "mapping": {
+      "names": ["Name"],
+      "poker": ["People_ID"]
+    }
+  },
+  {
+    "question": "What are flight numbers of flights departing from City \"Aberdeen \"?",
+    "sql": "SELECT T1.FlightNo FROM FLIGHTS AS T1 JOIN AIRPORTS AS T2 ON T1.SourceAirport   =  T2.AirportCode WHERE T2.City  =  \"Aberdeen\"",
+    "topics": ["flight numbers", "flights", "City"],
+    "mapping": {
+      "flight numbers": ["FLIGHTS.FlightNo"],
+      "flights": ["FLIGHTS.SourceAirport", "AIRPORTS.AirportCode"],
+      "City": ["AIRPORTS.City"]
+    }
+  },
+  {
+    "question": "Show names of all high school students who do not have any friends.",
+    "sql": "SELECT name FROM Highschooler EXCEPT SELECT T2.name FROM Friend AS T1 JOIN Highschooler AS T2 ON T1.student_id  =  T2.id",
+    "topics": ["names", "high school students", "friends"],
+    "mapping": {
+      "names": ["name", "Highschooler.name"],
+      "high school students": ["Highschooler.id", "Highschooler.name"],
+      "friends": ["Friend.student_id"]
+    }
+  },
+  {
+    "question": "What is the average weight and year for each year?",
+    "sql": "SELECT avg(Weight) ,  YEAR FROM CARS_DATA GROUP BY YEAR;",
+    "topics": ["weight", "year"],
+    "mapping": {
+      "weight": ["Weight"],
+      "year": []
+    }
+  },
+  {
+    "question": "What is the minimum weight of the car with 8 cylinders produced in 1974 ?",
+    "sql": "select min(weight) from cars_data where cylinders  =  8 and year  =  1974",
+    "topics": ["weight", "cylinders", "year"],
+    "mapping": {
+      "weight": ["weight"],
+      "cylinders": ["cylinders"],
+      "year": []
+    }
+  },
+  {
+    "question": "Return the birth date of the poker player with the lowest earnings.",
+    "sql": "SELECT T1.Birth_Date FROM people AS T1 JOIN poker_player AS T2 ON T1.People_ID  =  T2.People_ID ORDER BY T2.Earnings ASC LIMIT 1",
+    "topics": ["birth date", "poker player", "earnings"],
+    "mapping": {
+      "birth date": ["people.Birth_Date"],
+      "poker player": ["poker_player.People_ID"],
+      "earnings": ["poker_player.Earnings"]
+    }
+  },
+  {
+    "question": "Return the template type code of the template that is used by a document named Data base.",
+    "sql": "SELECT T1.template_type_code FROM Templates AS T1 JOIN Documents AS T2 ON T1.template_id  =  T2.template_id WHERE T2.document_name  =  \"Data base\"",
+    "topics": ["template type code", "template", "document name"],
+    "mapping": {
+      "template type code": ["Templates.template_type_code"],
+      "template": ["Templates.template_id"],
+      "document name": ["Documents.document_name"]
+    }
+  },
+  {
+    "question": "Which region is the city Kabul located in?",
+    "sql": "SELECT Region FROM country AS T1 JOIN city AS T2 ON T1.Code  =  T2.CountryCode WHERE T2.Name  =  \"Kabul\"",
+    "topics": ["region", "city"],
+    "mapping": {
+      "region": ["Region"],
+      "city": ["city.Name"]
+    }
+  },
+  {
+    "question": "Count the number of matches.",
+    "sql": "SELECT count(*) FROM matches",
+    "topics": ["matches"],
+    "mapping": {
+      "matches": ["*"]
+    }
+  },
+  {
+    "question": "Sort all the shops by number products in descending order, and return the name, location and district of each shop.",
+    "sql": "SELECT name ,  LOCATION ,  district FROM shop ORDER BY number_products DESC",
+    "topics": ["shops", "products", "name", "location", "district"],
+    "mapping": {
+      "shops": ["name", "LOCATION", "district"],
+      "products": ["number_products"],
+      "name": ["name"],
+      "location": ["LOCATION"],
+      "district": ["district"]
+    }
+  },
+  {
+    "question": "Which grades have 4 or more high schoolers?",
+    "sql": "SELECT grade FROM Highschooler GROUP BY grade HAVING count(*)  >=  4",
+    "topics": ["grades", "high schoolers"],
+    "mapping": {
+      "grades": ["grade"],
+      "high schoolers": ["grade"]
+    }
+  },
+  {
+    "question": "What are the African countries that have a  population less than any country in Asia?",
+    "sql": "SELECT Name FROM country WHERE Continent  =  \"Africa\"  AND population  <  (SELECT max(population) FROM country WHERE Continent  =  \"Asia\")",
+    "topics": ["African countries", "population", "Asia"],
+    "mapping": {
+      "African countries": ["Name", "Continent", "Africa"],
+      "population": ["population"],
+      "Asia": ["Continent", "Asia"]
+    }
+  },
+  {
+    "question": "For each shop, return the number of employees working there and the name of the shop.",
+    "sql": "SELECT count(*) ,  t2.name FROM hiring AS t1 JOIN shop AS t2 ON t1.shop_id  =  t2.shop_id GROUP BY t2.name",
+    "topics": ["shop", "employees", "name"],
+    "mapping": {
+      "shop": ["shop.shop_id"],
+      "employees": ["hiring.shop_id"],
+      "name": ["shop.name"]
+    }
+  },
+  {
+    "question": "Which cities are in European countries where English is not the official language?",
+    "sql": "SELECT DISTINCT T2.Name FROM country AS T1 JOIN city AS T2 ON T2.CountryCode  =  T1.Code WHERE T1.Continent  =  'Europe' AND T1.Name NOT IN (SELECT T3.Name FROM country AS T3 JOIN countrylanguage AS T4 ON T3.Code  =  T4.CountryCode WHERE T4.IsOfficial  =  'T' AND T4.Language  =  'English')",
+    "topics": ["cities", "countries", "English", "official language"],
+    "mapping": {
+      "cities": ["city.Name"],
+      "countries": ["country.Code", "country.Name"],
+      "English": ["countrylanguage.Language"],
+      "official language": ["countrylanguage.IsOfficial"]
+    }
+  },
+  {
+    "question": "What are the first, middle, and last names, along with the ids, of all students who enrolled in 2 degree programs in one semester?",
+    "sql": "SELECT T1.first_name ,  T1.middle_name ,  T1.last_name ,  T1.student_id FROM Students AS T1 JOIN Student_Enrolment AS T2 ON T1.student_id  =  T2.student_id GROUP BY T1.student_id HAVING count(*)  =  2",
+    "topics": [
+      "first name",
+      "middle name",
+      "last name",
+      "student id",
+      "degree program",
+      "enrollment",
+      "semester"
     ],
-    "treatments": ["Treatments.professional_id"]
-  },
-  {
-    "episode": ["Episode"],
-    "title": ["A Love of a Lifetime"],
-    "airdate": ["Air_Date"]
-  },
-  {
-    "concerts": ["stadium_id"],
-    "stadium": ["stadium_id"],
-    "capacity": ["capacity"]
-  },
-  {
-    "template": ["template_type_code"],
-    "type": ["template_type_code"],
-    "code": ["template_type_code"]
-  },
-  {
-    "document id": ["Paragraphs.document_id"],
-    "name": ["Documents.document_name"],
-    "paragraphs": ["Paragraphs.document_id"]
-  },
-  {
-    "language": ["countrylanguage.Language"],
-    "continent": ["country.Continent"]
-  },
-  {
-    "name": ["name"],
-    "hometown": ["hometown", "little lever urban district"]
-  },
-  {
-    "region": ["Region"],
-    "city": ["city.Name"]
-  },
-  {
-    "injuries": ["injured"]
-  },
-  {
-    "degree summary name": ["Degree_Programs.degree_summary_name"],
-    "number of students enrolled": ["Student_Enrolment.degree_program_id"]
-  },
-  {
-    "countries": ["Name"],
-    "names": ["Name"],
-    "independence date": ["IndepYear"]
-  },
-  {
-    "shop": ["shop.name"],
-    "employees": ["hiring.shop_id"]
-  },
-  {
-    "ranking points": ["ranking_points"],
-    "player": ["players.player_id", "rankings.player_id"],
-    "first name": ["players.first_name"]
-  },
-  {
-    "emails": ["email_address"],
-    "state": ["state"]
-  },
-  {
-    "names": ["winner_name", "loser_name"],
-    "winner": ["winner_name"],
-    "loser": ["loser_name"],
-    "match length": ["minutes"]
-  },
-  {},
-  {
-    "name": ["stadium.name"],
-    "capacity": ["stadium.capacity"],
-    "stadium": ["concert.stadium_id", "stadium.stadium_id"],
-    "concerts": ["concert.stadium_id"],
-    "date": ["concert.year"]
-  },
-  {
-    "names": ["winner_name", "loser_name"],
-    "loser": ["loser_name"],
-    "winner": ["winner_name"],
-    "match": ["minutes"],
-    "minutes": ["minutes"]
-  },
-  {
-    "first name": ["student.fname"],
-    "gender": ["student.sex"],
-    "student": ["student.stuid"],
-    "pet": ["has_pet.stuid"]
-  },
-  {
-    "airlines": ["AIRLINES.Airline", "AIRLINES.uid", "FLIGHTS.Airline"],
-    "flights": ["FLIGHTS.Airline", "FLIGHTS.SourceAirport"],
-    "airports": ["FLIGHTS.SourceAirport", "APG", "CVO"]
-  },
-  {
-    "cities": ["city.Name"],
-    "Asia": ["country.Continent"],
-    "official language": [
-      "countrylanguage.IsOfficial",
-      "countrylanguage.Language"
-    ]
-  },
-  {
-    "breed type": ["breed_code"],
-    "size type": ["size_code"]
-  },
-  {
-    "handedness": ["winner_hand"],
-    "winners": ["winner_name"],
-    "participation": ["winner_name"],
-    "tournament": ["tourney_name"]
-  },
-  {
-    "area codes": ["area_code"]
-  },
-  {
-    "singer name": ["singer.Name"],
-    "total sales": ["song.Sales"],
-    "songs": ["song.Sales"]
-  },
-  {
-    "document id": ["document_id"],
-    "template id": ["template_id"],
-    "description": ["Document_Description"],
-    "document name": ["document_name"]
-  },
-  {
-    "grade": ["grade"],
-    "students": ["id"],
-    "friends": ["Friend.student_id", "Highschooler.id"]
-  },
-  {
-    "grades": ["grade"],
-    "high schoolers": ["grade"]
-  },
-  {
-    "life expectancy": ["LifeExpectancy"],
-    "country": [],
-    "continent": ["Continent", "Africa"],
-    "government type": ["GovernmentForm", "Republic"]
-  },
-  {
-    "earnings": ["Earnings"],
-    "poker players": ["Earnings"]
-  },
-  {
-    "flights": ["FLIGHTS.Airline"],
-    "airline": ["AIRLINES.Airline"]
-  },
-  {
-    "horsepower": ["horsepower"],
-    "cars": ["horsepower"]
-  },
-  {
-    "grade": ["grade"],
-    "students": ["id", "Highschooler.id"],
-    "friends": ["Friend.student_id"]
-  },
-  {
-    "Airlines": ["AIRLINES.Airline", "United Airlines"],
-    "Flights": ["FLIGHTS.Airline"],
-    "Airport": ["FLIGHTS.DestAirport", "ASY"]
-  },
-  {
-    "name": ["visitor.name"],
-    "visitor": ["visitor.id", "visit.visitor_id"],
-    "museum": ["museum.Museum_ID", "visit.Museum_ID"],
-    "opened": ["museum.open_year"]
-  },
-  {}
+    "mapping": {
+      "first name": ["Students.first_name"],
+      "middle name": ["Students.middle_name"],
+      "last name": ["Students.last_name"],
+      "student id": ["Students.student_id"],
+      "degree program": [],
+      "enrollment": ["Student_Enrolment.student_id"],
+      "semester": []
+    }
+  }
 ]
 

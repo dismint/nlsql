@@ -1,0 +1,10 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+LIBRARY_COURSE_INSTRUCTOR_KEY ;VARCHAR2                                                                                                  ;         50
+LIBRARY_RESERVE_CATALOG_KEY   ;VARCHAR2                                                                                                  ;         20
+LIBRARY_SUBJECT_OFFERED_KEY   ;VARCHAR2                                                                                                  ;         26
+LIBRARY_MATERIAL_STATUS_KEY   ;VARCHAR2                                                                                                  ;          1
+TERM_CODE                     ;VARCHAR2                                                                                                  ;          6
+SUBJECT_ID                    ;VARCHAR2                                                                                                  ;         20
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

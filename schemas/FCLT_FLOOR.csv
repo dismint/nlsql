@@ -1,0 +1,14 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+FCLT_FLOOR_KEY                ;VARCHAR2                                                                                                  ;         52
+FCLT_BUILDING_KEY             ;VARCHAR2                                                                                                  ;         32
+FLOOR                         ;VARCHAR2                                                                                                  ;         16
+EXT_GROSS_AREA                ;NUMBER                                                                                                    ;         22
+ASSIGNABLE_AREA               ;NUMBER                                                                                                    ;         22
+NON_ASSIGNABLE_AREA           ;NUMBER                                                                                                    ;         22
+FLOOR_SORT_SEQUENCE           ;VARCHAR2                                                                                                  ;         12
+LEVEL_ID                      ;VARCHAR2                                                                                                  ;        100
+BUILDING_WINGS_ID             ;VARCHAR2                                                                                                  ;        256
+ACCESS_LEVEL                  ;VARCHAR2                                                                                                  ;          8
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

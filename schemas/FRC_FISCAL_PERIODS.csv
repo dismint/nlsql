@@ -1,0 +1,6 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+TIME_MONTH_KEY                ;VARCHAR2                                                                                                  ;         24
+CALENDAR_PERIOD_DESCRIPTION   ;VARCHAR2                                                                                                  ;        120
+FISCAL_PERIOD                 ;VARCHAR2                                                                                                  ;         24

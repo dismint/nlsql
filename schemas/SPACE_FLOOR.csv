@@ -1,0 +1,7 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+FLOOR_KEY                     ;VARCHAR2                                                                                                  ;         16
+FLOOR                         ;VARCHAR2                                                                                                  ;         16
+FLOOR_NAME                    ;VARCHAR2                                                                                                  ;         40
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

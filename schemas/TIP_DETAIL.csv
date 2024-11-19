@@ -1,0 +1,11 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+TIP_SUBJECT_OFFERED_KEY       ;VARCHAR2                                                                                                  ;         64
+TIP_MATERIAL_KEY              ;VARCHAR2                                                                                                  ;        624
+TIP_MATERIAL_STATUS_KEY       ;VARCHAR2                                                                                                  ;         16
+TERM_CODE                     ;VARCHAR2                                                                                                  ;         24
+SUBJECT_ID                    ;VARCHAR2                                                                                                  ;         80
+ISBN                          ;VARCHAR2                                                                                                  ;        144
+RECORD_COUNT                  ;NUMBER                                                                                                    ;         22
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

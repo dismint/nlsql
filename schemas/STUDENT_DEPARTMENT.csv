@@ -1,0 +1,8 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+DEPARTMENT_CODE               ;VARCHAR2                                                                                                  ;         24
+DEPARTMENT_NAME               ;VARCHAR2                                                                                                  ;        120
+DEPARTMENT_FULL_NAME          ;VARCHAR2                                                                                                  ;        140
+SCHOOL_CODE                   ;VARCHAR2                                                                                                  ;          8
+SCHOOL_NAME                   ;VARCHAR2                                                                                                  ;        120

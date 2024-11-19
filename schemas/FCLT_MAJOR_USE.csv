@@ -1,0 +1,8 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+FCLT_MAJOR_USE_KEY            ;VARCHAR2                                                                                                  ;         40
+MAJOR_USE                     ;VARCHAR2                                                                                                  ;         48
+DESCRIPTION                   ;VARCHAR2                                                                                                  ;        384
+ASSIGNABLE                    ;VARCHAR2                                                                                                  ;          8
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

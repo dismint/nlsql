@@ -1,0 +1,10 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+DEPT_ID                       ;NUMBER                                                                                                    ;         22
+D_CODE                        ;VARCHAR2                                                                                                  ;        180
+D_NAME                        ;VARCHAR2                                                                                                  ;        840
+PARENT_ID                     ;NUMBER                                                                                                    ;         22
+PARENT_D_CODE                 ;VARCHAR2                                                                                                  ;        180
+PARENT_D_NAME                 ;VARCHAR2                                                                                                  ;        840
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

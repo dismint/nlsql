@@ -1,0 +1,10 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+SUBJECT_GROUPING_KEY          ;VARCHAR2                                                                                                  ;        128
+TERM_CODE                     ;VARCHAR2                                                                                                  ;         24
+DEPARTMENT_CODE               ;VARCHAR2                                                                                                  ;         32
+DEPARTMENT_NAME               ;VARCHAR2                                                                                                  ;        120
+DEPARTMENT_FULL_NAME          ;VARCHAR2                                                                                                  ;        140
+SCHOOL_NAME                   ;VARCHAR2                                                                                                  ;        120
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          8

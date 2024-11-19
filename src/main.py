@@ -1,12 +1,17 @@
+from sqlglot.optimizer import qualify
 from rich.console import Console
+from sqlglot import parse_one
 import sql_metadata
 import rich_click
 import sqlparse
+import sqlglot
 import random
 import openai
 import time
 import json
+import csv
 import os
+import re
 
 console = Console()
 console.clear()
@@ -23,6 +28,98 @@ if not ANNOTATED_FILE:
     console.print("ANNOTATED_FILE not set in .env\nDefault: annotated.json")
     ANNOTATED_FILE = "annotated.json"
 ANNOTATED_FILE = f"annotations/{ANNOTATED_FILE}"
+
+# globals for mapping
+
+alias_map = {}
+table_set = set()
+
+# get schema
+
+schema = {}
+
+path = os.path.join(os.getcwd(), 'schemas')
+files = os.listdir(path)
+csv_files = [file for file in files if file.endswith('.csv')]
+
+for file in csv_files:
+    path = os.path.join(os.getcwd(), 'schemas', file)
+    table = file.split('.')[0]
+    schema[table] = {}
+    with open(path, 'r') as f:
+        normalized_lines = (re.sub(r'\s*;\s*', ';', line.strip()) for line in f)
+        reader = csv.reader(normalized_lines, delimiter=';')
+        rows = [row for row in reader if row]
+        for row in rows[2:]:
+            assert len(row) == 3
+            schema[table][row[0]] = row[1]
+
+def get_children(node):
+    depth = node.depth
+    children = [child for child in node.walk() if child.depth == depth + 1]
+    children.reverse()
+    return children
+
+def recur(node):
+    global table_set
+    global alias_map
+
+    if type(node) == sqlglot.exp.Table:
+        table_set.add(node.name.upper())
+    if type(node) == sqlglot.exp.Table and (alias := node.alias) and node.name != alias:
+        if alias in alias_map:
+            print(f"BAD, {alias} already exists {alias_map}")
+        alias_map[alias] = node.name
+    for child in get_children(node):
+        recur(child)
+
+def rename(node):
+    global table_set
+    global alias_map
+
+    if type(node) == sqlglot.exp.Column and (table := node.table):
+        if table in alias_map and alias_map[table]:
+            node.set("table", alias_map[table])
+    for child in get_children(node):
+        rename(child)
+
+def sql_to_normal_columns(sql):
+    global table_set
+    global alias_map
+    global schema
+
+    allcol = set()
+
+    try:
+        alias_map = {}
+        parsed = parse_one(sql, read="mysql")
+        try:
+            qualify.qualify(parsed, schema=schema)
+        except Exception as e:
+            print(f"[bold #FF0000]CANNOT QUALIFY[/bold #FF0000]")
+            print(parsed.sql(pretty=True))
+            print(e)
+        recur(parsed)
+        rename(parsed)
+        print(parsed.sql(pretty=True))
+        # get all columns
+        columns = set([col for col in parsed.find_all(sqlglot.exp.Column)])
+        # filter by columns that actually belong to true tables
+        columns = set([col for col in columns if col.table.upper() in table_set])
+        # get table, column
+        # columns = set([(col.table.upper(), col.name.upper()) for col in columns])
+        columns = set([f"{col.table.upper()}.{col.name.upper()}" for col in columns])
+        allcol = allcol.union(columns)
+    except Exception as ee:
+        print(f"[bold #FF0000]ERROR[/bold #FF0000]")
+        try:
+            print(parse_one(sql).sql(pretty=True))
+        except Exception as e:
+            print("went bad")
+            print(sql)
+        print(ee)
+
+    return list(allcol)
 
 def annotate_queries(sample=True):
     global ANNOTATED_FILE
@@ -110,6 +207,7 @@ def map_queries():
         try:
             mapping.append({"progress": "unprocessed"})
             columns = metadata.columns + metadata.columns_aliases_names
+            columns = sql_to_normal_columns(query["sql"])
 
             completion = client.chat.completions.create(
               model="gpt-4o",

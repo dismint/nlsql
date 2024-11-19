@@ -1,0 +1,14 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+TERM_CODE                     ;VARCHAR2                                                                                                  ;         24
+SUBJECT_ID                    ;VARCHAR2                                                                                                  ;         60
+SUBJECT_TITLE                 ;VARCHAR2                                                                                                  ;        240
+SUBJECT_TITLE_LONG            ;VARCHAR2                                                                                                  ;       1200
+MASTER_SUBJECT_ID             ;VARCHAR2                                                                                                  ;         32
+ULT_MASTER_SUBJECT_ID         ;VARCHAR2                                                                                                  ;         32
+CLUSTER_LIST                  ;VARCHAR2                                                                                                  ;       4000
+OFFER_DEPT_CODE               ;VARCHAR2                                                                                                  ;         16
+OFFER_SCHOOL_CODE             ;VARCHAR2                                                                                                  ;          8
+SUBJECT_GROUP_ID              ;VARCHAR2                                                                                                  ;        128
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

@@ -1,0 +1,10 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+BUILDING_ROOM                 ;VARCHAR2                                                                                                  ;         64
+BUILDING_COMPONENT            ;VARCHAR2                                                                                                  ;         32
+FLOOR                         ;VARCHAR2                                                                                                  ;         16
+SPACE_USAGE                   ;VARCHAR2                                                                                                  ;         80
+SPACE_UNIT_CODE               ;VARCHAR2                                                                                                  ;         64
+HR_ORG_UNIT_ID                ;VARCHAR2                                                                                                  ;         32
+ACCESS_LEVEL                  ;VARCHAR2                                                                                                  ;         16

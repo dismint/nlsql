@@ -1,0 +1,11 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+COURSE_NUMBER                 ;VARCHAR2                                                                                                  ;         12
+SUBJECT_CODE                  ;VARCHAR2                                                                                                  ;         12
+SUBJECT_CODE_DESC             ;VARCHAR2                                                                                                  ;        120
+DEPARTMENT_CODE               ;VARCHAR2                                                                                                  ;         16
+DEPARTMENT_NAME               ;VARCHAR2                                                                                                  ;        120
+SCHOOL_CODE                   ;VARCHAR2                                                                                                  ;          8
+SCHOOL_NAME                   ;VARCHAR2                                                                                                  ;        120
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

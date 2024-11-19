@@ -1,0 +1,9 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+FCLT_ORGANIZATION_KEY         ;VARCHAR2                                                                                                  ;         64
+SPACE_UNIT_KEY                ;VARCHAR2                                                                                                  ;         64
+SPACE_UNIT_CODE               ;VARCHAR2                                                                                                  ;         64
+SPACE_UNIT                    ;VARCHAR2                                                                                                  ;        840
+DLC_KEY                       ;VARCHAR2                                                                                                  ;        180
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

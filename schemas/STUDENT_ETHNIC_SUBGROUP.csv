@@ -1,0 +1,10 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+STUDENT_ETHNIC_SUBGROUP_KEY   ;VARCHAR2                                                                                                  ;         32
+ETHNIC_GROUP_NAME             ;VARCHAR2                                                                                                  ;        240
+ETHNIC_SUBGROUP_NAME          ;VARCHAR2                                                                                                  ;        240
+ETHNIC_CODE                   ;VARCHAR2                                                                                                  ;          8
+ETHNIC_SUBGROUP_CODE          ;VARCHAR2                                                                                                  ;         20
+MIT_PRIORITY                  ;NUMBER                                                                                                    ;         22
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

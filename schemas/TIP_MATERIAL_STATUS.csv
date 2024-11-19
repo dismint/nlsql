@@ -1,0 +1,7 @@
+
+COLUMN_NAME                   ;DATA_TYPE                                                                                                 ;DATA_LENGTH
+------------------------------;----------------------------------------------------------------------------------------------------------;-----------
+TIP_MATERIAL_STATUS_KEY       ;VARCHAR2                                                                                                  ;         16
+TIP_MATERIAL_STATUS_CODE      ;VARCHAR2                                                                                                  ;         16
+TIP_MATERIAL_STATUS           ;VARCHAR2                                                                                                  ;        200
+WAREHOUSE_LOAD_DATE           ;DATE                                                                                                      ;          7

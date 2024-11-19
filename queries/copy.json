@@ -1,0 +1,7 @@
+[
+  {
+    "question": "What is the name of the building that accomodates the most students and the number of students this building accomodates?",
+    "sql": "SELECT DISTINCT building_name, num_students FROM (SELECT fclt_rooms.fclt_building_key, COUNT(distinct mit_student_directory.full_name) as num_students FROM fclt_rooms JOIN mit_student_directory ON office_location=BUILDING_ROOM GROUP BY fclt_building_key) a JOIN fclt_building ON a.fclt_building_key = fclt_building.fclt_building_key JOIN (SELECT MAX(num_students) as max_num_students FROM (SELECT fclt_building_key, COUNT(distinct full_name) as num_students FROM fclt_rooms JOIN mit_student_directory ON office_location=BUILDING_ROOM GROUP BY fclt_building_key)) b ON a.num_students = b.max_num_students;",
+    "db_id": "dw"
+  }
+]

@@ -83,12 +83,45 @@ def rename(node):
     for child in get_children(node):
         rename(child)
 
+def find_bad_cols(node):
+    # get all columns in the node
+    columns = [col for col in node.find_all(sqlglot.exp.Column)]
+    columns = [col for col in columns if col.table and col.table.upper() in table_set]
+    count = {}
+    for col in columns:
+        id = col.table.upper() + "." + col.name.upper()
+        if id not in count:
+            count[id] = 0
+        count[id] += 1
+    joins = [join for join in node.find_all(sqlglot.exp.Join)]
+    joincols = []
+    for join in joins:
+        cols = [col for col in join.find_all(sqlglot.exp.Column)]
+        cols = [col for col in cols if col.table and col.table.upper() in table_set]
+        joincols.extend(cols)
+    joincount = {}
+    for col in joincols:
+        id = col.table.upper() + "." + col.name.upper()
+        if id not in joincount:
+            joincount[id] = 0
+        joincount[id] += 1
+
+    bad_cols = []
+
+    for col in joincount:
+        if col not in count:
+            bad_cols.append(col)
+        elif joincount[col] >= count[col]:
+            bad_cols.append(col)
+    return bad_cols
+
 def sql_to_normal_columns(sql):
     global table_set
     global alias_map
     global schema
 
     allcol = set()
+    qualified = None
 
     try:
         alias_map = {}
@@ -101,6 +134,8 @@ def sql_to_normal_columns(sql):
             print(e)
         recur(parsed)
         rename(parsed)
+        bad_cols = find_bad_cols(parsed)
+        qualified = parsed.sql(pretty=True)
         print(parsed.sql(pretty=True))
         # get all columns
         columns = set([col for col in parsed.find_all(sqlglot.exp.Column)])
@@ -109,8 +144,10 @@ def sql_to_normal_columns(sql):
         # get table, column
         # columns = set([(col.table.upper(), col.name.upper()) for col in columns])
         columns = set([f"{col.table.upper()}.{col.name.upper()}" for col in columns])
+        columns = columns.difference(bad_cols)
         allcol = allcol.union(columns)
     except Exception as ee:
+        print(ee)
         print(f"[bold #FF0000]ERROR[/bold #FF0000]")
         try:
             print(parse_one(sql).sql(pretty=True))
@@ -119,7 +156,7 @@ def sql_to_normal_columns(sql):
             print(sql)
         print(ee)
 
-    return list(allcol)
+    return list(allcol), qualified
 
 def annotate_queries(sample=True):
     global ANNOTATED_FILE
@@ -171,7 +208,6 @@ def annotate_queries(sample=True):
         console.clear()
 
     console.print("Done annotating queries.")
-    time.sleep(2) 
     console.clear()
     
 
@@ -195,6 +231,8 @@ def map_queries():
 
     mapping = []
     errors = []
+    columns = []
+    qualifieds = []
 
     for i, query in enumerate(data):
         console.print(f"[bold #87C3AA]{i} [#308673]/ [#87C3AA]{len(data)}\n")
@@ -206,23 +244,51 @@ def map_queries():
         metadata = sql_metadata.Parser(query["sql"])
         try:
             mapping.append({"progress": "unprocessed"})
-            columns = metadata.columns + metadata.columns_aliases_names
-            columns = sql_to_normal_columns(query["sql"])
+            columns.append([])
+            qualifieds.append(None)
+            # columns = metadata.columns + metadata.columns_aliases_names
+            columns[-1], qualifieds[-1] = sql_to_normal_columns(query["sql"])
+            print("columns:")
+            for col in columns[-1]:
+                print("\t" + col)
+
+            # completion = client.chat.completions.create(
+            #   model="gpt-4o",
+            #   messages=[
+            #     {"role": "system", "content": "The following will give four sections. (1) Natural language (2) SQL query (3) Natural language concepts (4) Columns of interest in the SQL query. Your job is to give a mapping of natural language concepts to columns of interest. Please use the columns given exactly, as they are the true table.column mappings that may not show up in the sql query. It will often be the case that there is more than one column per concept. Each column must be assigned to at least ONE topic. DO NOT leave any column out. Answer EXACTLY as a single json map where the concept is the key as a string and the value is a list of columns of interest as strings. Give as plaintext and do NOT wrap in a code block. Make sure to give a mapping for each concept, using the exact columns given. Make sure to use ALL columns that are given. If needed use the SQL query itself as well as the original natural language description to help you. Do not leave out any columns from the mapping. Do not leave out any columns from the mapping."},
+            #     {"role": "user", "content": f"Natural Language: {query['question']}\nSQL: {query['sql']}\nConcepts: {query['topics']}\nColumns: {columns[-1]}"},
+            #   ]
+            # )
+            #
+            # strmap = completion.choices[0].message.content
+            # assert(strmap is not None)
+            # print("mapping:")
+            # print(completion.choices[0].message.content)
+            # mapping[-1] = {"progress": strmap}
+            # mapping[-1] = json.loads(strmap)
 
             completion = client.chat.completions.create(
               model="gpt-4o",
               messages=[
-                {"role": "system", "content": "The following will give four sections of (1) natural language (2) SQL query (3) natural language concepts (4) columns of interest in the SQL query. Your job is to give a mapping of natural language concepts to columns of interest in the sql query. it might be the case that there is more than one column per concept, and rarely the same column of interest may be used in multiple concepts. Answer EXACTLY as a single json map where the concept is the key as a string and the value is a list of columns of interest as strings. Give as plaintext and do NOT wrap in a code block. Make sure to give a mapping for each concept if possible, and use exact values as given. If needed use the SQL query itself as well as the original natural language description to help you."},
-                {"role": "user", "content": f"Natural Language: {query['question']}\nSQL: {query['sql']}\nConcepts: {query['topics']}\nColumns: {columns}"},
+                  {"role": "system", "content": f"Given these columns: {columns[-1]} and this SQL query: {query['sql']} with these topics: {query['topics']} generated from this natural language: {query['question']}, please generate a mapping from columns, exactly as I gave in the first list, to a list of topics, exactly as I gave them in the third list. The columns should correspond to the topics, and there may be one or more topics each column corresponds to. Please answer EXACTLY and ONLY as a single json as plain text, NOT in a json code block."},
+                {"role": "user", "content": f"Natural Language: {query['question']}\nSQL: {query['sql']}\nConcepts: {query['topics']}\nColumns: {columns[-1]}"},
               ]
             )
 
             strmap = completion.choices[0].message.content
             assert(strmap is not None)
-
-            mapping[-1] = {"progress": strmap}
-            mapping[-1] = json.loads(strmap)
-        except:
+            print(strmap)
+            mapprog = {topic: set() for topic in query["topics"]}
+            jsonmap = json.loads(strmap)
+            for key in jsonmap:
+                for val in jsonmap[key]:
+                    assert(val in mapprog)
+                    mapprog[val].add(key)
+            mapprog = {key: list(val) for key, val in mapprog.items()}
+            mapping[-1] = mapprog
+            print(json.dumps(mapprog, indent=4))
+        except Exception as e:
+            print(e)
             console.print("[red]Error parsing SQL[/red]")
             errors.append(i)
             mapping[-1] = {"progress": "error"}
@@ -234,9 +300,11 @@ def map_queries():
                     "question": query["question"],
                     "sql": query["sql"],
                     "topics": query["topics"],
-                    "mapping": map
+                    "mapping": map,
+                    "columns": column,
+                    "qualified": qualified
                 }
-                for query, map in zip(data, mapping)
+                for query, map, column, qualified in zip(data, mapping, columns, qualifieds)
             ]
             f.write(json.dumps(annotated_mappings, indent=4))
 

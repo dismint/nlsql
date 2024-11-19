@@ -7,9 +7,33 @@
             "building street address",
             "city",
             "state",
-            "postal code",
-            "history department"
-        ]
+            "postal code"
+        ],
+        "mapping": {
+            "building key": [
+                "FCLT_BUILDING_ADDRESS.FCLT_BUILDING_KEY"
+            ],
+            "building street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS",
+                "literals": {
+                    "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE": "STREET"
+                }
+            ],
+            "city": [
+                "FCLT_BUILDING_ADDRESS.CITY"
+            ],
+            "state": [
+                "FCLT_BUILDING_ADDRESS.STATE"
+            ],
+            "postal code": [
+                "FCLT_BUILDING_ADDRESS.POSTAL_CODE"
+            ],
+            "history department": [
+                "literals": {
+                    "MASTER_DEPT_HIERARCHY.DLC_NAME": "History"
+                },
+            ]
+        }
     },
     {
         "question": "Show the unique activity titles, locations, term start date, and supervisor name for all independent activities, sorted by the ascending order of start date.",
@@ -19,7 +43,24 @@
             "locations",
             "term start date",
             "supervisor name"
-        ]
+        ],
+        "mapping": {
+            "activity titles": [
+                "iap_subject_detail.activity_title"
+            ],
+            "locations": [
+                "iap_subject_session.session_location"
+            ],
+            "term start date": [
+                "academic_terms_all.term_start_date",
+            ],
+            "supervisor name": [
+                "iap_subject_person.person_name",
+                "literals": {
+                    "iap_subject_person.person_role": "Activity leader"
+                }
+            ]
+        }
     },
     {
         "question": "List the unique course instructor names, course titles, and the amount of material for each course instructor key and the key of subject offered.",
@@ -30,7 +71,26 @@
             "amount of material",
             "course instructor key",
             "subject offered key"
-        ]
+        ],
+        "mapping": {
+            "course instructor names": [
+                "LIBRARY_COURSE_INSTRUCTOR.instructor_name"
+            ],
+            "course titles": [
+                "LIBRARY_SUBJECT_OFFERED.subject_title"
+            ],
+            "amount of material": [
+                "LIBRARY_RESERVE_CATALOG.catalog_isbn"
+            ],
+            "course instructor key": [
+                "LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY",
+                "LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_COURSE_INSTRUCTOR_KEY"
+            ],
+            "subject offered key": [
+                "LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY",
+                "LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_SUBJECT_OFFERED_KEY"
+            ]
+        }
     },
     {
         "question": "What is the room, floor, building key, building street address, city, state, and postal code of Professor Lily Knapp's office?",
@@ -44,7 +104,33 @@
             "state",
             "postal code",
             "Professor Lily Knapp's office"
-        ]
+        ],
+        "mapping": {
+            "room": [
+                "fac_rooms.Room"
+            ],
+            "floor": [
+                "fac_rooms.floor"
+            ],
+            "building key": [
+                "fac_building_address.BUILDING_KEY"
+            ],
+            "building street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "city": [
+                "fac_building_address.CITY"
+            ],
+            "state": [
+                "fac_building_address.STATE"
+            ],
+            "postal code": [
+                "fac_building_address.POSTAL_CODE"
+            ],
+            "Professor Lily Knapp's office": [
+                "office_location"
+            ]
+        }
     },
     {
         "question": "Show the unique full room names, building names, the street address, the city, the state and postal code of subjects that are enrollable for Computer Science students.",
@@ -58,7 +144,31 @@
             "postal code",
             "subjects",
             "Computer Science students"
-        ]
+        ],
+        "mapping": {
+            "full room names": [
+                "FCLT_ROOMS.ROOM_FULL_NAME"
+            ],
+            "building names": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "city": [
+                "FCLT_BUILDING_ADDRESS.CITY"
+            ],
+            "state": [
+                "FCLT_BUILDING_ADDRESS.STATE"
+            ],
+            "postal code": [
+                "FCLT_BUILDING_ADDRESS.POSTAL_CODE"
+            ],
+            "subjects": [],
+            "Computer Science students": [
+                "DEPARTMENT_NAME"
+            ]
+        }
     },
     {
         "question": "List the unique term code, subject title, room, floor, building key, building street address, city, state, and postal code, formats, and number of enrolled students for all courses with more than 300 attendees.",
@@ -76,7 +186,45 @@
             "formats",
             "number of enrolled students",
             "attendees"
-        ]
+        ],
+        "mapping": {
+            "term code": [
+                "subject_offered.TERM_CODE"
+            ],
+            "subject title": [
+                "subject_offered.subject_title"
+            ],
+            "room": [
+                "FCLT_ROOMS.room"
+            ],
+            "floor": [
+                "FCLT_ROOMS.floor"
+            ],
+            "building key": [
+                "BUILDINGS.BUILDING_KEY"
+            ],
+            "building street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "city": [
+                "FCLT_BUILDING_ADDRESS.CITY"
+            ],
+            "state": [
+                "FCLT_BUILDING_ADDRESS.STATE"
+            ],
+            "postal code": [
+                "FCLT_BUILDING_ADDRESS.POSTAL_CODE"
+            ],
+            "formats": [
+                "subject_offered.form_type"
+            ],
+            "number of enrolled students": [
+                "subject_offered.num_enrolled_students"
+            ],
+            "attendees": [
+                "subject_offered.num_enrolled_students"
+            ]
+        }
     },
     {
         "question": "What are the subject titles, their material titles, ISBN numbers, new shelf prices, and total costs of new materials for each subject title, sorted by individual item prices in ascending order?",
@@ -87,7 +235,24 @@
             "ISBN number",
             "new shelf price",
             "total cost of new material"
-        ]
+        ],
+        "mapping": {
+            "subject title": [
+                "TIP_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ],
+            "material title": [
+                "tip_material.title"
+            ],
+            "ISBN number": [
+                "tip_material.isbn"
+            ],
+            "new shelf price": [
+                "tip_material.new_shelf_price"
+            ],
+            "total cost of new material": [
+                "SUM(tm.new_shelf_price) OVER(PARTITION BY tso.SUBJECT_TITLE)"
+            ]
+        }
     },
     {
         "question": "List the long building names constructed before 1950 that have more than 100 employees and the built year and number of employees.",
@@ -96,7 +261,18 @@
             "building name",
             "constructed year",
             "number of employees"
-        ]
+        ],
+        "mapping": {
+            "building name": [
+                "BUILDING_NAME_LONG"
+            ],
+            "constructed year": [
+                "year_built"
+            ],
+            "number of employees": [
+                "num_employees"
+            ]
+        }
     },
     {
         "question": "For each building key, what is the building name and the number of courses offered by the Center for International Studies.",
@@ -106,7 +282,22 @@
             "building name",
             "courses",
             "Center for International Studies"
-        ]
+        ],
+        "mapping": {
+            "building key": [
+                "FCLT_BUILDING.FCLT_BUILDING_KEY",
+                "FCLT_ROOMS.FCLT_BUILDING_KEY"
+            ],
+            "building name": [
+                "FCLT_BUILDING.BUILDING_NAME"
+            ],
+            "courses": [
+                "cis_course_catalog.subject_id",
+                "cis_course_catalog.SUBJECT_ID",
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
+            ],
+            "Center for International Studies": []
+        }
     },
     {
         "question": "What is the name of the building that accomodates the most students and the number of students this building accomodates?",
@@ -114,7 +305,15 @@
         "topics": [
             "name",
             "students"
-        ]
+        ],
+        "mapping": {
+            "name": [
+                "building_name"
+            ],
+            "students": [
+                "num_students"
+            ]
+        }
     },
     {
         "question": "List name and floor of the building with the largest floor number?",
@@ -123,7 +322,10 @@
             "name",
             "floor",
             "floor number"
-        ]
+        ],
+        "mapping": {
+            "progress": "error"
+        }
     },
     {
         "question": "For each IAP category and academic year, list the category name, academic year, total fee collected, total number of IAP subjects, and the minimum and maximum enrollment.",
@@ -136,7 +338,30 @@
             "total number of IAP subjects",
             "minimum enrollment",
             "maximum enrollment"
-        ]
+        ],
+        "mapping": {
+            "IAP category": [
+                "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"
+            ],
+            "academic year": [
+                "TIME_DAY.ACADEMIC_YEAR"
+            ],
+            "category name": [
+                "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"
+            ],
+            "total fee collected": [
+                "Total_Fee"
+            ],
+            "total number of IAP subjects": [
+                "Total_Subjects"
+            ],
+            "minimum enrollment": [
+                "Min_Attendance"
+            ],
+            "maximum enrollment": [
+                "Max_Attendance"
+            ]
+        }
     },
     {
         "question": "For each sponsor of the independent activity periods, list the sponsor name, number of sessions held, the total number of enrollment, and the minimum and maximum fee.",
@@ -148,7 +373,31 @@
             "sessions",
             "enrollment",
             "fee"
-        ]
+        ],
+        "mapping": {
+            "sponsor": [
+                "IAP_SUBJECT_SPONSOR.SPONSOR_NAME",
+                "IAP_SUBJECT_DETAIL.IAP_SUBJECT_SPONSOR_KEY"
+            ],
+            "independent activity periods": [
+                "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY",
+                "IAP_SUBJECT_DETAIL.IAP_SUBJECT_SESSION_KEY"
+            ],
+            "sponsor name": [
+                "IAP_SUBJECT_SPONSOR.SPONSOR_NAME"
+            ],
+            "sessions": [
+                "Total_Sessions"
+            ],
+            "enrollment": [
+                "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"
+            ],
+            "fee": [
+                "IAP_SUBJECT_DETAIL.FEE",
+                "Min_Fee",
+                "Max_Fee"
+            ]
+        }
     },
     {
         "question": "What is the person's email and name, academic year, total number of IAP subjects, the minimum and maximum fees, and the total course enrollment for each person involved and academic year?",
@@ -160,7 +409,28 @@
             "IAP subjects",
             "fees",
             "course enrollment"
-        ]
+        ],
+        "mapping": {
+            "email": [
+                "IAP_SUBJECT_PERSON.PERSON_EMAIL"
+            ],
+            "name": [
+                "IAP_SUBJECT_PERSON.PERSON_NAME"
+            ],
+            "academic year": [
+                "TIME_DAY.ACADEMIC_YEAR"
+            ],
+            "IAP subjects": [
+                "Total_Subjects"
+            ],
+            "fees": [
+                "Min_Fee",
+                "Max_Fee"
+            ],
+            "course enrollment": [
+                "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"
+            ]
+        }
     },
     {
         "question": "What is the term code, term description, total number of IAP sessions, total fee collected, and minimum and maximum enrollment for each term code?",
@@ -171,7 +441,25 @@
             "IAP sessions",
             "fee",
             "enrollment"
-        ]
+        ],
+        "mapping": {
+            "term code": [
+                "IAP_SUBJECT_DETAIL.TERM_CODE"
+            ],
+            "term description": [
+                "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"
+            ],
+            "IAP sessions": [
+                "Total_Sessions"
+            ],
+            "fee": [
+                "Total_Fee"
+            ],
+            "enrollment": [
+                "Min_Enrollment",
+                "Max_Enrollment"
+            ]
+        }
     },
     {
         "question": "What is the name of the building, total number of subjects, total fee, and shortest and longest sessions for each physical IAP session location?",
@@ -181,7 +469,24 @@
             "subjects",
             "fee",
             "session location"
-        ]
+        ],
+        "mapping": {
+            "building": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "subjects": [
+                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+                "Total_Subjects"
+            ],
+            "fee": [
+                "IAP_SUBJECT_DETAIL.FEE",
+                "Total_Fee"
+            ],
+            "session location": [
+                "BUILDINGS.BUILDING_NAME",
+                "IAP_SUBJECT_SESSION.SESSION_LOCATION"
+            ]
+        }
     },
     {
         "question": "What is total number of subjects, the total fee, and the shortest and longest sessions, for all virtual IAP sessions?",
@@ -191,7 +496,23 @@
             "fee",
             "sessions",
             "IAP sessions"
-        ]
+        ],
+        "mapping": {
+            "subjects": [
+                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"
+            ],
+            "fee": [
+                "IAP_SUBJECT_DETAIL.FEE"
+            ],
+            "sessions": [
+                "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+                "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+            ],
+            "IAP sessions": [
+                "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY",
+                "IAP_SUBJECT_DETAIL.IAP_SUBJECT_SESSION_KEY"
+            ]
+        }
     },
     {
         "question": "What is the school code, school name, full name of the department, course level, total number of courses, and total number of degree-granting courses for each school code, department, and course level?",
@@ -203,7 +524,27 @@
             "course level",
             "total number of courses",
             "total number of degree-granting courses"
-        ]
+        ],
+        "mapping": {
+            "school code": [
+                "SIS_SUBJECT_CODE.SCHOOL_CODE"
+            ],
+            "school name": [
+                "SIS_SUBJECT_CODE.SCHOOL_NAME"
+            ],
+            "full name of the department": [
+                "SIS_DEPARTMENT.DEPARTMENT_FULL_NAME"
+            ],
+            "course level": [
+                "SIS_COURSE_DESCRIPTION.COURSE_LEVEL"
+            ],
+            "total number of courses": [
+                "Total_Courses"
+            ],
+            "total number of degree-granting courses": [
+                "Total_Degree_Granting_Courses"
+            ]
+        }
     },
     {
         "question": "What are the different schools and departments that offer SIS courses? List their school code, school name, department code, department name, and the total number of phone numbers.",
@@ -217,7 +558,35 @@
             "department code",
             "department name",
             "phone numbers"
-        ]
+        ],
+        "mapping": {
+            "schools": [
+                "SIS_SUBJECT_CODE.SCHOOL_CODE",
+                "SIS_SUBJECT_CODE.SCHOOL_NAME"
+            ],
+            "departments": [
+                "SIS_DEPARTMENT.DEPARTMENT_CODE",
+                "SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"
+            ],
+            "courses": [
+                "SIS_COURSE_DESCRIPTION.COURSE"
+            ],
+            "school code": [
+                "SIS_SUBJECT_CODE.SCHOOL_CODE"
+            ],
+            "school name": [
+                "SIS_SUBJECT_CODE.SCHOOL_NAME"
+            ],
+            "department code": [
+                "SIS_DEPARTMENT.DEPARTMENT_CODE"
+            ],
+            "department name": [
+                "SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"
+            ],
+            "phone numbers": [
+                "Total_Phone_Numbers"
+            ]
+        }
     },
     {
         "question": "What is the school code, school name, DLC key, the graduate level, total number of SIS subjects, the minimum and maximum course numbers, and the total number of departments offering subjects for each school?",
@@ -230,7 +599,31 @@
             "total number of SIS subjects",
             "course numbers",
             "departments"
-        ]
+        ],
+        "mapping": {
+            "school code": [
+                "SIS_SUBJECT_CODE.SCHOOL_CODE"
+            ],
+            "school name": [
+                "SIS_SUBJECT_CODE.SCHOOL_NAME"
+            ],
+            "DLC key": [
+                "SIS_DEPARTMENT.DLC_KEY"
+            ],
+            "graduate level": [
+                "GRADUATE_LEVEL"
+            ],
+            "total number of SIS subjects": [
+                "Total_Subjects"
+            ],
+            "course numbers": [
+                "Min_Course_Number",
+                "Max_Course_Number"
+            ],
+            "departments": [
+                "Total_Departments"
+            ]
+        }
     },
     {
         "question": "What is the building component, name of the building, square footage for all rooms, total number of floors, total number of rooms, total number of facility organizations, total number of supervisors, and total number of supervisees for each building component?",
@@ -244,7 +637,33 @@
             "facility organizations",
             "supervisors",
             "supervisees"
-        ]
+        ],
+        "mapping": {
+            "building component": [
+                "BUILDING_COMPONENT"
+            ],
+            "building": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "square footage": [
+                "Total_Square_Footage"
+            ],
+            "rooms": [
+                "Total_Rooms"
+            ],
+            "floors": [
+                "Total_Number_Of_Floors"
+            ],
+            "facility organizations": [
+                "Total_Number_FCLT"
+            ],
+            "supervisors": [
+                "Total_Supervisors"
+            ],
+            "supervisees": [
+                "Total_Supervisees"
+            ]
+        }
     },
     {
         "question": "What is the DLC key, name of the DLC, total number of floors, total square footage, total number of facility organizations, total number of supervisors, and total number of supervisees for each DLC?",
@@ -257,7 +676,30 @@
             "total number of facility organizations",
             "total number of supervisors",
             "total number of supervisees"
-        ]
+        ],
+        "mapping": {
+            "DLC key": [
+                "SPACE_UNIT.DLC_KEY"
+            ],
+            "name of the DLC": [
+                "DLC_NAME"
+            ],
+            "total number of floors": [
+                "Total_Number_Of_Floors"
+            ],
+            "total square footage": [
+                "Total_Square_Footage"
+            ],
+            "total number of facility organizations": [
+                "Total_Number_Facility"
+            ],
+            "total number of supervisors": [
+                "Total_Supervisors"
+            ],
+            "total number of supervisees": [
+                "Total_Supervisees"
+            ]
+        }
     },
     {
         "question": "What is the department name, total number of types of TIP subjects, total number of enrolled students, the minimum and maximum rental new price for each department?",
@@ -267,7 +709,25 @@
             "TIP subjects",
             "enrolled students",
             "rental new price"
-        ]
+        ],
+        "mapping": {
+            "department name": [
+                "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"
+            ],
+            "TIP subjects": [
+                "TIP_SUBJECT_OFFERED.SUBJECT_ID",
+                "Total_Subjects"
+            ],
+            "enrolled students": [
+                "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+                "Total_Enrolled_Students"
+            ],
+            "rental new price": [
+                "TIP_MATERIAL.RENTAL_NEW_PRICE",
+                "Min_Rental_New_Price",
+                "Max_Rental_New_Price"
+            ]
+        }
     },
     {
         "question": "What are the details of courses offered in the current academic term, including the academic year, term code, hgn code, the total number of types of courses, the average number of units, the department name, the name and email address of the person in charge?",
@@ -282,7 +742,36 @@
             "department name",
             "name",
             "email address"
-        ]
+        ],
+        "mapping": {
+            "courses": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
+            ],
+            "academic year": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR"
+            ],
+            "term code": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
+            ],
+            "hgn code": [
+                "SUBJECT_OFFERED.HGN_CODE"
+            ],
+            "types of courses": [
+                "TOTAL_COURSES"
+            ],
+            "units": [
+                "AVERAGE_UNITS"
+            ],
+            "department name": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"
+            ],
+            "name": [
+                "EMPLOYEE_DIRECTORY.FULL_NAME"
+            ],
+            "email address": [
+                "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"
+            ]
+        }
     },
     {
         "question": "Retrieve information about the IAP subjects, including their titles, categories, session titles, session start and end time, sponsors, and total number of sessions.",
@@ -296,7 +785,33 @@
             "session end time",
             "sponsors",
             "total number of sessions"
-        ]
+        ],
+        "mapping": {
+            "IAP subjects": [
+                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"
+            ],
+            "titles": [
+                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"
+            ],
+            "categories": [
+                "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"
+            ],
+            "session titles": [
+                "IAP_SUBJECT_SESSION.SESSION_TITLE"
+            ],
+            "session start time": [
+                "IAP_SUBJECT_SESSION.SESSION_START_TIME"
+            ],
+            "session end time": [
+                "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+            ],
+            "sponsors": [
+                "IAP_SUBJECT_SPONSOR.SPONSOR_NAME"
+            ],
+            "total number of sessions": [
+                "Total_Sessions"
+            ]
+        }
     },
     {
         "question": "Show the department names, the corresponding SIS subject code, subject code descriptions, graduate level, and the total number of courses per department.",
@@ -307,7 +822,24 @@
             "subject code descriptions",
             "graduate level",
             "total number of courses"
-        ]
+        ],
+        "mapping": {
+            "department names": [
+                "SIS_DEPARTMENT.DEPARTMENT_NAME"
+            ],
+            "SIS subject code": [
+                "SIS_SUBJECT_CODE.SUBJECT_CODE"
+            ],
+            "subject code descriptions": [
+                "SIS_SUBJECT_CODE.SUBJECT_CODE_DESC"
+            ],
+            "graduate level": [
+                "SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL"
+            ],
+            "total number of courses": [
+                "Total_Courses"
+            ]
+        }
     },
     {
         "question": "For each term, list the term code, the term description, whether the term is current or not, and the total number of types of CIS courses.",
@@ -317,7 +849,21 @@
             "term description",
             "term current status",
             "CIS course types count"
-        ]
+        ],
+        "mapping": {
+            "term code": [
+                "TERM_CODE"
+            ],
+            "term description": [
+                "TERM_DESCRIPTION"
+            ],
+            "term current status": [
+                "IS_CURRENT_TERM2"
+            ],
+            "CIS course types count": [
+                "Total_SUBJECTS"
+            ]
+        }
     },
     {
         "question": "What is the author, school name, material status, total record counts, and total number of types of courses for each author and school?",
@@ -328,7 +874,24 @@
             "material status",
             "total record counts",
             "total number of types of courses"
-        ]
+        ],
+        "mapping": {
+            "author": [
+                "AUTHOR"
+            ],
+            "school name": [
+                "STUDENT_DEPARTMENT.SCHOOL_NAME"
+            ],
+            "material status": [
+                "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"
+            ],
+            "total record counts": [
+                "Total_Record_Count"
+            ],
+            "total number of types of courses": [
+                "Total_Subject"
+            ]
+        }
     },
     {
         "question": "What is the course number, subject title, material status, the total, min, and max new shelf price, the total, min, and max used shelf price, total number of schools and the total number of materials for each TIP subject and material status?",
@@ -342,7 +905,38 @@
             "total number of schools",
             "total number of materials",
             "TIP subject"
-        ]
+        ],
+        "mapping": {
+            "course number": [
+                "TIP_SUBJECT_OFFERED.COURSE_NUMBER"
+            ],
+            "subject title": [
+                "TIP_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ],
+            "material status": [
+                "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"
+            ],
+            "new shelf price": [
+                "Total_New_Price",
+                "Min_New_Price",
+                "Max_New_Price"
+            ],
+            "used shelf price": [
+                "Total_Used_Price",
+                "Min_Used_Price",
+                "Max_Used_Price"
+            ],
+            "total number of schools": [
+                "Total_Num_Schools"
+            ],
+            "total number of materials": [
+                "Total_Num_Materials"
+            ],
+            "TIP subject": [
+                "TIP_SUBJECT_OFFERED.COURSE_NUMBER",
+                "TIP_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ]
+        }
     },
     {
         "question": "What is material status, the total number of materials, the total number of subjects, and the total number of schools for each material status?",
@@ -352,7 +946,21 @@
             "materials",
             "subjects",
             "schools"
-        ]
+        ],
+        "mapping": {
+            "material status": [
+                "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"
+            ],
+            "materials": [
+                "Total_Materials"
+            ],
+            "subjects": [
+                "Total_Subjects"
+            ],
+            "schools": [
+                "Total_Num_Schools"
+            ]
+        }
     },
     {
         "question": "What is the term description, whether the term is current or not, total number of types of TIP subjects offered and materials needed, the minimum and maximum number of enrolled students, and the total number of schools offering subjects for each term code?",
@@ -365,7 +973,34 @@
             "enrolled students",
             "schools",
             "term code"
-        ]
+        ],
+        "mapping": {
+            "term description": [
+                "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"
+            ],
+            "current status": [
+                "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM"
+            ],
+            "types of TIP subjects": [
+                "TIP_SUBJECT_OFFERED.COURSE_NUMBER"
+            ],
+            "materials needed": [
+                "TIP_MATERIAL.isbn"
+            ],
+            "enrolled students": [
+                "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+                "Min_Enrolled_Students",
+                "Max_Enrolled_Students"
+            ],
+            "schools": [
+                "OFFER_SCHOOL_NAME",
+                "Total_Num_Schools"
+            ],
+            "term code": [
+                "ACADEMIC_TERMS_ALL.TERM_CODE",
+                "TIP_SUBJECT_OFFERED.TERM_CODE"
+            ]
+        }
     },
     {
         "question": "List all buildings with their names, building numbers, street address, city, state, department name, assignable square footage, total and average square footage, ordered in descending order of assignable, total, and average square footage.",
@@ -381,7 +1016,41 @@
             "assignable square footage",
             "total square footage",
             "average square footage"
-        ]
+        ],
+        "mapping": {
+            "buildings": [
+                "BUILDINGS.BUILDING_NAME",
+                "BUILDINGS.BUILDING_NUMBER",
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "names": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "building numbers": [
+                "BUILDINGS.BUILDING_NUMBER"
+            ],
+            "street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "city": [
+                "FAC_BUILDING_ADDRESS.CITY"
+            ],
+            "state": [
+                "FAC_BUILDING_ADDRESS.STATE"
+            ],
+            "department name": [
+                "FAC_ORGANIZATION.HR_DEPARTMENT_NAME"
+            ],
+            "assignable square footage": [
+                "BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE"
+            ],
+            "total square footage": [
+                "Total_Square_Footage"
+            ],
+            "average square footage": [
+                "Avg_Square_Footage_Per_Room"
+            ]
+        }
     },
     {
         "question": "For the 2023 Fall term, what are the unique term descriptions, subject titles along with their prerequisites, total number of types of subjects per term code, instructor of this course, and the number of types of courses ever taught by the instructor?",
@@ -393,7 +1062,27 @@
             "term code",
             "instructor",
             "types of courses"
-        ]
+        ],
+        "mapping": {
+            "term descriptions": [
+                "ACADEMIC_TERMS.TERM_DESCRIPTION"
+            ],
+            "subject titles": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ],
+            "prerequisites": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.PREREQUISITES"
+            ],
+            "term code": [
+                "ACADEMIC_TERMS.TERM_CODE"
+            ],
+            "instructor": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"
+            ],
+            "types of courses": [
+                "Experience"
+            ]
+        }
     },
     {
         "question": "Show the details of rooms including the full name of the rooms, the building names, floor numbers, the organizations occupying them, name of the departments occupying them, and the percentage of the room area over the assignable floor area and building.",
@@ -406,7 +1095,30 @@
             "department_name",
             "percentage_room_area_over_assignable_floor_area",
             "building_area"
-        ]
+        ],
+        "mapping": {
+            "room_full_name": [
+                "FAC_ROOMS.ROOM_FULL_NAME"
+            ],
+            "building_name": [
+                "FAC_BUILDING.BUILDING_NAME"
+            ],
+            "floor_number": [
+                "FAC_FLOOR.FLOOR"
+            ],
+            "organization_name": [
+                "FAC_ORGANIZATION.ORGANIZATION_NAME"
+            ],
+            "department_name": [
+                "FAC_ORGANIZATION.HR_DEPARTMENT_NAME"
+            ],
+            "percentage_room_area_over_assignable_floor_area": [
+                "PERC_OF_ASG_FLOOR"
+            ],
+            "building_area": [
+                "PERC_OF_ASG_BUILDING"
+            ]
+        }
     },
     {
         "question": "Show the details of rooms including the full name of the rooms, the building names, floor numbers, the organizations occupying them, name of the departments occupying them, and the percentage of the room area over the floor area and building.",
@@ -421,7 +1133,36 @@
             "room area",
             "floor area",
             "building"
-        ]
+        ],
+        "mapping": {
+            "rooms": [
+                "ROOM_FULL_NAME"
+            ],
+            "full name": [
+                "ROOM_FULL_NAME"
+            ],
+            "building names": [
+                "FAC_BUILDING.BUILDING_NAME"
+            ],
+            "floor numbers": [
+                "FAC_FLOOR.FLOOR"
+            ],
+            "organizations": [
+                "FAC_ORGANIZATION.ORGANIZATION_NAME"
+            ],
+            "departments": [
+                "FAC_ORGANIZATION.HR_DEPARTMENT_NAME"
+            ],
+            "room area": [
+                "AREA"
+            ],
+            "floor area": [
+                "FLOOR_AREA"
+            ],
+            "building": [
+                "BUILDING_AREA"
+            ]
+        }
     },
     {
         "question": "What are the academic year, and instructors names for courses offered in the academic year 2022, along with the total number of types of courses per instructor?",
@@ -431,7 +1172,21 @@
             "instructors names",
             "courses",
             "types of courses"
-        ]
+        ],
+        "mapping": {
+            "academic year": [
+                "ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"
+            ],
+            "instructors names": [
+                "EMPLOYEE_DIRECTORY.FULL_NAME"
+            ],
+            "courses": [
+                "SUBJECT_OFFERED.COURSE_NUMBER"
+            ],
+            "types of courses": [
+                "Total_Courses"
+            ]
+        }
     },
     {
         "question": "What are the building names, department names, organizations, their highest and lowest floor number, along with the total number of rooms per each building key?",
@@ -443,7 +1198,30 @@
             "floor number",
             "room",
             "building key"
-        ]
+        ],
+        "mapping": {
+            "building name": [
+                "FAC_BUILDING.BUILDING_NAME"
+            ],
+            "department name": [
+                "FAC_ORGANIZATION.HR_DEPARTMENT_NAME"
+            ],
+            "organization": [
+                "FAC_ORGANIZATION.ORGANIZATION"
+            ],
+            "floor number": [
+                "FAC_FLOOR.LEVEL_ID",
+                "MAX_FLOOR",
+                "MIN_FLOOR"
+            ],
+            "room": [
+                "Total_Rooms"
+            ],
+            "building key": [
+                "FAC_BUILDING.FAC_BUILDING_KEY",
+                "FAC_ROOMS.BUILDING_KEY"
+            ]
+        }
     },
     {
         "question": "What are the details of the students including their full names, emails, department names, department phone numbers, school names, and the total number of students per department and school?",
@@ -457,7 +1235,37 @@
             "school names",
             "total number of students per department",
             "total number of students per school"
-        ]
+        ],
+        "mapping": {
+            "students": [
+                "MIT_STUDENT_DIRECTORY.FULL_NAME",
+                "MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS",
+                "SIS_DEPARTMENT.DEPARTMENT_NAME",
+                "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
+                "SIS_DEPARTMENT.SCHOOL_NAME"
+            ],
+            "full names": [
+                "MIT_STUDENT_DIRECTORY.FULL_NAME"
+            ],
+            "emails": [
+                "MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS"
+            ],
+            "department names": [
+                "SIS_DEPARTMENT.DEPARTMENT_NAME"
+            ],
+            "department phone numbers": [
+                "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER"
+            ],
+            "school names": [
+                "SIS_DEPARTMENT.SCHOOL_NAME"
+            ],
+            "total number of students per department": [
+                "Total_Students_DEPT"
+            ],
+            "total number of students per school": [
+                "Total_Students_SCHOOLS"
+            ]
+        }
     },
     {
         "question": "What are the unique titles of subjects offered in the fall term along with their instructor names, instructor emails, and the total number of types of subjects per instructor?",
@@ -469,7 +1277,28 @@
             "instructor names",
             "instructor emails",
             "types of subjects"
-        ]
+        ],
+        "mapping": {
+            "titles": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ],
+            "subjects": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
+            ],
+            "fall term": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE",
+                "ACADEMIC_TERMS_ALL.TERM_CODE"
+            ],
+            "instructor names": [
+                "EMPLOYEE_DIRECTORY.FULL_NAME"
+            ],
+            "instructor emails": [
+                "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"
+            ],
+            "types of subjects": [
+                "Total_Subjects"
+            ]
+        }
     },
     {
         "question": "List the building names, names of departments occupying them, the total gross square footage, and the total and average assignable square footage per building key.",
@@ -480,7 +1309,26 @@
             "gross square footage",
             "assignable square footage",
             "building key"
-        ]
+        ],
+        "mapping": {
+            "building names": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "departments": [
+                "FAC_ORGANIZATION.HR_DEPARTMENT_NAME"
+            ],
+            "gross square footage": [
+                "BUILDINGS.BLDG_GROSS_SQUARE_FOOTAGE"
+            ],
+            "assignable square footage": [
+                "BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE",
+                "Avg_Square_Footage"
+            ],
+            "building key": [
+                "BUILDINGS.BUILDING_KEY",
+                "FAC_BUILDING.FAC_BUILDING_KEY"
+            ]
+        }
     },
     {
         "question": "Retrieve the titles of subjects offered in the summer term along with their descriptions, responsible faculty names, email address, building name, room name, floor level, building street address, and the total number of types of courses per departmnet.",
@@ -496,7 +1344,39 @@
             "building street address",
             "types of courses",
             "department"
-        ]
+        ],
+        "mapping": {
+            "titles": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+            ],
+            "descriptions": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_DESCRIPTION"
+            ],
+            "faculty names": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.RESPONSIBLE_FACULTY_NAME"
+            ],
+            "email address": [
+                "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"
+            ],
+            "building name": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "room name": [
+                "FAC_ROOMS.ROOM_FULL_NAME"
+            ],
+            "floor level": [
+                "FAC_FLOOR.LEVEL_ID"
+            ],
+            "building street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "types of courses": [
+                "Total_Courses"
+            ],
+            "department": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_CODE"
+            ]
+        }
     },
     {
         "question": "For each term code, list the term description, attribute desciption, department name, school name, and the number of subjects in the area of humanities, arts and social sciences.",
@@ -511,7 +1391,37 @@
             "area of humanities",
             "arts",
             "social sciences"
-        ]
+        ],
+        "mapping": {
+            "term code": [
+                "ACADEMIC_TERMS_ALL.TERM_CODE",
+                "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
+            ],
+            "term description": [
+                "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"
+            ],
+            "attribute desciption": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.HASS_ATTRIBUTE_DESC"
+            ],
+            "department name": [
+                "SIS_DEPARTMENT.DEPARTMENT_NAME"
+            ],
+            "school name": [
+                "SIS_DEPARTMENT.SCHOOL_NAME"
+            ],
+            "subjects": [
+                "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
+            ],
+            "area of humanities": [
+                "CIS_HASS_ATTRIBUTE.CIS_ATTRIBUTE_GROUP"
+            ],
+            "arts": [
+                "CIS_HASS_ATTRIBUTE.CIS_ATTRIBUTE_GROUP"
+            ],
+            "social sciences": [
+                "CIS_HASS_ATTRIBUTE.CIS_ATTRIBUTE_GROUP"
+            ]
+        }
     },
     {
         "question": "List building names, their height, street address, city, state, postal code, their gross and assignable square footage, the smallest and largest floor level and the total area of all rooms for each building key.",
@@ -528,7 +1438,43 @@
             "floor level",
             "room area",
             "building key"
-        ]
+        ],
+        "mapping": {
+            "building name": [
+                "FAC_BUILDING.BUILDING_NAME"
+            ],
+            "height": [
+                "FAC_BUILDING.BUILDING_HEIGHT"
+            ],
+            "street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "city": [
+                "FAC_BUILDING_ADDRESS.CITY"
+            ],
+            "state": [
+                "FAC_BUILDING_ADDRESS.STATE"
+            ],
+            "postal code": [
+                "FAC_BUILDING_ADDRESS.POSTAL_CODE"
+            ],
+            "gross square footage": [
+                "FAC_BUILDING.EXT_GROSS_AREA"
+            ],
+            "assignable square footage": [
+                "FAC_BUILDING.ASSIGNABLE_AREA"
+            ],
+            "floor level": [
+                "SMALLEST_FLOOR",
+                "HIGHEST_FLOOR"
+            ],
+            "room area": [
+                "Total_Room_Area"
+            ],
+            "building key": [
+                "FAC_BUILDING.FAC_BUILDING_KEY"
+            ]
+        }
     },
     {
         "question": "What is the category title, version, department name, school name, total number of courses for each course level, and the total number of degree-granting courses for each CIP category code?",
@@ -540,7 +1486,28 @@
             "school name",
             "course level",
             "CIP category code"
-        ]
+        ],
+        "mapping": {
+            "category title": [
+                "CIP.CATEGORY_TITLE"
+            ],
+            "version": [
+                "CIP.VERSION"
+            ],
+            "department name": [
+                "SIS_DEPARTMENT.DEPARTMENT_NAME"
+            ],
+            "school name": [
+                "SIS_DEPARTMENT.SCHOOL_NAME"
+            ],
+            "course level": [
+                "Total_U_Courses",
+                "Total_G_Courses"
+            ],
+            "CIP category code": [
+                "CIP.CATEGORY_CODE"
+            ]
+        }
     },
     {
         "question": "What is the total number of library materials, the minimum and maximum publication years, and the total number of materials status for each course name?",
@@ -550,7 +1517,25 @@
             "publication years",
             "materials status",
             "course name"
-        ]
+        ],
+        "mapping": {
+            "library materials": [
+                "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER",
+                "Total_Materials"
+            ],
+            "publication years": [
+                "LIBRARY_RESERVE_CATALOG.CATALOG_YEAR",
+                "Min_Publication_Year",
+                "Max_Publication_Year"
+            ],
+            "materials status": [
+                "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS",
+                "Total_Statuses"
+            ],
+            "course name": [
+                "LIBRARY_COURSE_INSTRUCTOR.COURSE_NAME"
+            ]
+        }
     },
     {
         "question": "What is the total number of library reserve materials, the minimum and maximum publication years, and the total number of enrolled students for each course instructor?",
@@ -560,7 +1545,26 @@
             "publication years",
             "enrolled students",
             "course instructor"
-        ]
+        ],
+        "mapping": {
+            "library reserve materials": [
+                "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER",
+                "Total_Materials"
+            ],
+            "publication years": [
+                "LIBRARY_RESERVE_CATALOG.CATALOG_YEAR",
+                "Min_Publication_Year",
+                "Max_Publication_Year"
+            ],
+            "enrolled students": [
+                "LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+                "Total_Enrolled_Students"
+            ],
+            "course instructor": [
+                "LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME",
+                "LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY"
+            ]
+        }
     },
     {
         "question": "What is the material status, term description, total number of courses and materials, occurences in departments and school, and the total number of instructors for each library material status code and term code?",
@@ -575,7 +1579,37 @@
             "instructors",
             "library material status code",
             "term code"
-        ]
+        ],
+        "mapping": {
+            "material status": [
+                "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"
+            ],
+            "term description": [
+                "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"
+            ],
+            "courses": [
+                "Total_Courses"
+            ],
+            "materials": [
+                "Total_Materials"
+            ],
+            "departments": [
+                "LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_CODE"
+            ],
+            "school": [
+                "LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"
+            ],
+            "instructors": [
+                "Total_Instructors"
+            ],
+            "library material status code": [
+                "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS_CODE"
+            ],
+            "term code": [
+                "ACADEMIC_TERMS_ALL.TERM_CODE",
+                "LIBRARY_SUBJECT_OFFERED.TERM_CODE"
+            ]
+        }
     },
     {
         "question": "List all space units, their floor and building name, building street address, as well as their space usage and list how many space units are on the same building and floor.",
@@ -586,6 +1620,23 @@
             "building name",
             "building street address",
             "space usage"
-        ]
+        ],
+        "mapping": {
+            "space units": [
+                "SPACE_UNIT.SPACE_UNIT"
+            ],
+            "floor": [
+                "SPACE_FLOOR.FLOOR"
+            ],
+            "building name": [
+                "BUILDINGS.BUILDING_NAME"
+            ],
+            "building street address": [
+                "BUILDINGS.BUILDING_STREET_ADDRESS"
+            ],
+            "space usage": [
+                "SPACE_USAGE.SPACE_USAGE"
+            ]
+        }
     }
 ]

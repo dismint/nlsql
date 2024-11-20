@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Template_ID,NUMBER,PRIMARY KEY,
+Version_Number,NUMBER,,
+Template_Type_Code,TEXT,,FOREIGN KEY CRE_DOC_TEMPLATE_MGT-REF_TEMPLATE_TYPES (Template_Type_Code)
+Date_Effective_From,TIME,,
+Date_Effective_To,TIME,,
+Template_Details,TEXT,,

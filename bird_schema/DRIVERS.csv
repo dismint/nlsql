@@ -1,0 +1,10 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+driverId,INTEGER,PRIMARY KEY,
+driverRef,TEXT,,
+number,INTEGER,,
+code,TEXT,,
+forename,TEXT,,
+surname,TEXT,,
+dob,DATE,,
+nationality,TEXT,,
+url,TEXT,,

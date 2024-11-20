@@ -1,0 +1,4 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+directorid,INTEGER,,
+d_quality,INTEGER,,
+avg_revenue,INTEGER,,

@@ -1,0 +1,3 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Template_Type_Code,TEXT,PRIMARY KEY,
+Template_Type_Description,TEXT,,

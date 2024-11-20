@@ -1,0 +1,22 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Id,INTEGER,PRIMARY KEY,
+PostTypeId,INTEGER,,
+AcceptedAnswerId,INTEGER,,
+CreaionDate,DATETIME,,
+Score,INTEGER,,
+ViewCount,INTEGER,,
+Body,TEXT,,
+OwnerUserId,INTEGER,,FOREIGN KEY USERS (Id)
+LasActivityDate,DATETIME,,
+Title,TEXT,,
+Tags,TEXT,,
+AnswerCount,INTEGER,,
+CommentCount,INTEGER,,
+FavoriteCount,INTEGER,,
+LastEditorUserId,INTEGER,,FOREIGN KEY USERS (Id)
+LastEditDate,DATETIME,,
+CommunityOwnedDate,DATETIME,,
+ParentId,INTEGER,,FOREIGN KEY POSTS (Id)
+ClosedDate,DATETIME,,
+OwnerDisplayName,TEXT,,
+LastEditorDisplayName,TEXT,,

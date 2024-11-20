@@ -1,0 +1,12 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+professional_id,NUMBER,PRIMARY KEY,
+role_code,TEXT,,
+first_name,TEXT,,
+street,TEXT,,
+city,TEXT,,
+state,TEXT,,
+zip_code,TEXT,,
+last_name,TEXT,,
+email_address,TEXT,,
+home_phone,TEXT,,
+cell_number,TEXT,,

@@ -1,0 +1,1473 @@
+[
+  {
+    "question": "What is the current building key, building street address, city, state, and postal code of the history department?",
+    "sql": "SELECT DISTINCT d.FCLT_BUILDING_KEY, e.BUILDING_STREET_ADDRESS, d.CITY, d.STATE, d.POSTAL_CODE FROM FCLT_BUILDING_ADDRESS d JOIN FCLT_ROOMS a ON a.FCLT_BUILDING_KEY = d.FCLT_BUILDING_KEY JOIN FCLT_ORG_DLC_KEY b ON a.FCLT_ORGANIZATION_KEY = b.FCLT_ORGANIZATION_KEY JOIN MASTER_DEPT_HIERARCHY c ON b.DLC_KEY = c.DLC_KEY JOIN BUILDINGS e ON e.BUILDING_KEY = d.FCLT_BUILDING_KEY WHERE lower(c.DLC_NAME) = lower('History') AND d.ADDRESS_PURPOSE = 'STREET';",
+    "topics": [
+      "building key",
+      "building street address",
+      "city",
+      "state",
+      "postal code",
+      "history department"
+    ],
+    "mapping": {
+      "building key": ["FCLT_BUILDING_ADDRESS.FCLT_BUILDING_KEY"],
+      "building street address": [
+        "BUILDINGS.BUILDING_STREET_ADDRESS",
+        "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+      ],
+      "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+      "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"],
+      "history department": ["MASTER_DEPT_HIERARCHY.DLC_NAME"]
+    },
+    "columns": [
+      "FCLT_BUILDING_ADDRESS.CITY",
+      "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE",
+      "FCLT_BUILDING_ADDRESS.STATE",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "FCLT_BUILDING_ADDRESS.FCLT_BUILDING_KEY",
+      "MASTER_DEPT_HIERARCHY.DLC_NAME",
+      "FCLT_BUILDING_ADDRESS.POSTAL_CODE"
+    ],
+    "qualified": "SELECT DISTINCT\n  fclt_building_address.\"fclt_building_key\" AS \"fclt_building_key\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  fclt_building_address.\"city\" AS \"city\",\n  fclt_building_address.\"state\" AS \"state\",\n  fclt_building_address.\"postal_code\" AS \"postal_code\"\nFROM \"fclt_building_address\" AS \"d\"\nJOIN \"fclt_rooms\" AS \"a\"\n  ON fclt_rooms.\"fclt_building_key\" = fclt_building_address.\"fclt_building_key\"\nJOIN \"fclt_org_dlc_key\" AS \"b\"\n  ON fclt_rooms.\"fclt_organization_key\" = fclt_org_dlc_key.\"fclt_organization_key\"\nJOIN \"master_dept_hierarchy\" AS \"c\"\n  ON fclt_org_dlc_key.\"dlc_key\" = master_dept_hierarchy.\"dlc_key\"\nJOIN \"buildings\" AS \"e\"\n  ON buildings.\"building_key\" = fclt_building_address.\"fclt_building_key\"\nWHERE\n  LOWER(master_dept_hierarchy.\"dlc_name\") = LOWER('History')\n  AND fclt_building_address.\"address_purpose\" = 'STREET'"
+  },
+  {
+    "question": "Show the unique activity titles, locations, term start date, and supervisor name for all independent activities, sorted by the ascending order of start date.",
+    "sql": "SELECT DISTINCT a.activity_title, d.session_location, c.term_start_date, b.person_name AS Leader FROM iap_subject_detail a JOIN iap_subject_person b ON a.iap_subject_person_key = b.iap_subject_person_key JOIN academic_terms_all c ON c.term_code = a.term_code JOIN iap_subject_session d ON a.iap_subject_session_key = d.iap_subject_session_key WHERE b.person_role = 'Activity leader' ORDER BY term_start_date ASC;",
+    "topics": [
+      "activity titles",
+      "locations",
+      "term start date",
+      "supervisor name"
+    ],
+    "mapping": {
+      "activity titles": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "locations": ["IAP_SUBJECT_SESSION.SESSION_LOCATION"],
+      "term start date": ["ACADEMIC_TERMS_ALL.TERM_START_DATE"],
+      "supervisor name": [
+        "IAP_SUBJECT_PERSON.PERSON_NAME",
+        "IAP_SUBJECT_PERSON.PERSON_ROLE"
+      ]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_START_DATE",
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_PERSON.PERSON_NAME",
+      "IAP_SUBJECT_SESSION.SESSION_LOCATION",
+      "IAP_SUBJECT_PERSON.PERSON_ROLE"
+    ],
+    "qualified": "SELECT DISTINCT\n  iap_subject_detail.\"activity_title\" AS \"activity_title\",\n  iap_subject_session.\"session_location\" AS \"session_location\",\n  academic_terms_all.\"term_start_date\" AS \"term_start_date\",\n  iap_subject_person.\"person_name\" AS \"leader\"\nFROM \"iap_subject_detail\" AS \"a\"\nJOIN \"iap_subject_person\" AS \"b\"\n  ON iap_subject_detail.\"iap_subject_person_key\" = iap_subject_person.\"iap_subject_person_key\"\nJOIN \"academic_terms_all\" AS \"c\"\n  ON academic_terms_all.\"term_code\" = iap_subject_detail.\"term_code\"\nJOIN \"iap_subject_session\" AS \"d\"\n  ON iap_subject_detail.\"iap_subject_session_key\" = iap_subject_session.\"iap_subject_session_key\"\nWHERE\n  iap_subject_person.\"person_role\" = 'Activity leader'\nORDER BY\n  \"term_start_date\" ASC"
+  },
+  {
+    "question": "List the unique course instructor names, course titles, and the amount of material for each course instructor key and the key of subject offered.",
+    "sql": "SELECT DISTINCT LIBRARY_COURSE_INSTRUCTOR.instructor_name, LIBRARY_SUBJECT_OFFERED.subject_title, COUNT(LIBRARY_RESERVE_CATALOG.catalog_isbn) OVER (PARTITION BY LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY, LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY) FROM LIBRARY_COURSE_INSTRUCTOR JOIN LIBRARY_RESERVE_MATRL_DETAIL ON LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY = LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_COURSE_INSTRUCTOR_KEY JOIN LIBRARY_SUBJECT_OFFERED ON LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY = LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_SUBJECT_OFFERED_KEY JOIN LIBRARY_RESERVE_CATALOG ON LIBRARY_RESERVE_CATALOG.LIBRARY_RESERVE_CATALOG_KEY = LIBRARY_RESERVE_MATRL_DETAIL.LIBRARY_RESERVE_CATALOG_KEY;",
+    "topics": [
+      "course instructor names",
+      "course titles",
+      "amount of material",
+      "course instructor key",
+      "subject offered key"
+    ],
+    "mapping": {
+      "course instructor names": ["LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME"],
+      "course titles": ["LIBRARY_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "amount of material": ["LIBRARY_RESERVE_CATALOG.CATALOG_ISBN"],
+      "course instructor key": [
+        "LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY"
+      ],
+      "key of subject offered": [
+        "LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY"
+      ]
+    },
+    "columns": [
+      "LIBRARY_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "LIBRARY_RESERVE_CATALOG.CATALOG_ISBN",
+      "LIBRARY_COURSE_INSTRUCTOR.LIBRARY_COURSE_INSTRUCTOR_KEY",
+      "LIBRARY_SUBJECT_OFFERED.LIBRARY_SUBJECT_OFFERED_KEY",
+      "LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME"
+    ],
+    "qualified": "SELECT DISTINCT\n  \"library_course_instructor\".\"instructor_name\" AS \"instructor_name\",\n  \"library_subject_offered\".\"subject_title\" AS \"subject_title\",\n  COUNT(\"library_reserve_catalog\".\"catalog_isbn\") OVER (PARTITION BY \"library_course_instructor\".\"library_course_instructor_key\", \"library_subject_offered\".\"library_subject_offered_key\") AS \"_col_2\"\nFROM \"library_course_instructor\" AS \"library_course_instructor\"\nJOIN \"library_reserve_matrl_detail\" AS \"library_reserve_matrl_detail\"\n  ON \"library_course_instructor\".\"library_course_instructor_key\" = \"library_reserve_matrl_detail\".\"library_course_instructor_key\"\nJOIN \"library_subject_offered\" AS \"library_subject_offered\"\n  ON \"library_subject_offered\".\"library_subject_offered_key\" = \"library_reserve_matrl_detail\".\"library_subject_offered_key\"\nJOIN \"library_reserve_catalog\" AS \"library_reserve_catalog\"\n  ON \"library_reserve_catalog\".\"library_reserve_catalog_key\" = \"library_reserve_matrl_detail\".\"library_reserve_catalog_key\""
+  },
+  {
+    "question": "What is the room, floor, building key, building street address, city, state, and postal code of Professor Lily Knapp's office?",
+    "sql": "SELECT fac_rooms.Room, fac_rooms.floor, fac_building_address.BUILDING_KEY, BUILDINGS.BUILDING_STREET_ADDRESS, fac_building_address.CITY, fac_building_address.STATE, fac_building_address.POSTAL_CODE FROM (SELECT office_location FROM employee_directory WHERE full_name = 'Knapp, Lily-Mae') JOIN fac_rooms on office_location = fac_room_key JOIN fac_building_address on fac_rooms.building_key = fac_building_address.BUILDING_KEY JOIN BUILDINGS ON BUILDINGS.BUILDING_KEY = fac_building_address.BUILDING_KEY where fac_building_address.ADDRESS_PURPOSE = 'STREET';",
+    "topics": [
+      "room",
+      "floor",
+      "building key",
+      "building street address",
+      "city",
+      "state",
+      "postal code",
+      "Professor Lily Knapp's office"
+    ],
+    "mapping": {
+      "room": ["FAC_ROOMS.ROOM"],
+      "floor": ["FAC_ROOMS.FLOOR"],
+      "building key": ["FAC_BUILDING_ADDRESS.BUILDING_KEY"],
+      "building street address": [
+        "BUILDINGS.BUILDING_STREET_ADDRESS",
+        "FAC_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+      ],
+      "city": ["FAC_BUILDING_ADDRESS.CITY"],
+      "state": ["FAC_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FAC_BUILDING_ADDRESS.POSTAL_CODE"]
+    },
+    "columns": [
+      "FAC_BUILDING_ADDRESS.BUILDING_KEY",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "EMPLOYEE_DIRECTORY.FULL_NAME",
+      "EMPLOYEE_DIRECTORY.OFFICE_LOCATION",
+      "FAC_BUILDING_ADDRESS.ADDRESS_PURPOSE",
+      "FAC_BUILDING_ADDRESS.POSTAL_CODE",
+      "FAC_BUILDING_ADDRESS.CITY",
+      "FAC_ROOMS.FLOOR",
+      "FAC_ROOMS.ROOM",
+      "FAC_BUILDING_ADDRESS.STATE"
+    ],
+    "qualified": "SELECT\n  \"fac_rooms\".\"room\" AS \"room\",\n  \"fac_rooms\".\"floor\" AS \"floor\",\n  \"fac_building_address\".\"building_key\" AS \"building_key\",\n  \"buildings\".\"building_street_address\" AS \"building_street_address\",\n  \"fac_building_address\".\"city\" AS \"city\",\n  \"fac_building_address\".\"state\" AS \"state\",\n  \"fac_building_address\".\"postal_code\" AS \"postal_code\"\nFROM (\n  SELECT\n    \"employee_directory\".\"office_location\" AS \"office_location\"\n  FROM \"employee_directory\" AS \"employee_directory\"\n  WHERE\n    \"employee_directory\".\"full_name\" = 'Knapp, Lily-Mae'\n) AS \"_q_0\"\nJOIN \"fac_rooms\" AS \"fac_rooms\"\n  ON \"_q_0\".\"office_location\" = \"fac_rooms\".\"fac_room_key\"\nJOIN \"fac_building_address\" AS \"fac_building_address\"\n  ON \"fac_rooms\".\"building_key\" = \"fac_building_address\".\"building_key\"\nJOIN \"buildings\" AS \"buildings\"\n  ON \"buildings\".\"building_key\" = \"fac_building_address\".\"building_key\"\nWHERE\n  \"fac_building_address\".\"address_purpose\" = 'STREET'"
+  },
+  {
+    "question": "Show the unique full room names, building names, the street address, the city, the state and postal code of subjects that are enrollable for Computer Science students.",
+    "sql": "SELECT DISTINCT fr.ROOM_FULL_NAME, b.BUILDING_NAME, b.BUILDING_STREET_ADDRESS, fba.CITY, fba.STATE, fba.POSTAL_CODE FROM COURSE_CATALOG_SUBJECT_OFFERED JOIN FCLT_ROOMS fr ON MEET_PLACE = FCLT_ROOM_KEY JOIN FCLT_BUILDING_ADDRESS fba ON fba.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY JOIN FCLT_BUILDING fb ON fb.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY JOIN BUILDINGS b ON b.BUILDING_KEY = fr.FCLT_BUILDING_KEY WHERE DEPARTMENT_NAME = 'Electrical Eng & Computer Sci' AND fba.ADDRESS_PURPOSE = 'STREET';",
+    "topics": [
+      "full room names",
+      "building names",
+      "street address",
+      "city",
+      "state",
+      "postal code",
+      "subjects",
+      "Computer Science students"
+    ],
+    "mapping": {
+      "full room names": ["FCLT_ROOMS.ROOM_FULL_NAME"],
+      "building names": ["BUILDINGS.BUILDING_NAME"],
+      "street address": [
+        "BUILDINGS.BUILDING_STREET_ADDRESS",
+        "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+      ],
+      "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+      "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"],
+      "Computer Science students": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"
+      ]
+    },
+    "columns": [
+      "FCLT_BUILDING_ADDRESS.STATE",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "FCLT_BUILDING_ADDRESS.CITY",
+      "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME",
+      "FCLT_ROOMS.ROOM_FULL_NAME",
+      "FCLT_BUILDING_ADDRESS.POSTAL_CODE",
+      "BUILDINGS.BUILDING_NAME",
+      "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+    ],
+    "qualified": "SELECT DISTINCT\n  fclt_rooms.\"room_full_name\" AS \"room_full_name\",\n  buildings.\"building_name\" AS \"building_name\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  fclt_building_address.\"city\" AS \"city\",\n  fclt_building_address.\"state\" AS \"state\",\n  fclt_building_address.\"postal_code\" AS \"postal_code\"\nFROM \"course_catalog_subject_offered\" AS \"course_catalog_subject_offered\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON \"course_catalog_subject_offered\".\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building_address\" AS \"fba\"\n  ON fclt_building_address.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\"\nJOIN \"fclt_building\" AS \"fb\"\n  ON fclt_building.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_key\" = fclt_rooms.\"fclt_building_key\"\nWHERE\n  \"course_catalog_subject_offered\".\"department_name\" = 'Electrical Eng & Computer Sci'\n  AND fclt_building_address.\"address_purpose\" = 'STREET'"
+  },
+  {
+    "question": "List the unique term code, subject title, room, floor, building key, building street address, city, state, and postal code, formats, and number of enrolled students for all courses with more than 300 attendees.",
+    "sql": "SELECT DISTINCT s.TERM_CODE, s.subject_title, fr.room, fr.floor, b.BUILDING_KEY, b.BUILDING_STREET_ADDRESS, fba.CITY, fba.STATE, fba.POSTAL_CODE, s.form_type, s.num_enrolled_students FROM subject_offered s JOIN FCLT_ROOMS fr ON MEET_PLACE = FCLT_ROOM_KEY JOIN FCLT_BUILDING_ADDRESS fba ON fba.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY JOIN BUILDINGS b ON fr.FCLT_BUILDING_KEY = b.BUILDING_KEY WHERE s.num_enrolled_students > 300 AND fba.ADDRESS_PURPOSE = 'STREET';",
+    "topics": [
+      "term code",
+      "subject title",
+      "room",
+      "floor",
+      "building key",
+      "building street address",
+      "city",
+      "state",
+      "postal code",
+      "formats",
+      "number of enrolled students",
+      "attendees"
+    ],
+    "mapping": {
+      "term code": ["SUBJECT_OFFERED.TERM_CODE"],
+      "subject title": ["SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "room": ["FCLT_ROOMS.ROOM"],
+      "floor": ["FCLT_ROOMS.FLOOR"],
+      "building key": ["BUILDINGS.BUILDING_KEY"],
+      "building street address": [
+        "BUILDINGS.BUILDING_STREET_ADDRESS",
+        "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+      ],
+      "city": ["FCLT_BUILDING_ADDRESS.CITY"],
+      "state": ["FCLT_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FCLT_BUILDING_ADDRESS.POSTAL_CODE"],
+      "formats": ["SUBJECT_OFFERED.FORM_TYPE"],
+      "enrolled students": ["SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+      "attendees": ["SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"]
+    },
+    "columns": [
+      "FCLT_BUILDING_ADDRESS.STATE",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "SUBJECT_OFFERED.FORM_TYPE",
+      "FCLT_ROOMS.ROOM",
+      "SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+      "FCLT_BUILDING_ADDRESS.CITY",
+      "BUILDINGS.BUILDING_KEY",
+      "FCLT_BUILDING_ADDRESS.POSTAL_CODE",
+      "FCLT_ROOMS.FLOOR",
+      "SUBJECT_OFFERED.TERM_CODE",
+      "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE",
+      "SUBJECT_OFFERED.SUBJECT_TITLE"
+    ],
+    "qualified": "SELECT DISTINCT\n  subject_offered.\"term_code\" AS \"term_code\",\n  subject_offered.\"subject_title\" AS \"subject_title\",\n  fclt_rooms.\"room\" AS \"room\",\n  fclt_rooms.\"floor\" AS \"floor\",\n  buildings.\"building_key\" AS \"building_key\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  fclt_building_address.\"city\" AS \"city\",\n  fclt_building_address.\"state\" AS \"state\",\n  fclt_building_address.\"postal_code\" AS \"postal_code\",\n  subject_offered.\"form_type\" AS \"form_type\",\n  subject_offered.\"num_enrolled_students\" AS \"num_enrolled_students\"\nFROM \"subject_offered\" AS \"s\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON subject_offered.\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building_address\" AS \"fba\"\n  ON fclt_building_address.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\"\nJOIN \"buildings\" AS \"b\"\n  ON fclt_rooms.\"fclt_building_key\" = buildings.\"building_key\"\nWHERE\n  subject_offered.\"num_enrolled_students\" > 300\n  AND fclt_building_address.\"address_purpose\" = 'STREET'"
+  },
+  {
+    "question": "What are the subject titles, their material titles, ISBN numbers, new shelf prices, and total costs of new materials for each subject title, sorted by individual item prices in ascending order?",
+    "sql": "SELECT DISTINCT tso.SUBJECT_TITLE, tm.title, tm.isbn, tm.new_shelf_price, SUM(tm.new_shelf_price) OVER(PARTITION BY tso.SUBJECT_TITLE) FROM tip_material tm JOIN TIP_DETAIL td ON tm.TIP_MATERIAL_KEY = td.TIP_MATERIAL_KEY JOIN TIP_SUBJECT_OFFERED tso ON tso.SUBJECT_ID = td.SUBJECT_ID ORDER BY tm.new_shelf_price ASC;",
+    "topics": [
+      "subject title",
+      "material title",
+      "ISBN number",
+      "new shelf price",
+      "total cost of new material"
+    ],
+    "mapping": {
+      "subject title": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "material title": ["TIP_MATERIAL.TITLE"],
+      "ISBN number": ["TIP_MATERIAL.ISBN"],
+      "new shelf price": ["TIP_MATERIAL.NEW_SHELF_PRICE"]
+    },
+    "columns": [
+      "TIP_MATERIAL.ISBN",
+      "TIP_MATERIAL.TITLE",
+      "TIP_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "TIP_MATERIAL.NEW_SHELF_PRICE"
+    ],
+    "qualified": "SELECT DISTINCT\n  tip_subject_offered.\"subject_title\" AS \"subject_title\",\n  tip_material.\"title\" AS \"title\",\n  tip_material.\"isbn\" AS \"isbn\",\n  tip_material.\"new_shelf_price\" AS \"new_shelf_price\",\n  SUM(tip_material.\"new_shelf_price\") OVER (PARTITION BY tip_subject_offered.\"subject_title\") AS \"_col_4\"\nFROM \"tip_material\" AS \"tm\"\nJOIN \"tip_detail\" AS \"td\"\n  ON tip_material.\"tip_material_key\" = tip_detail.\"tip_material_key\"\nJOIN \"tip_subject_offered\" AS \"tso\"\n  ON tip_subject_offered.\"subject_id\" = tip_detail.\"subject_id\"\nORDER BY\n  tip_material.\"new_shelf_price\" ASC"
+  },
+  {
+    "question": "List the long building names constructed before 1950 that have more than 100 employees and the built year and number of employees.",
+    "sql": "SELECT * FROM (SELECT DISTINCT a.BUILDING_NAME_LONG, a.year_built, COUNT(distinct employee_directory.MIT_ID) OVER (PARTITION BY a.BUILDING_NAME_LONG, a.year_built) as num_employees FROM (SELECT * FROM (SELECT DISTINCT FCLT_BUILDING_KEY, BUILDING_NAME_LONG, extract(year FROM TO_DATE(date_built, 'MM/DD/YYYY')) as year_built FROM fclt_building_hist) WHERE year_built < 1950) a JOIN fclt_rooms ON fclt_rooms.FCLT_BUILDING_KEY = a.FCLT_BUILDING_KEY JOIN employee_directory ON employee_directory.OFFICE_LOCATION = fclt_rooms.BUILDING_ROOM ) WHERE num_employees > 100;",
+    "topics": ["building name", "constructed year", "number of employees"],
+    "mapping": {
+      "long building names": ["FCLT_BUILDING_HIST.BUILDING_NAME_LONG"],
+      "built year": ["FCLT_BUILDING_HIST.DATE_BUILT"],
+      "employees": ["EMPLOYEE_DIRECTORY.MIT_ID"]
+    },
+    "columns": [
+      "FCLT_BUILDING_HIST.BUILDING_NAME_LONG",
+      "EMPLOYEE_DIRECTORY.MIT_ID",
+      "FCLT_BUILDING_HIST.FCLT_BUILDING_KEY",
+      "FCLT_BUILDING_HIST.DATE_BUILT"
+    ],
+    "qualified": "SELECT\n  \"_q_1\".\"building_name_long\" AS \"building_name_long\",\n  \"_q_1\".\"year_built\" AS \"year_built\",\n  \"_q_1\".\"num_employees\" AS \"num_employees\"\nFROM (\n  SELECT DISTINCT\n    \"a\".\"building_name_long\" AS \"building_name_long\",\n    \"a\".\"year_built\" AS \"year_built\",\n    COUNT(DISTINCT \"employee_directory\".\"mit_id\") OVER (PARTITION BY \"a\".\"building_name_long\", \"a\".\"year_built\") AS \"num_employees\"\n  FROM (\n    SELECT\n      \"_q_0\".\"fclt_building_key\" AS \"fclt_building_key\",\n      \"_q_0\".\"building_name_long\" AS \"building_name_long\",\n      \"_q_0\".\"year_built\" AS \"year_built\"\n    FROM (\n      SELECT DISTINCT\n        \"fclt_building_hist\".\"fclt_building_key\" AS \"fclt_building_key\",\n        \"fclt_building_hist\".\"building_name_long\" AS \"building_name_long\",\n        EXTRACT(YEAR FROM TO_DATE(\"fclt_building_hist\".\"date_built\", 'MM/DD/YYYY')) AS \"year_built\"\n      FROM \"fclt_building_hist\" AS \"fclt_building_hist\"\n    ) AS \"_q_0\"\n    WHERE\n      \"_q_0\".\"year_built\" < 1950\n  ) AS \"a\"\n  JOIN \"fclt_rooms\" AS \"fclt_rooms\"\n    ON \"fclt_rooms\".\"fclt_building_key\" = \"a\".\"fclt_building_key\"\n  JOIN \"employee_directory\" AS \"employee_directory\"\n    ON \"employee_directory\".\"office_location\" = \"fclt_rooms\".\"building_room\"\n) AS \"_q_1\"\nWHERE\n  \"_q_1\".\"num_employees\" > 100"
+  },
+  {
+    "question": "For each building key, what is the building name and the number of courses offered by the Center for International Studies.",
+    "sql": "SELECT fb.BUILDING_NAME, COUNT(DISTINCT ccc.subject_id) FROM cis_course_catalog ccc JOIN COURSE_CATALOG_SUBJECT_OFFERED ccso ON ccc.SUBJECT_ID = ccso.SUBJECT_ID JOIN FCLT_ROOMS fr ON ccso.MEET_PLACE = fr.FCLT_ROOM_KEY JOIN FCLT_BUILDING fb ON fb.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY GROUP BY fb.FCLT_BUILDING_KEY, fb.BUILDING_NAME;",
+    "topics": [
+      "building key",
+      "building name",
+      "courses",
+      "number of courses offered by the Center for International Studies"
+    ],
+    "mapping": {
+      "building key": ["FCLT_BUILDING.FCLT_BUILDING_KEY"],
+      "building name": ["FCLT_BUILDING.BUILDING_NAME"],
+      "courses offered by the Center for International Studies": [
+        "CIS_COURSE_CATALOG.SUBJECT_ID"
+      ]
+    },
+    "columns": [
+      "CIS_COURSE_CATALOG.SUBJECT_ID",
+      "FCLT_BUILDING.BUILDING_NAME",
+      "FCLT_BUILDING.FCLT_BUILDING_KEY"
+    ],
+    "qualified": "SELECT\n  fclt_building.\"building_name\" AS \"building_name\",\n  COUNT(DISTINCT cis_course_catalog.\"subject_id\") AS \"_col_1\"\nFROM \"cis_course_catalog\" AS \"ccc\"\nJOIN \"course_catalog_subject_offered\" AS \"ccso\"\n  ON cis_course_catalog.\"subject_id\" = course_catalog_subject_offered.\"subject_id\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON course_catalog_subject_offered.\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building\" AS \"fb\"\n  ON fclt_building.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\"\nGROUP BY\n  fclt_building.\"fclt_building_key\",\n  fclt_building.\"building_name\""
+  },
+  {
+    "question": "What is the name of the building that accomodates the most students and the number of students this building accomodates?",
+    "sql": "SELECT DISTINCT building_name, num_students FROM (SELECT fclt_building_key, COUNT(distinct full_name) as num_students FROM fclt_rooms JOIN mit_student_directory ON office_location=BUILDING_ROOM GROUP BY fclt_building_key) a JOIN fclt_building ON a.fclt_building_key = fclt_building.fclt_building_key JOIN (SELECT MAX(num_students) as max_num_students FROM (SELECT fclt_building_key, COUNT(distinct full_name) as num_students FROM fclt_rooms JOIN mit_student_directory ON office_location=BUILDING_ROOM GROUP BY fclt_building_key)) b ON a.num_students = b.max_num_students;",
+    "topics": ["name", "students"],
+    "mapping": {
+      "name of the building": ["FCLT_BUILDING.BUILDING_NAME"],
+      "students": ["MIT_STUDENT_DIRECTORY.FULL_NAME"]
+    },
+    "columns": [
+      "FCLT_ROOMS.FCLT_BUILDING_KEY",
+      "FCLT_BUILDING.BUILDING_NAME",
+      "MIT_STUDENT_DIRECTORY.FULL_NAME"
+    ],
+    "qualified": "SELECT DISTINCT\n  \"fclt_building\".\"building_name\" AS \"building_name\",\n  \"a\".\"num_students\" AS \"num_students\"\nFROM (\n  SELECT\n    \"fclt_rooms\".\"fclt_building_key\" AS \"fclt_building_key\",\n    COUNT(DISTINCT \"mit_student_directory\".\"full_name\") AS \"num_students\"\n  FROM \"fclt_rooms\" AS \"fclt_rooms\"\n  JOIN \"mit_student_directory\" AS \"mit_student_directory\"\n    ON \"mit_student_directory\".\"office_location\" = \"fclt_rooms\".\"building_room\"\n  GROUP BY\n    \"fclt_rooms\".\"fclt_building_key\"\n) AS \"a\"\nJOIN \"fclt_building\" AS \"fclt_building\"\n  ON \"a\".\"fclt_building_key\" = \"fclt_building\".\"fclt_building_key\"\nJOIN (\n  SELECT\n    MAX(\"_q_0\".\"num_students\") AS \"max_num_students\"\n  FROM (\n    SELECT\n      \"fclt_rooms\".\"fclt_building_key\" AS \"fclt_building_key\",\n      COUNT(DISTINCT \"mit_student_directory\".\"full_name\") AS \"num_students\"\n    FROM \"fclt_rooms\" AS \"fclt_rooms\"\n    JOIN \"mit_student_directory\" AS \"mit_student_directory\"\n      ON \"mit_student_directory\".\"office_location\" = \"fclt_rooms\".\"building_room\"\n    GROUP BY\n      \"fclt_rooms\".\"fclt_building_key\"\n  ) AS \"_q_0\"\n) AS \"b\"\n  ON \"a\".\"num_students\" = \"b\".\"max_num_students\""
+  },
+  {
+    "question": "List name and floor of the building with the largest floor number?",
+    "sql": "SELECT DISTINCT B.BUILDING_NAME, A.FLOOR FROM FAC_FLOOR A JOIN FAC_BUILDING B ON A.BUILDING_KEY = B.FAC_BUILDING_KEY JOIN (SELECT max(f) as highest_floor FROM (SELECT CASE WHEN REGEXP_LIKE(FLOOR, '^\\d+$') THEN TO_NUMBER(FLOOR) ELSE NULL END AS f FROM fac_floor)) ON (CASE WHEN REGEXP_LIKE(A.FLOOR, '^\\d+$') THEN TO_NUMBER(FLOOR) ELSE NULL END) = highest_floor;",
+    "topics": ["name", "floor", "floor number"],
+    "mapping": {
+      "name": ["FAC_BUILDING.BUILDING_NAME"],
+      "floor": ["FAC_FLOOR.FLOOR"]
+    },
+    "columns": ["FAC_BUILDING.BUILDING_NAME", "FAC_FLOOR.FLOOR"],
+    "qualified": "SELECT DISTINCT\n  fac_building.\"building_name\" AS \"building_name\",\n  fac_floor.\"floor\" AS \"floor\"\nFROM \"fac_floor\" AS \"a\"\nJOIN \"fac_building\" AS \"b\"\n  ON fac_floor.\"building_key\" = fac_building.\"fac_building_key\"\nJOIN (\n  SELECT\n    MAX(\"_q_0\".\"f\") AS \"highest_floor\"\n  FROM (\n    SELECT\n      CASE\n        WHEN REGEXP_LIKE(\"fac_floor\".\"floor\", '^\\d+$')\n        THEN CAST(\"fac_floor\".\"floor\" AS DOUBLE)\n        ELSE NULL\n      END AS \"f\"\n    FROM \"fac_floor\" AS \"fac_floor\"\n  ) AS \"_q_0\"\n) AS \"_q_1\"\n  ON (\n    CASE\n      WHEN REGEXP_LIKE(fac_floor.\"floor\", '^\\d+$')\n      THEN CAST(fac_floor.\"floor\" AS DOUBLE)\n      ELSE NULL\n    END\n  ) = \"_q_1\".\"highest_floor\""
+  },
+  {
+    "question": "For each IAP category and academic year, list the category name, academic year, total fee collected, total number of IAP subjects, and the minimum and maximum enrollment.",
+    "sql": "SELECT isc.IAP_CATEGORY_NAME, td.ACADEMIC_YEAR, SUM(isd.FEE) AS Total_Fee, COUNT(distinct isd.ACTIVITY_TITLE) AS Total_Subjects, MIN(isd.MAX_ENROLLMENT) AS Min_Attendance, MAX(isd.MAX_ENROLLMENT) AS Max_Attendance FROM IAP_SUBJECT_DETAIL isd JOIN IAP_SUBJECT_CATEGORY isc ON isd.IAP_SUBJECT_CATEGORY_KEY = isc.IAP_SUBJECT_CATEGORY_KEY JOIN TIME_DAY td ON isd.TERM_CODE = td.ACADEMIC_TERM_CODE GROUP BY isc.IAP_CATEGORY_NAME, td.ACADEMIC_YEAR;",
+    "topics": [
+      "IAP category",
+      "academic year",
+      "category name",
+      "total fee collected",
+      "total number of IAP subjects",
+      "minimum enrollment",
+      "maximum enrollment"
+    ],
+    "mapping": {
+      "academic year": ["TIME_DAY.ACADEMIC_YEAR"],
+      "category name": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+      "fee collected": ["IAP_SUBJECT_DETAIL.FEE"],
+      "IAP subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME",
+      "TIME_DAY.ACADEMIC_YEAR",
+      "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"
+    ],
+    "qualified": "SELECT\n  iap_subject_category.\"iap_category_name\" AS \"iap_category_name\",\n  time_day.\"academic_year\" AS \"academic_year\",\n  SUM(iap_subject_detail.\"fee\") AS \"total_fee\",\n  COUNT(DISTINCT iap_subject_detail.\"activity_title\") AS \"total_subjects\",\n  MIN(iap_subject_detail.\"max_enrollment\") AS \"min_attendance\",\n  MAX(iap_subject_detail.\"max_enrollment\") AS \"max_attendance\"\nFROM \"iap_subject_detail\" AS \"isd\"\nJOIN \"iap_subject_category\" AS \"isc\"\n  ON iap_subject_detail.\"iap_subject_category_key\" = iap_subject_category.\"iap_subject_category_key\"\nJOIN \"time_day\" AS \"td\"\n  ON iap_subject_detail.\"term_code\" = time_day.\"academic_term_code\"\nGROUP BY\n  iap_subject_category.\"iap_category_name\",\n  time_day.\"academic_year\""
+  },
+  {
+    "question": "For each sponsor of the independent activity periods, list the sponsor name, number of sessions held, the total number of enrollment, and the minimum and maximum fee.",
+    "sql": "SELECT issr.SPONSOR_NAME, COUNT(distinct iss.IAP_SUBJECT_SESSION_KEY) AS Total_Sessions, SUM(isd.MAX_ENROLLMENT), MIN(isd.FEE) AS Min_Fee, MAX(isd.FEE) AS Max_Fee FROM IAP_SUBJECT_SESSION iss JOIN IAP_SUBJECT_DETAIL isd ON iss.IAP_SUBJECT_SESSION_KEY = isd.IAP_SUBJECT_SESSION_KEY JOIN IAP_SUBJECT_SPONSOR issr ON isd.IAP_SUBJECT_SPONSOR_KEY = issr.IAP_SUBJECT_SPONSOR_KEY GROUP BY issr.SPONSOR_NAME;",
+    "topics": [
+      "sponsor",
+      "independent activity periods",
+      "sponsor name",
+      "sessions",
+      "enrollment",
+      "fee"
+    ],
+    "mapping": {
+      "sponsor name": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+      "sessions": ["IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"],
+      "enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"],
+      "fee": ["IAP_SUBJECT_DETAIL.FEE"]
+    },
+    "columns": [
+      "IAP_SUBJECT_SPONSOR.SPONSOR_NAME",
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY",
+      "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"
+    ],
+    "qualified": "SELECT\n  iap_subject_sponsor.\"sponsor_name\" AS \"sponsor_name\",\n  COUNT(DISTINCT iap_subject_session.\"iap_subject_session_key\") AS \"total_sessions\",\n  SUM(iap_subject_detail.\"max_enrollment\") AS \"_col_2\",\n  MIN(iap_subject_detail.\"fee\") AS \"min_fee\",\n  MAX(iap_subject_detail.\"fee\") AS \"max_fee\"\nFROM \"iap_subject_session\" AS \"iss\"\nJOIN \"iap_subject_detail\" AS \"isd\"\n  ON iap_subject_session.\"iap_subject_session_key\" = iap_subject_detail.\"iap_subject_session_key\"\nJOIN \"iap_subject_sponsor\" AS \"issr\"\n  ON iap_subject_detail.\"iap_subject_sponsor_key\" = iap_subject_sponsor.\"iap_subject_sponsor_key\"\nGROUP BY\n  iap_subject_sponsor.\"sponsor_name\""
+  },
+  {
+    "question": "What is the person's email and name, academic year, total number of IAP subjects, the minimum and maximum fees, and the total course enrollment for each person involved and academic year?",
+    "sql": "SELECT isp.PERSON_EMAIL, isp.PERSON_NAME, td.ACADEMIC_YEAR, COUNT(distinct isd.ACTIVITY_TITLE) AS Total_Subjects, MIN(isd.FEE) AS Min_Fee, MAX(isd.FEE) AS Max_Fee, SUM(isd.MAX_ENROLLMENT) FROM IAP_SUBJECT_PERSON isp JOIN IAP_SUBJECT_DETAIL isd ON isp.IAP_SUBJECT_PERSON_KEY = isd.IAP_SUBJECT_PERSON_KEY JOIN TIME_DAY td ON isd.TERM_CODE = td.ACADEMIC_TERM_CODE GROUP BY isp.PERSON_EMAIL, isp.PERSON_NAME, td.ACADEMIC_YEAR;",
+    "topics": [
+      "email",
+      "name",
+      "academic year",
+      "IAP subjects",
+      "fees",
+      "course enrollment"
+    ],
+    "mapping": {
+      "email": ["IAP_SUBJECT_PERSON.PERSON_EMAIL"],
+      "name": ["IAP_SUBJECT_PERSON.PERSON_NAME"],
+      "academic year": ["TIME_DAY.ACADEMIC_YEAR"],
+      "IAP subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "fees": ["IAP_SUBJECT_DETAIL.FEE"],
+      "course enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_PERSON.PERSON_NAME",
+      "TIME_DAY.ACADEMIC_YEAR",
+      "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT",
+      "IAP_SUBJECT_PERSON.PERSON_EMAIL"
+    ],
+    "qualified": "SELECT\n  iap_subject_person.\"person_email\" AS \"person_email\",\n  iap_subject_person.\"person_name\" AS \"person_name\",\n  time_day.\"academic_year\" AS \"academic_year\",\n  COUNT(DISTINCT iap_subject_detail.\"activity_title\") AS \"total_subjects\",\n  MIN(iap_subject_detail.\"fee\") AS \"min_fee\",\n  MAX(iap_subject_detail.\"fee\") AS \"max_fee\",\n  SUM(iap_subject_detail.\"max_enrollment\") AS \"_col_6\"\nFROM \"iap_subject_person\" AS \"isp\"\nJOIN \"iap_subject_detail\" AS \"isd\"\n  ON iap_subject_person.\"iap_subject_person_key\" = iap_subject_detail.\"iap_subject_person_key\"\nJOIN \"time_day\" AS \"td\"\n  ON iap_subject_detail.\"term_code\" = time_day.\"academic_term_code\"\nGROUP BY\n  iap_subject_person.\"person_email\",\n  iap_subject_person.\"person_name\",\n  time_day.\"academic_year\""
+  },
+  {
+    "question": "What is the term code, term description, total number of IAP sessions, total fee collected, and minimum and maximum enrollment for each term code?",
+    "sql": "SELECT isd.TERM_CODE, ata.TERM_DESCRIPTION, COUNT(distinct iss.IAP_SUBJECT_SESSION_KEY) AS Total_Sessions, SUM(isd.FEE) AS Total_Fee, MIN(isd.MAX_ENROLLMENT) AS Min_Enrollment, MAX(isd.MAX_ENROLLMENT) AS Max_Enrollment FROM IAP_SUBJECT_SESSION iss JOIN IAP_SUBJECT_DETAIL isd ON iss.IAP_SUBJECT_SESSION_KEY = isd.IAP_SUBJECT_SESSION_KEY JOIN ACADEMIC_TERMS_ALL ata ON isd.TERM_CODE = ata.TERM_CODE GROUP BY isd.TERM_CODE, ata.TERM_DESCRIPTION;",
+    "topics": [
+      "term code",
+      "term description",
+      "IAP sessions",
+      "fee",
+      "enrollment"
+    ],
+    "mapping": {
+      "term code": ["IAP_SUBJECT_DETAIL.TERM_CODE"],
+      "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+      "IAP sessions": ["IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"],
+      "fee": ["IAP_SUBJECT_DETAIL.FEE"],
+      "enrollment": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_DETAIL.TERM_CODE",
+      "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION",
+      "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY",
+      "IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"
+    ],
+    "qualified": "SELECT\n  iap_subject_detail.\"term_code\" AS \"term_code\",\n  academic_terms_all.\"term_description\" AS \"term_description\",\n  COUNT(DISTINCT iap_subject_session.\"iap_subject_session_key\") AS \"total_sessions\",\n  SUM(iap_subject_detail.\"fee\") AS \"total_fee\",\n  MIN(iap_subject_detail.\"max_enrollment\") AS \"min_enrollment\",\n  MAX(iap_subject_detail.\"max_enrollment\") AS \"max_enrollment\"\nFROM \"iap_subject_session\" AS \"iss\"\nJOIN \"iap_subject_detail\" AS \"isd\"\n  ON iap_subject_session.\"iap_subject_session_key\" = iap_subject_detail.\"iap_subject_session_key\"\nJOIN \"academic_terms_all\" AS \"ata\"\n  ON iap_subject_detail.\"term_code\" = academic_terms_all.\"term_code\"\nGROUP BY\n  iap_subject_detail.\"term_code\",\n  academic_terms_all.\"term_description\""
+  },
+  {
+    "question": "What is the name of the building, total number of subjects, total fee, and shortest and longest sessions for each physical IAP session location?",
+    "sql": "SELECT b.BUILDING_NAME, COUNT(Distinct isd.ACTIVITY_TITLE) AS Total_Subjects, SUM(isd.FEE) AS Total_Fee, MIN((CASE WHEN TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') > TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM') THEN TO_DATE('12:00PM', 'HH12:MIAM') ELSE TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM')END) - TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') ) * 24 * 60 AS Min_Sessions, MAX((CASE WHEN TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') > TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM') THEN TO_DATE('12:00PM', 'HH12:MIAM') ELSE TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM')END) - TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') ) * 24 * 60 AS Max_Sessions FROM IAP_SUBJECT_SESSION iss JOIN IAP_SUBJECT_DETAIL isd ON iss.IAP_SUBJECT_SESSION_KEY = isd.IAP_SUBJECT_SESSION_KEY JOIN BUILDINGS b on b.BUILDING_NUMBER = iss.SESSION_LOCATION GROUP BY b.BUILDING_NAME;",
+    "topics": ["building", "subjects", "fee", "sessions"],
+    "mapping": {
+      "name of the building": ["BUILDINGS.BUILDING_NAME"],
+      "subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "fee": ["IAP_SUBJECT_DETAIL.FEE"],
+      "sessions": [
+        "IAP_SUBJECT_SESSION.SESSION_END_TIME",
+        "IAP_SUBJECT_SESSION.SESSION_START_TIME"
+      ]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+      "BUILDINGS.BUILDING_NAME",
+      "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+    ],
+    "qualified": "SELECT\n  buildings.\"building_name\" AS \"building_name\",\n  COUNT(DISTINCT iap_subject_detail.\"activity_title\") AS \"total_subjects\",\n  SUM(iap_subject_detail.\"fee\") AS \"total_fee\",\n  MIN(\n    (\n      CASE\n        WHEN TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM') > TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n        THEN TO_DATE('12:00PM', 'HH12:MIAM')\n        ELSE TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n      END\n    ) - TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM')\n  ) * 24 * 60 AS \"min_sessions\",\n  MAX(\n    (\n      CASE\n        WHEN TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM') > TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n        THEN TO_DATE('12:00PM', 'HH12:MIAM')\n        ELSE TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n      END\n    ) - TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM')\n  ) * 24 * 60 AS \"max_sessions\"\nFROM \"iap_subject_session\" AS \"iss\"\nJOIN \"iap_subject_detail\" AS \"isd\"\n  ON iap_subject_session.\"iap_subject_session_key\" = iap_subject_detail.\"iap_subject_session_key\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_number\" = iap_subject_session.\"session_location\"\nGROUP BY\n  buildings.\"building_name\""
+  },
+  {
+    "question": "What is total number of subjects, the total fee, and the shortest and longest sessions, for all virtual IAP sessions?",
+    "sql": "SELECT COUNT(DISTINCT isd.ACTIVITY_TITLE) AS Total_Subjects, SUM(isd.FEE) AS Total_Fee, MIN((CASE WHEN TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') > TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM') THEN TO_DATE('12:00PM', 'HH12:MIAM') ELSE TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM')END) - TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') ) * 24 * 60 AS Min_Sessions, MAX((CASE WHEN TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') > TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM') THEN TO_DATE('12:00PM', 'HH12:MIAM') ELSE TO_DATE(iss.SESSION_END_TIME, 'HH12:MIAM')END) - TO_DATE(iss.SESSION_START_TIME, 'HH12:MIAM') ) * 24 * 60 AS Max_Sessions FROM IAP_SUBJECT_SESSION iss JOIN IAP_SUBJECT_DETAIL isd ON iss.IAP_SUBJECT_SESSION_KEY = isd.IAP_SUBJECT_SESSION_KEY JOIN BUILDINGS b on b.BUILDING_NUMBER != iss.SESSION_LOCATION;",
+    "topics": ["subjects", "fee", "sessions", "IAP sessions"],
+    "mapping": {
+      "subjects": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "fee": ["IAP_SUBJECT_DETAIL.FEE"],
+      "sessions": [
+        "IAP_SUBJECT_SESSION.SESSION_END_TIME",
+        "IAP_SUBJECT_SESSION.SESSION_START_TIME"
+      ]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_DETAIL.FEE",
+      "IAP_SUBJECT_SESSION.SESSION_END_TIME",
+      "IAP_SUBJECT_SESSION.SESSION_START_TIME"
+    ],
+    "qualified": "SELECT\n  COUNT(DISTINCT iap_subject_detail.\"activity_title\") AS \"total_subjects\",\n  SUM(iap_subject_detail.\"fee\") AS \"total_fee\",\n  MIN(\n    (\n      CASE\n        WHEN TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM') > TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n        THEN TO_DATE('12:00PM', 'HH12:MIAM')\n        ELSE TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n      END\n    ) - TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM')\n  ) * 24 * 60 AS \"min_sessions\",\n  MAX(\n    (\n      CASE\n        WHEN TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM') > TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n        THEN TO_DATE('12:00PM', 'HH12:MIAM')\n        ELSE TO_DATE(iap_subject_session.\"session_end_time\", 'HH12:MIAM')\n      END\n    ) - TO_DATE(iap_subject_session.\"session_start_time\", 'HH12:MIAM')\n  ) * 24 * 60 AS \"max_sessions\"\nFROM \"iap_subject_session\" AS \"iss\"\nJOIN \"iap_subject_detail\" AS \"isd\"\n  ON iap_subject_session.\"iap_subject_session_key\" = iap_subject_detail.\"iap_subject_session_key\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_number\" <> iap_subject_session.\"session_location\""
+  },
+  {
+    "question": "What is the school code, school name, full name of the department, course level, total number of courses, and total number of degree-granting courses for each school code, department, and course level?",
+    "sql": "SELECT ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, sd.DEPARTMENT_FULL_NAME, scd.COURSE_LEVEL, COUNT(DISTINCT scd.COURSE) AS Total_Courses, SUM(CASE WHEN scd.IS_DEGREE_GRANTING = 'Y' THEN 1 ELSE 0 END) AS Total_Degree_Granting_Courses FROM SIS_COURSE_DESCRIPTION scd JOIN SIS_DEPARTMENT sd ON scd.DEPARTMENT = sd.DEPARTMENT_CODE JOIN SIS_SUBJECT_CODE ssc ON scd.COURSE = ssc.SUBJECT_CODE GROUP BY ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, scd.DEPARTMENT, sd.DEPARTMENT_FULL_NAME, scd.COURSE_LEVEL;",
+    "topics": [
+      "school code",
+      "school name",
+      "full name of the department",
+      "course level",
+      "total number of courses",
+      "total number of degree-granting courses"
+    ],
+    "mapping": {
+      "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+      "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+      "full name of the department": ["SIS_DEPARTMENT.DEPARTMENT_FULL_NAME"],
+      "course level": ["SIS_COURSE_DESCRIPTION.COURSE_LEVEL"],
+      "courses": ["SIS_COURSE_DESCRIPTION.COURSE"],
+      "degree-granting courses": ["SIS_COURSE_DESCRIPTION.IS_DEGREE_GRANTING"]
+    },
+    "columns": [
+      "SIS_COURSE_DESCRIPTION.COURSE_LEVEL",
+      "SIS_SUBJECT_CODE.SCHOOL_CODE",
+      "SIS_COURSE_DESCRIPTION.DEPARTMENT",
+      "SIS_COURSE_DESCRIPTION.COURSE",
+      "SIS_DEPARTMENT.DEPARTMENT_FULL_NAME",
+      "SIS_COURSE_DESCRIPTION.IS_DEGREE_GRANTING",
+      "SIS_SUBJECT_CODE.SCHOOL_NAME"
+    ],
+    "qualified": "SELECT\n  sis_subject_code.\"school_code\" AS \"school_code\",\n  sis_subject_code.\"school_name\" AS \"school_name\",\n  sis_department.\"department_full_name\" AS \"department_full_name\",\n  sis_course_description.\"course_level\" AS \"course_level\",\n  COUNT(DISTINCT sis_course_description.\"course\") AS \"total_courses\",\n  SUM(CASE WHEN sis_course_description.\"is_degree_granting\" = 'Y' THEN 1 ELSE 0 END) AS \"total_degree_granting_courses\"\nFROM \"sis_course_description\" AS \"scd\"\nJOIN \"sis_department\" AS \"sd\"\n  ON sis_course_description.\"department\" = sis_department.\"department_code\"\nJOIN \"sis_subject_code\" AS \"ssc\"\n  ON sis_course_description.\"course\" = sis_subject_code.\"subject_code\"\nGROUP BY\n  sis_subject_code.\"school_code\",\n  sis_subject_code.\"school_name\",\n  sis_course_description.\"department\",\n  sis_department.\"department_full_name\",\n  sis_course_description.\"course_level\""
+  },
+  {
+    "question": "What are the different schools and departments that offer SIS courses? List their school code, school name, department code, department name, and the total number of phone numbers.",
+    "sql": "SELECT ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, sd.DEPARTMENT_CODE, sad.SIS_ADMIN_DEPARTMENT_NAME, COUNT(distinct sad.DEPARTMENT_PHONE_NUMBER) AS Total_Phone_Numbers FROM SIS_ADMIN_DEPARTMENT sad JOIN SIS_DEPARTMENT sd ON sad.SIS_ADMIN_DEPARTMENT_CODE = sd.DEPARTMENT_CODE JOIN SIS_COURSE_DESCRIPTION scd ON sd.DEPARTMENT_CODE = scd.DEPARTMENT JOIN SIS_SUBJECT_CODE ssc ON scd.COURSE = ssc.SUBJECT_CODE  GROUP BY ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, sd.DEPARTMENT_CODE, sad.SIS_ADMIN_DEPARTMENT_NAME;",
+    "topics": [
+      "schools",
+      "departments",
+      "courses",
+      "school code",
+      "school name",
+      "department code",
+      "department name",
+      "phone numbers"
+    ],
+    "mapping": {
+      "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+      "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+      "department code": ["SIS_DEPARTMENT.DEPARTMENT_CODE"],
+      "department name": ["SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"],
+      "phone numbers": ["SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER"]
+    },
+    "columns": [
+      "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
+      "SIS_SUBJECT_CODE.SCHOOL_CODE",
+      "SIS_SUBJECT_CODE.SCHOOL_NAME",
+      "SIS_DEPARTMENT.DEPARTMENT_CODE",
+      "SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"
+    ],
+    "qualified": "SELECT\n  sis_subject_code.\"school_code\" AS \"school_code\",\n  sis_subject_code.\"school_name\" AS \"school_name\",\n  sis_department.\"department_code\" AS \"department_code\",\n  sis_admin_department.\"sis_admin_department_name\" AS \"sis_admin_department_name\",\n  COUNT(DISTINCT sis_admin_department.\"department_phone_number\") AS \"total_phone_numbers\"\nFROM \"sis_admin_department\" AS \"sad\"\nJOIN \"sis_department\" AS \"sd\"\n  ON sis_admin_department.\"sis_admin_department_code\" = sis_department.\"department_code\"\nJOIN \"sis_course_description\" AS \"scd\"\n  ON sis_department.\"department_code\" = sis_course_description.\"department\"\nJOIN \"sis_subject_code\" AS \"ssc\"\n  ON sis_course_description.\"course\" = sis_subject_code.\"subject_code\"\nGROUP BY\n  sis_subject_code.\"school_code\",\n  sis_subject_code.\"school_name\",\n  sis_department.\"department_code\",\n  sis_admin_department.\"sis_admin_department_name\""
+  },
+  {
+    "question": "What is the school code, school name, DLC key, the graduate level, total number of SIS subjects, the minimum and maximum course numbers, and the total number of departments offering subjects for each school?",
+    "sql": "SELECT ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, sd.DLC_KEY, GRADUATE_LEVEL, COUNT(DISTINCT ssc.SUBJECT_CODE) AS Total_Subjects, MIN(ssc.COURSE_NUMBER) AS Min_Course_Number, MAX(ssc.COURSE_NUMBER) AS Max_Course_Number, COUNT(DISTINCT sd.DEPARTMENT_CODE) AS Total_Departments FROM SIS_SUBJECT_CODE ssc JOIN SIS_COURSE_DESCRIPTION scd ON ssc.SUBJECT_CODE = scd.COURSE JOIN SIS_DEPARTMENT sd ON scd.DEPARTMENT = sd.DEPARTMENT_CODE GROUP BY ssc.SCHOOL_CODE, ssc.SCHOOL_NAME, sd.DLC_KEY,GRADUATE_LEVEL;",
+    "topics": [
+      "school code",
+      "school name",
+      "DLC key",
+      "graduate level",
+      "total number of SIS subjects",
+      "course numbers",
+      "departments"
+    ],
+    "mapping": {
+      "school code": ["SIS_SUBJECT_CODE.SCHOOL_CODE"],
+      "school name": ["SIS_SUBJECT_CODE.SCHOOL_NAME"],
+      "DLC key": ["SIS_DEPARTMENT.DLC_KEY"],
+      "graduate level": ["SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL"],
+      "SIS subjects": ["SIS_SUBJECT_CODE.SUBJECT_CODE"],
+      "course numbers": ["SIS_SUBJECT_CODE.COURSE_NUMBER"],
+      "departments": ["SIS_DEPARTMENT.DEPARTMENT_CODE"]
+    },
+    "columns": [
+      "SIS_SUBJECT_CODE.SUBJECT_CODE",
+      "SIS_DEPARTMENT.DLC_KEY",
+      "SIS_SUBJECT_CODE.SCHOOL_CODE",
+      "SIS_SUBJECT_CODE.COURSE_NUMBER",
+      "SIS_SUBJECT_CODE.SCHOOL_NAME",
+      "SIS_DEPARTMENT.DEPARTMENT_CODE",
+      "SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL"
+    ],
+    "qualified": "SELECT\n  sis_subject_code.\"school_code\" AS \"school_code\",\n  sis_subject_code.\"school_name\" AS \"school_name\",\n  sis_department.\"dlc_key\" AS \"dlc_key\",\n  sis_course_description.\"graduate_level\" AS \"graduate_level\",\n  COUNT(DISTINCT sis_subject_code.\"subject_code\") AS \"total_subjects\",\n  MIN(sis_subject_code.\"course_number\") AS \"min_course_number\",\n  MAX(sis_subject_code.\"course_number\") AS \"max_course_number\",\n  COUNT(DISTINCT sis_department.\"department_code\") AS \"total_departments\"\nFROM \"sis_subject_code\" AS \"ssc\"\nJOIN \"sis_course_description\" AS \"scd\"\n  ON sis_subject_code.\"subject_code\" = sis_course_description.\"course\"\nJOIN \"sis_department\" AS \"sd\"\n  ON sis_course_description.\"department\" = sis_department.\"department_code\"\nGROUP BY\n  sis_subject_code.\"school_code\",\n  sis_subject_code.\"school_name\",\n  sis_department.\"dlc_key\",\n  sis_course_description.\"graduate_level\""
+  },
+  {
+    "question": "What is the building component, name of the building, square footage for all rooms, total number of floors, total number of rooms, total number of facility organizations, total number of supervisors, and total number of supervisees for each building component?",
+    "sql": "SELECT sd.BUILDING_COMPONENT, b.BUILDING_NAME, sd.Total_Square_Footage, COUNT(DISTINCT SF.FLOOR) AS Total_Number_Of_Floors, COUNT(DISTINCT sd.BUILDING_ROOM) AS Total_Rooms, COUNT(DISTINCT su.FCLT_ORGANIZATION_KEY) as Total_Number_FCLT, COUNT(DISTINCT ssu.MIT_ID) AS Total_Supervisors, SUM(ssu.NUM_OF_SUPERVISEES) AS Total_Supervisees FROM (SELECT SPACE_DETAIL.*, SUM(ROOM_SQUARE_FOOTAGE) OVER (PARTITION BY BUILDING_COMPONENT) AS Total_Square_Footage FROM SPACE_DETAIL) sd JOIN BUILDINGS b ON b.BUILDING_KEY = sd.BUILDING_KEY JOIN SPACE_FLOOR sf ON sd.FLOOR_KEY = sf.FLOOR_KEY JOIN SPACE_UNIT su ON sd.SPACE_UNIT_KEY = su.SPACE_UNIT_KEY JOIN SPACE_SUPERVISOR_USAGE ssu ON su.DLC_KEY = ssu.DEPT_NAMES GROUP BY sd.BUILDING_COMPONENT, b.BUILDING_NAME, sd.Total_Square_Footage;",
+    "topics": [
+      "building component",
+      "building",
+      "square footage",
+      "rooms",
+      "floors",
+      "facility organizations",
+      "supervisors",
+      "supervisees"
+    ],
+    "mapping": {
+      "building component": ["SPACE_DETAIL.BUILDING_COMPONENT"],
+      "building": ["BUILDINGS.BUILDING_NAME"],
+      "square footage": ["SPACE_DETAIL.ROOM_SQUARE_FOOTAGE"],
+      "rooms": ["SPACE_DETAIL.BUILDING_ROOM"],
+      "floors": ["SPACE_FLOOR.FLOOR"],
+      "facility organizations": ["SPACE_UNIT.FCLT_ORGANIZATION_KEY"],
+      "supervisors": ["SPACE_SUPERVISOR_USAGE.MIT_ID"],
+      "supervisees": ["SPACE_SUPERVISOR_USAGE.NUM_OF_SUPERVISEES"]
+    },
+    "columns": [
+      "SPACE_DETAIL.BUILDING_ROOM",
+      "SPACE_DETAIL.ROOM_COUNTER",
+      "SPACE_UNIT.FCLT_ORGANIZATION_KEY",
+      "SPACE_DETAIL.FLOOR_KEY",
+      "SPACE_DETAIL.BUILDING_KEY",
+      "BUILDINGS.BUILDING_NAME",
+      "SPACE_DETAIL.BUILDING_ROOM_NAME",
+      "SPACE_DETAIL.WAREHOUSE_LOAD_DATE",
+      "SPACE_FLOOR.FLOOR",
+      "SPACE_SUPERVISOR_USAGE.MIT_ID",
+      "SPACE_DETAIL.SPACE_USAGE_KEY",
+      "SPACE_DETAIL.ROOM_NUMBER",
+      "SPACE_SUPERVISOR_USAGE.NUM_OF_SUPERVISEES",
+      "SPACE_DETAIL.ROOM_SQUARE_FOOTAGE",
+      "SPACE_DETAIL.SPACE_UNIT_KEY",
+      "SPACE_DETAIL.BUILDING_COMPONENT"
+    ],
+    "qualified": "SELECT\n  \"sd\".\"building_component\" AS \"building_component\",\n  buildings.\"building_name\" AS \"building_name\",\n  \"sd\".\"total_square_footage\" AS \"total_square_footage\",\n  COUNT(DISTINCT space_floor.\"floor\") AS \"total_number_of_floors\",\n  COUNT(DISTINCT \"sd\".\"building_room\") AS \"total_rooms\",\n  COUNT(DISTINCT space_unit.\"fclt_organization_key\") AS \"total_number_fclt\",\n  COUNT(DISTINCT space_supervisor_usage.\"mit_id\") AS \"total_supervisors\",\n  SUM(space_supervisor_usage.\"num_of_supervisees\") AS \"total_supervisees\"\nFROM (\n  SELECT\n    \"space_detail\".\"building_key\" AS \"building_key\",\n    \"space_detail\".\"floor_key\" AS \"floor_key\",\n    \"space_detail\".\"space_unit_key\" AS \"space_unit_key\",\n    \"space_detail\".\"space_usage_key\" AS \"space_usage_key\",\n    \"space_detail\".\"building_room\" AS \"building_room\",\n    \"space_detail\".\"building_room_name\" AS \"building_room_name\",\n    \"space_detail\".\"room_number\" AS \"room_number\",\n    \"space_detail\".\"room_square_footage\" AS \"room_square_footage\",\n    \"space_detail\".\"room_counter\" AS \"room_counter\",\n    \"space_detail\".\"building_component\" AS \"building_component\",\n    \"space_detail\".\"warehouse_load_date\" AS \"warehouse_load_date\",\n    SUM(\"space_detail\".\"room_square_footage\") OVER (PARTITION BY \"space_detail\".\"building_component\") AS \"total_square_footage\"\n  FROM \"space_detail\" AS \"space_detail\"\n) AS \"sd\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_key\" = \"sd\".\"building_key\"\nJOIN \"space_floor\" AS \"sf\"\n  ON \"sd\".\"floor_key\" = space_floor.\"floor_key\"\nJOIN \"space_unit\" AS \"su\"\n  ON \"sd\".\"space_unit_key\" = space_unit.\"space_unit_key\"\nJOIN \"space_supervisor_usage\" AS \"ssu\"\n  ON space_unit.\"dlc_key\" = space_supervisor_usage.\"dept_names\"\nGROUP BY\n  \"sd\".\"building_component\",\n  buildings.\"building_name\",\n  \"sd\".\"total_square_footage\""
+  },
+  {
+    "question": "What is the DLC key, name of the DLC, total number of floors, total square footage, total number of facility organizations, total number of supervisors, and total number of supervisees for each DLC?",
+    "sql": "SELECT su.DLC_KEY, fo.DLC_NAME, COUNT(DISTINCT SF.FLOOR) AS Total_Number_Of_Floors, sd.Total_Square_Footage, COUNT(DISTINCT su.FCLT_ORGANIZATION_KEY) as Total_Number_Facility, COUNT(DISTINCT ssu.MIT_ID) AS Total_Supervisors, SUM(ssu.NUM_OF_SUPERVISEES) AS Total_Supervisees FROM (SELECT SPACE_DETAIL.*, SUM(ROOM_SQUARE_FOOTAGE) OVER (PARTITION BY BUILDING_COMPONENT) AS Total_Square_Footage FROM SPACE_DETAIL) sd JOIN BUILDINGS b ON b.BUILDING_KEY = sd.BUILDING_KEY JOIN SPACE_FLOOR sf ON sd.FLOOR_KEY = sf.FLOOR_KEY JOIN SPACE_UNIT su ON sd.SPACE_UNIT_KEY = su.SPACE_UNIT_KEY JOIN SPACE_SUPERVISOR_USAGE ssu ON su.DLC_KEY = ssu.DEPT_NAMES JOIN (SELECT DISTINCT DLC_KEY, DLC_NAME FROM FCLT_ORGANIZATION)fo ON fo.DLC_KEY = su.DLC_KEY GROUP BY su.DLC_KEY, fo.DLC_NAME, sd.Total_Square_Footage;",
+    "topics": [
+      "DLC key",
+      "name of the DLC",
+      "total number of floors",
+      "total square footage",
+      "total number of facility organizations",
+      "total number of supervisors",
+      "total number of supervisees"
+    ],
+    "mapping": {
+      "DLC key": ["SPACE_UNIT.DLC_KEY"],
+      "name of the DLC": ["FCLT_ORGANIZATION.DLC_NAME"],
+      "floors": ["SPACE_FLOOR.FLOOR"],
+      "square footage": ["SPACE_DETAIL.ROOM_SQUARE_FOOTAGE"],
+      "facility organizations": ["SPACE_UNIT.FCLT_ORGANIZATION_KEY"],
+      "supervisors": ["SPACE_SUPERVISOR_USAGE.MIT_ID"],
+      "supervisees": ["SPACE_SUPERVISOR_USAGE.NUM_OF_SUPERVISEES"]
+    },
+    "columns": [
+      "SPACE_DETAIL.BUILDING_ROOM",
+      "SPACE_DETAIL.ROOM_COUNTER",
+      "SPACE_UNIT.FCLT_ORGANIZATION_KEY",
+      "SPACE_DETAIL.FLOOR_KEY",
+      "SPACE_UNIT.DLC_KEY",
+      "SPACE_DETAIL.BUILDING_KEY",
+      "SPACE_DETAIL.BUILDING_ROOM_NAME",
+      "SPACE_DETAIL.WAREHOUSE_LOAD_DATE",
+      "SPACE_FLOOR.FLOOR",
+      "SPACE_SUPERVISOR_USAGE.MIT_ID",
+      "SPACE_DETAIL.SPACE_USAGE_KEY",
+      "SPACE_DETAIL.ROOM_NUMBER",
+      "SPACE_SUPERVISOR_USAGE.NUM_OF_SUPERVISEES",
+      "SPACE_DETAIL.ROOM_SQUARE_FOOTAGE",
+      "SPACE_DETAIL.SPACE_UNIT_KEY",
+      "SPACE_DETAIL.BUILDING_COMPONENT"
+    ],
+    "qualified": "SELECT\n  space_unit.\"dlc_key\" AS \"dlc_key\",\n  \"fo\".\"dlc_name\" AS \"dlc_name\",\n  COUNT(DISTINCT space_floor.\"floor\") AS \"total_number_of_floors\",\n  \"sd\".\"total_square_footage\" AS \"total_square_footage\",\n  COUNT(DISTINCT space_unit.\"fclt_organization_key\") AS \"total_number_facility\",\n  COUNT(DISTINCT space_supervisor_usage.\"mit_id\") AS \"total_supervisors\",\n  SUM(space_supervisor_usage.\"num_of_supervisees\") AS \"total_supervisees\"\nFROM (\n  SELECT\n    \"space_detail\".\"building_key\" AS \"building_key\",\n    \"space_detail\".\"floor_key\" AS \"floor_key\",\n    \"space_detail\".\"space_unit_key\" AS \"space_unit_key\",\n    \"space_detail\".\"space_usage_key\" AS \"space_usage_key\",\n    \"space_detail\".\"building_room\" AS \"building_room\",\n    \"space_detail\".\"building_room_name\" AS \"building_room_name\",\n    \"space_detail\".\"room_number\" AS \"room_number\",\n    \"space_detail\".\"room_square_footage\" AS \"room_square_footage\",\n    \"space_detail\".\"room_counter\" AS \"room_counter\",\n    \"space_detail\".\"building_component\" AS \"building_component\",\n    \"space_detail\".\"warehouse_load_date\" AS \"warehouse_load_date\",\n    SUM(\"space_detail\".\"room_square_footage\") OVER (PARTITION BY \"space_detail\".\"building_component\") AS \"total_square_footage\"\n  FROM \"space_detail\" AS \"space_detail\"\n) AS \"sd\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_key\" = \"sd\".\"building_key\"\nJOIN \"space_floor\" AS \"sf\"\n  ON \"sd\".\"floor_key\" = space_floor.\"floor_key\"\nJOIN \"space_unit\" AS \"su\"\n  ON \"sd\".\"space_unit_key\" = space_unit.\"space_unit_key\"\nJOIN \"space_supervisor_usage\" AS \"ssu\"\n  ON space_unit.\"dlc_key\" = space_supervisor_usage.\"dept_names\"\nJOIN (\n  SELECT DISTINCT\n    \"fclt_organization\".\"dlc_key\" AS \"dlc_key\",\n    \"fclt_organization\".\"dlc_name\" AS \"dlc_name\"\n  FROM \"fclt_organization\" AS \"fclt_organization\"\n) AS \"fo\"\n  ON \"fo\".\"dlc_key\" = space_unit.\"dlc_key\"\nGROUP BY\n  space_unit.\"dlc_key\",\n  \"fo\".\"dlc_name\",\n  \"sd\".\"total_square_footage\""
+  },
+  {
+    "question": "What is the department name, total number of types of TIP subjects, total number of enrolled students, the minimum and maximum rental new price for each department?",
+    "sql": "SELECT tso.OFFER_DEPT_NAME, COUNT(distinct tso.SUBJECT_ID) AS Total_Subjects, SUM(tso.NUM_ENROLLED_STUDENTS) AS Total_Enrolled_Students, MIN(tm.RENTAL_NEW_PRICE) AS Min_Rental_New_Price, MAX(tm.RENTAL_NEW_PRICE) AS Max_Rental_New_Price FROM TIP_SUBJECT_OFFERED tso JOIN TIP_DETAIL td ON tso.TIP_SUBJECT_OFFERED_KEY = td.TIP_SUBJECT_OFFERED_KEY JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY GROUP BY tso.OFFER_DEPT_NAME;",
+    "topics": [
+      "department name",
+      "TIP subjects",
+      "enrolled students",
+      "rental new price"
+    ],
+    "mapping": {
+      "department name": ["TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"],
+      "TIP subjects": ["TIP_SUBJECT_OFFERED.SUBJECT_ID"],
+      "enrolled students": ["TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+      "rental new price": ["TIP_MATERIAL.RENTAL_NEW_PRICE"]
+    },
+    "columns": [
+      "TIP_SUBJECT_OFFERED.SUBJECT_ID",
+      "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+      "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME",
+      "TIP_MATERIAL.RENTAL_NEW_PRICE"
+    ],
+    "qualified": "SELECT\n  tip_subject_offered.\"offer_dept_name\" AS \"offer_dept_name\",\n  COUNT(DISTINCT tip_subject_offered.\"subject_id\") AS \"total_subjects\",\n  SUM(tip_subject_offered.\"num_enrolled_students\") AS \"total_enrolled_students\",\n  MIN(tip_material.\"rental_new_price\") AS \"min_rental_new_price\",\n  MAX(tip_material.\"rental_new_price\") AS \"max_rental_new_price\"\nFROM \"tip_subject_offered\" AS \"tso\"\nJOIN \"tip_detail\" AS \"td\"\n  ON tip_subject_offered.\"tip_subject_offered_key\" = tip_detail.\"tip_subject_offered_key\"\nJOIN \"tip_material\" AS \"tm\"\n  ON tip_detail.\"tip_material_key\" = tip_material.\"tip_material_key\"\nGROUP BY\n  tip_subject_offered.\"offer_dept_name\""
+  },
+  {
+    "question": "What are the details of courses offered in the current academic term, including the academic year, term code, hgn code, the total number of types of courses, the average number of units, the department name, the name and email address of the person in charge?",
+    "sql": "SELECT CC.ACADEMIC_YEAR, CC.TERM_CODE, SO.HGN_CODE, COUNT(DISTINCT CC.SUBJECT_ID) AS TOTAL_COURSES, AVG(CC.TOTAL_UNITS) AS AVERAGE_UNITS, CC.DEPARTMENT_NAME, ED.FULL_NAME AS RESPONSIBLE_FACULTY_NAME, ED.EMAIL_ADDRESS AS RESPONSIBLE_FACULTY_EMAIL FROM COURSE_CATALOG_SUBJECT_OFFERED CC JOIN SUBJECT_OFFERED SO ON CC.SUBJECT_ID = SO.SUBJECT_ID JOIN ACADEMIC_TERMS AT ON CC.TERM_CODE = AT.TERM_CODE JOIN  EMPLOYEE_DIRECTORY ED ON SO.RESPONSIBLE_FACULTY_MIT_ID = ED.MIT_ID WHERE  AT.IS_CURRENT_TERM = 'Y' GROUP BY CC.ACADEMIC_YEAR,  CC.TERM_CODE, SO.HGN_CODE, CC.DEPARTMENT_NAME, ED.FULL_NAME,  ED.EMAIL_ADDRESS;",
+    "topics": [
+      "courses",
+      "academic year",
+      "term code",
+      "hgn code",
+      "types of courses",
+      "units",
+      "department name",
+      "name",
+      "email address"
+    ],
+    "mapping": {
+      "academic year": ["COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR"],
+      "term code": ["COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"],
+      "hgn code": ["SUBJECT_OFFERED.HGN_CODE"],
+      "types of courses": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+      "number of units": ["COURSE_CATALOG_SUBJECT_OFFERED.TOTAL_UNITS"],
+      "department name": ["COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"],
+      "name": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+      "email address": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS.IS_CURRENT_TERM",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE",
+      "EMPLOYEE_DIRECTORY.FULL_NAME",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TOTAL_UNITS",
+      "SUBJECT_OFFERED.HGN_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME",
+      "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"
+    ],
+    "qualified": "SELECT\n  course_catalog_subject_offered.\"academic_year\" AS \"academic_year\",\n  course_catalog_subject_offered.\"term_code\" AS \"term_code\",\n  subject_offered.\"hgn_code\" AS \"hgn_code\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") AS \"total_courses\",\n  AVG(course_catalog_subject_offered.\"total_units\") AS \"average_units\",\n  course_catalog_subject_offered.\"department_name\" AS \"department_name\",\n  employee_directory.\"full_name\" AS \"responsible_faculty_name\",\n  employee_directory.\"email_address\" AS \"responsible_faculty_email\"\nFROM \"course_catalog_subject_offered\" AS \"cc\"\nJOIN \"subject_offered\" AS \"so\"\n  ON course_catalog_subject_offered.\"subject_id\" = subject_offered.\"subject_id\"\nJOIN \"academic_terms\" AS \"at\"\n  ON course_catalog_subject_offered.\"term_code\" = academic_terms.\"term_code\"\nJOIN \"employee_directory\" AS \"ed\"\n  ON subject_offered.\"responsible_faculty_mit_id\" = employee_directory.\"mit_id\"\nWHERE\n  academic_terms.\"is_current_term\" = 'Y'\nGROUP BY\n  course_catalog_subject_offered.\"academic_year\",\n  course_catalog_subject_offered.\"term_code\",\n  subject_offered.\"hgn_code\",\n  course_catalog_subject_offered.\"department_name\",\n  employee_directory.\"full_name\",\n  employee_directory.\"email_address\""
+  },
+  {
+    "question": "Retrieve information about the IAP subjects, including their titles, categories, session titles, session start and end time, sponsors, and total number of sessions.",
+    "sql": "SELECT isd.ACTIVITY_TITLE, isc.IAP_CATEGORY_NAME, iss.SESSION_TITLE, iss.SESSION_START_TIME, iss.SESSION_END_TIME, isp.SPONSOR_NAME, COUNT(distinct iss.IAP_SUBJECT_SESSION_KEY) AS Total_Sessions FROM IAP_SUBJECT_DETAIL isd JOIN IAP_SUBJECT_CATEGORY isc ON isd.IAP_SUBJECT_CATEGORY_KEY = isc.IAP_SUBJECT_CATEGORY_KEY JOIN IAP_SUBJECT_SESSION iss ON isd.IAP_SUBJECT_SESSION_KEY = iss.IAP_SUBJECT_SESSION_KEY JOIN IAP_SUBJECT_SPONSOR isp ON isd.IAP_SUBJECT_SPONSOR_KEY = isp.IAP_SUBJECT_SPONSOR_KEY GROUP BY isd.ACTIVITY_TITLE, isc.IAP_CATEGORY_NAME, iss.SESSION_TITLE, iss.SESSION_START_TIME, iss.SESSION_END_TIME, isp.SPONSOR_NAME;",
+    "topics": [
+      "IAP subjects",
+      "titles",
+      "categories",
+      "session titles",
+      "session start time",
+      "session end time",
+      "sponsors",
+      "total number of sessions"
+    ],
+    "mapping": {
+      "titles": ["IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"],
+      "categories": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+      "session titles": ["IAP_SUBJECT_SESSION.SESSION_TITLE"],
+      "session start and end time": [
+        "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+        "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+      ],
+      "sponsors": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+      "sessions": ["IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"]
+    },
+    "columns": [
+      "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
+      "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+      "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME",
+      "IAP_SUBJECT_SPONSOR.SPONSOR_NAME",
+      "IAP_SUBJECT_SESSION.SESSION_TITLE",
+      "IAP_SUBJECT_SESSION.SESSION_END_TIME",
+      "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"
+    ],
+    "qualified": "SELECT\n  iap_subject_detail.\"activity_title\" AS \"activity_title\",\n  iap_subject_category.\"iap_category_name\" AS \"iap_category_name\",\n  iap_subject_session.\"session_title\" AS \"session_title\",\n  iap_subject_session.\"session_start_time\" AS \"session_start_time\",\n  iap_subject_session.\"session_end_time\" AS \"session_end_time\",\n  iap_subject_sponsor.\"sponsor_name\" AS \"sponsor_name\",\n  COUNT(DISTINCT iap_subject_session.\"iap_subject_session_key\") AS \"total_sessions\"\nFROM \"iap_subject_detail\" AS \"isd\"\nJOIN \"iap_subject_category\" AS \"isc\"\n  ON iap_subject_detail.\"iap_subject_category_key\" = iap_subject_category.\"iap_subject_category_key\"\nJOIN \"iap_subject_session\" AS \"iss\"\n  ON iap_subject_detail.\"iap_subject_session_key\" = iap_subject_session.\"iap_subject_session_key\"\nJOIN \"iap_subject_sponsor\" AS \"isp\"\n  ON iap_subject_detail.\"iap_subject_sponsor_key\" = iap_subject_sponsor.\"iap_subject_sponsor_key\"\nGROUP BY\n  iap_subject_detail.\"activity_title\",\n  iap_subject_category.\"iap_category_name\",\n  iap_subject_session.\"session_title\",\n  iap_subject_session.\"session_start_time\",\n  iap_subject_session.\"session_end_time\",\n  iap_subject_sponsor.\"sponsor_name\""
+  },
+  {
+    "question": "Show the department names, the corresponding SIS subject code, subject code descriptions, graduate level, and the total number of courses per department.",
+    "sql": "SELECT sd.DEPARTMENT_NAME, sc.SUBJECT_CODE, sc.SUBJECT_CODE_DESC, scd.GRADUATE_LEVEL, COUNT(DISTINCT sc.COURSE_NUMBER) OVER (PARTITION BY sd.DEPARTMENT_NAME) AS Total_Courses FROM SIS_DEPARTMENT sd JOIN SIS_COURSE_DESCRIPTION scd ON sd.DEPARTMENT_CODE = scd.DEPARTMENT JOIN SIS_SUBJECT_CODE sc ON scd.COURSE = sc.COURSE_NUMBER;",
+    "topics": [
+      "department names",
+      "SIS subject code",
+      "subject code descriptions",
+      "graduate level",
+      "total number of courses"
+    ],
+    "mapping": {
+      "department names": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+      "SIS subject code": ["SIS_SUBJECT_CODE.SUBJECT_CODE"],
+      "subject code descriptions": ["SIS_SUBJECT_CODE.SUBJECT_CODE_DESC"],
+      "graduate level": ["SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL"],
+      "courses": ["SIS_SUBJECT_CODE.COURSE_NUMBER"]
+    },
+    "columns": [
+      "SIS_SUBJECT_CODE.SUBJECT_CODE_DESC",
+      "SIS_SUBJECT_CODE.SUBJECT_CODE",
+      "SIS_SUBJECT_CODE.COURSE_NUMBER",
+      "SIS_COURSE_DESCRIPTION.GRADUATE_LEVEL",
+      "SIS_DEPARTMENT.DEPARTMENT_NAME"
+    ],
+    "qualified": "SELECT\n  sis_department.\"department_name\" AS \"department_name\",\n  sis_subject_code.\"subject_code\" AS \"subject_code\",\n  sis_subject_code.\"subject_code_desc\" AS \"subject_code_desc\",\n  sis_course_description.\"graduate_level\" AS \"graduate_level\",\n  COUNT(DISTINCT sis_subject_code.\"course_number\") OVER (PARTITION BY sis_department.\"department_name\") AS \"total_courses\"\nFROM \"sis_department\" AS \"sd\"\nJOIN \"sis_course_description\" AS \"scd\"\n  ON sis_department.\"department_code\" = sis_course_description.\"department\"\nJOIN \"sis_subject_code\" AS \"sc\"\n  ON sis_course_description.\"course\" = sis_subject_code.\"course_number\""
+  },
+  {
+    "question": "For each term, list the term code, the term description, whether the term is current or not, and the total number of types of CIS courses.",
+    "sql": "SELECT at.TERM_CODE, at.TERM_DESCRIPTION, at.IS_CURRENT_TERM2, COUNT(distinct at.SUBJECT_ID) AS Total_SUBJECTS FROM (SELECT at.*, SUBJECT_ID, CASE WHEN at.ACADEMIC_YEAR = EXTRACT(YEAR FROM SYSDATE) AND atp.IS_CURRENT_TERM = 'Y' THEN 'Y' ELSE 'N' END as IS_CURRENT_TERM2 FROM (SELECT ACADEMIC_TERMS_ALL.*, CASE WHEN TERM_CODE LIKE '%FA' THEN 'Y' END AS A ,CASE WHEN TERM_CODE LIKE '%JA' THEN 'Y' END AS B,CASE WHEN TERM_CODE LIKE '%SP' THEN 'Y' END AS C,CASE WHEN TERM_CODE LIKE '%SU' THEN 'Y' END AS D FROM ACADEMIC_TERMS_ALL) at LEFT OUTER JOIN ACADEMIC_TERM_PARAMETER atp ON at.TERM_CODE = atp.TERM_CODE LEFT OUTER JOIN CIS_COURSE_CATALOG ccc ON ccc.ACADEMIC_YEAR = at.ACADEMIC_YEAR AND (IS_OFFERED_FALL_TERM = at.A OR IS_OFFERED_IAP = at.B OR IS_OFFERED_SPRING_TERM = at.C OR IS_OFFERED_SPRING_TERM = at.C OR IS_OFFERED_SUMMER_TERM = at.D)) at GROUP BY at.TERM_CODE, at.TERM_DESCRIPTION, at.IS_CURRENT_TERM2;",
+    "topics": [
+      "term code",
+      "term description",
+      "term current status",
+      "CIS course types count"
+    ],
+    "mapping": {
+      "term code": ["ACADEMIC_TERMS_ALL.TERM_CODE"],
+      "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+      "term is current or not": ["ACADEMIC_TERM_PARAMETER.IS_CURRENT_TERM"],
+      "CIS courses": ["CIS_COURSE_CATALOG.SUBJECT_ID"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_START_DATE",
+      "ACADEMIC_TERMS_ALL.GRADUATE_AWARD_START_DATE",
+      "ACADEMIC_TERMS_ALL.PRE_REGISTRATION_START_DAY",
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM",
+      "ACADEMIC_TERMS_ALL.LAST_DAY_OF_CLASSES",
+      "CIS_COURSE_CATALOG.SUBJECT_ID",
+      "ACADEMIC_TERMS_ALL.DEGREE_YEAR",
+      "ACADEMIC_TERMS_ALL.LAST_DAY_OF_FINAL_EXAM",
+      "ACADEMIC_TERMS_ALL.ACADEMIC_TERMS_KEY",
+      "ACADEMIC_TERM_PARAMETER.IS_CURRENT_TERM",
+      "ACADEMIC_TERMS_ALL.TERM_SELECTOR",
+      "ACADEMIC_TERMS_ALL.FIRST_DAY_OF_CLASSES",
+      "ACADEMIC_TERMS_ALL.TERM_END_DATE",
+      "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION",
+      "ACADEMIC_TERMS_ALL.WAREHOUSE_LOAD_DATE",
+      "ACADEMIC_TERMS_ALL.FINANCIAL_AID_YEAR",
+      "ACADEMIC_TERMS_ALL.ACADEMIC_YEAR",
+      "ACADEMIC_TERMS_ALL.GRADUATE_AWARD_END_DATE",
+      "ACADEMIC_TERMS_ALL.REGISTRATION_DAY",
+      "ACADEMIC_TERMS_ALL.ACADEMIC_YEAR_DESC",
+      "ACADEMIC_TERMS_ALL.TERM_STATUS_INDICATOR"
+    ],
+    "qualified": "SELECT\n  \"at\".\"term_code\" AS \"term_code\",\n  \"at\".\"term_description\" AS \"term_description\",\n  \"at\".\"is_current_term2\" AS \"is_current_term2\",\n  COUNT(DISTINCT \"at\".\"subject_id\") AS \"total_subjects\"\nFROM (\n  SELECT\n    \"at\".\"academic_terms_key\" AS \"academic_terms_key\",\n    \"at\".\"term_code\" AS \"term_code\",\n    \"at\".\"term_description\" AS \"term_description\",\n    \"at\".\"term_selector\" AS \"term_selector\",\n    \"at\".\"term_start_date\" AS \"term_start_date\",\n    \"at\".\"term_end_date\" AS \"term_end_date\",\n    \"at\".\"academic_year\" AS \"academic_year\",\n    \"at\".\"academic_year_desc\" AS \"academic_year_desc\",\n    \"at\".\"is_current_term\" AS \"is_current_term\",\n    \"at\".\"term_status_indicator\" AS \"term_status_indicator\",\n    \"at\".\"financial_aid_year\" AS \"financial_aid_year\",\n    \"at\".\"degree_year\" AS \"degree_year\",\n    \"at\".\"last_day_of_final_exam\" AS \"last_day_of_final_exam\",\n    \"at\".\"pre_registration_start_day\" AS \"pre_registration_start_day\",\n    \"at\".\"registration_day\" AS \"registration_day\",\n    \"at\".\"first_day_of_classes\" AS \"first_day_of_classes\",\n    \"at\".\"last_day_of_classes\" AS \"last_day_of_classes\",\n    \"at\".\"graduate_award_start_date\" AS \"graduate_award_start_date\",\n    \"at\".\"graduate_award_end_date\" AS \"graduate_award_end_date\",\n    \"at\".\"warehouse_load_date\" AS \"warehouse_load_date\",\n    \"at\".\"a\" AS \"a\",\n    \"at\".\"b\" AS \"b\",\n    \"at\".\"c\" AS \"c\",\n    \"at\".\"d\" AS \"d\",\n    cis_course_catalog.\"subject_id\" AS \"subject_id\",\n    CASE\n      WHEN \"at\".\"academic_year\" = EXTRACT(YEAR FROM \"sysdate\")\n      AND academic_term_parameter.\"is_current_term\" = 'Y'\n      THEN 'Y'\n      ELSE 'N'\n    END AS \"is_current_term2\"\n  FROM (\n    SELECT\n      \"academic_terms_all\".\"academic_terms_key\" AS \"academic_terms_key\",\n      \"academic_terms_all\".\"term_code\" AS \"term_code\",\n      \"academic_terms_all\".\"term_description\" AS \"term_description\",\n      \"academic_terms_all\".\"term_selector\" AS \"term_selector\",\n      \"academic_terms_all\".\"term_start_date\" AS \"term_start_date\",\n      \"academic_terms_all\".\"term_end_date\" AS \"term_end_date\",\n      \"academic_terms_all\".\"academic_year\" AS \"academic_year\",\n      \"academic_terms_all\".\"academic_year_desc\" AS \"academic_year_desc\",\n      \"academic_terms_all\".\"is_current_term\" AS \"is_current_term\",\n      \"academic_terms_all\".\"term_status_indicator\" AS \"term_status_indicator\",\n      \"academic_terms_all\".\"financial_aid_year\" AS \"financial_aid_year\",\n      \"academic_terms_all\".\"degree_year\" AS \"degree_year\",\n      \"academic_terms_all\".\"last_day_of_final_exam\" AS \"last_day_of_final_exam\",\n      \"academic_terms_all\".\"pre_registration_start_day\" AS \"pre_registration_start_day\",\n      \"academic_terms_all\".\"registration_day\" AS \"registration_day\",\n      \"academic_terms_all\".\"first_day_of_classes\" AS \"first_day_of_classes\",\n      \"academic_terms_all\".\"last_day_of_classes\" AS \"last_day_of_classes\",\n      \"academic_terms_all\".\"graduate_award_start_date\" AS \"graduate_award_start_date\",\n      \"academic_terms_all\".\"graduate_award_end_date\" AS \"graduate_award_end_date\",\n      \"academic_terms_all\".\"warehouse_load_date\" AS \"warehouse_load_date\",\n      CASE WHEN \"academic_terms_all\".\"term_code\" LIKE '%FA' THEN 'Y' END AS \"a\",\n      CASE WHEN \"academic_terms_all\".\"term_code\" LIKE '%JA' THEN 'Y' END AS \"b\",\n      CASE WHEN \"academic_terms_all\".\"term_code\" LIKE '%SP' THEN 'Y' END AS \"c\",\n      CASE WHEN \"academic_terms_all\".\"term_code\" LIKE '%SU' THEN 'Y' END AS \"d\"\n    FROM \"academic_terms_all\" AS \"academic_terms_all\"\n  ) AS \"at\"\n  LEFT OUTER JOIN \"academic_term_parameter\" AS \"atp\"\n    ON \"at\".\"term_code\" = academic_term_parameter.\"term_code\"\n  LEFT OUTER JOIN \"cis_course_catalog\" AS \"ccc\"\n    ON cis_course_catalog.\"academic_year\" = \"at\".\"academic_year\"\n    AND (\n      cis_course_catalog.\"is_offered_fall_term\" = \"at\".\"a\"\n      OR cis_course_catalog.\"is_offered_iap\" = \"at\".\"b\"\n      OR cis_course_catalog.\"is_offered_spring_term\" = \"at\".\"c\"\n      OR cis_course_catalog.\"is_offered_spring_term\" = \"at\".\"c\"\n      OR cis_course_catalog.\"is_offered_summer_term\" = \"at\".\"d\"\n    )\n) AS \"at\"\nGROUP BY\n  \"at\".\"term_code\",\n  \"at\".\"term_description\",\n  \"at\".\"is_current_term2\""
+  },
+  {
+    "question": "What is the author, school name, material status, total record counts, and total number of types of courses for each author and school?",
+    "sql": "SELECT tm.AUTHOR, sd.SCHOOL_NAME, tms.TIP_MATERIAL_STATUS, SUM(td.RECORD_COUNT) AS Total_Record_Count , COUNT(distinct td.SUBJECT_ID) AS Total_Subject FROM TIP_DETAIL td JOIN (select TIP_MATERIAL_KEY,  CASE  WHEN INSTR(AUTHOR, ';') > 0 THEN SUBSTR(AUTHOR, 1, INSTR(AUTHOR, ';') - 1)  ELSE AUTHOR END AS AUTHOR FROM TIP_MATERIAL) tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY JOIN TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY JOIN STUDENT_DEPARTMENT sd ON tso.OFFER_DEPT_CODE = sd.DEPARTMENT_CODE GROUP BY tm.AUTHOR, tms.TIP_MATERIAL_STATUS, sd.SCHOOL_NAME;",
+    "topics": [
+      "author",
+      "school name",
+      "material status",
+      "total record counts",
+      "total number of types of courses"
+    ],
+    "mapping": {
+      "author": ["TIP_MATERIAL.AUTHOR"],
+      "school name": ["STUDENT_DEPARTMENT.SCHOOL_NAME"],
+      "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+      "record counts": ["TIP_DETAIL.RECORD_COUNT"],
+      "courses": ["TIP_DETAIL.SUBJECT_ID"]
+    },
+    "columns": [
+      "TIP_DETAIL.RECORD_COUNT",
+      "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS",
+      "STUDENT_DEPARTMENT.SCHOOL_NAME",
+      "TIP_DETAIL.SUBJECT_ID"
+    ],
+    "qualified": "SELECT\n  \"tm\".\"author\" AS \"author\",\n  student_department.\"school_name\" AS \"school_name\",\n  tip_material_status.\"tip_material_status\" AS \"tip_material_status\",\n  SUM(tip_detail.\"record_count\") AS \"total_record_count\",\n  COUNT(DISTINCT tip_detail.\"subject_id\") AS \"total_subject\"\nFROM \"tip_detail\" AS \"td\"\nJOIN (\n  SELECT\n    \"tip_material\".\"tip_material_key\" AS \"tip_material_key\",\n    CASE\n      WHEN STR_POSITION(\"tip_material\".\"author\", ';') > 0\n      THEN SUBSTRING(\"tip_material\".\"author\", 1, STR_POSITION(\"tip_material\".\"author\", ';') - 1)\n      ELSE \"tip_material\".\"author\"\n    END AS \"author\"\n  FROM \"tip_material\" AS \"tip_material\"\n) AS \"tm\"\n  ON tip_detail.\"tip_material_key\" = \"tm\".\"tip_material_key\"\nJOIN \"tip_material_status\" AS \"tms\"\n  ON tip_detail.\"tip_material_status_key\" = tip_material_status.\"tip_material_status_key\"\nJOIN \"tip_subject_offered\" AS \"tso\"\n  ON tip_detail.\"tip_subject_offered_key\" = tip_subject_offered.\"tip_subject_offered_key\"\nJOIN \"student_department\" AS \"sd\"\n  ON tip_subject_offered.\"offer_dept_code\" = student_department.\"department_code\"\nGROUP BY\n  \"tm\".\"author\",\n  tip_material_status.\"tip_material_status\",\n  student_department.\"school_name\""
+  },
+  {
+    "question": "What is the course number, subject title, material status, the total, min, and max new shelf price, the total, min, and max used shelf price, total number of schools and the total number of materials for each TIP subject and material status?",
+    "sql": "SELECT tso.COURSE_NUMBER, tso.SUBJECT_TITLE, tms.TIP_MATERIAL_STATUS, SUM(tm.NEW_SHELF_PRICE) as Total_New_Price, Min(tm.NEW_SHELF_PRICE) as Min_New_Price, Max(tm.NEW_SHELF_PRICE) as Max_New_Price, SUM(tm.USED_SHELF_PRICE) as Total_Used_Price, Min(tm.USED_SHELF_PRICE) as Min_Used_Price, Max(tm.USED_SHELF_PRICE) as Max_Used_Price, COUNT(DISTINCT OFFER_SCHOOL_NAME) AS Total_Num_Schools, COUNT(distinct td.TIP_MATERIAL_KEY) AS Total_Num_Materials FROM TIP_DETAIL td JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY JOIN TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY GROUP BY tso.COURSE_NUMBER, tso.SUBJECT_TITLE, tms.TIP_MATERIAL_STATUS;",
+    "topics": [
+      "course number",
+      "subject title",
+      "material status",
+      "new shelf price",
+      "used shelf price",
+      "total number of schools",
+      "total number of materials",
+      "TIP subject"
+    ],
+    "mapping": {
+      "course number": ["TIP_SUBJECT_OFFERED.COURSE_NUMBER"],
+      "subject title": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+      "new shelf price": ["TIP_MATERIAL.NEW_SHELF_PRICE"],
+      "used shelf price": ["TIP_MATERIAL.USED_SHELF_PRICE"],
+      "schools": ["TIP_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"],
+      "materials": ["TIP_DETAIL.TIP_MATERIAL_KEY"],
+      "TIP subject": ["TIP_SUBJECT_OFFERED.SUBJECT_TITLE"]
+    },
+    "columns": [
+      "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS",
+      "TIP_DETAIL.TIP_MATERIAL_KEY",
+      "TIP_MATERIAL.USED_SHELF_PRICE",
+      "TIP_MATERIAL.NEW_SHELF_PRICE",
+      "TIP_SUBJECT_OFFERED.COURSE_NUMBER",
+      "TIP_SUBJECT_OFFERED.OFFER_SCHOOL_NAME",
+      "TIP_SUBJECT_OFFERED.SUBJECT_TITLE"
+    ],
+    "qualified": "SELECT\n  tip_subject_offered.\"course_number\" AS \"course_number\",\n  tip_subject_offered.\"subject_title\" AS \"subject_title\",\n  tip_material_status.\"tip_material_status\" AS \"tip_material_status\",\n  SUM(tip_material.\"new_shelf_price\") AS \"total_new_price\",\n  MIN(tip_material.\"new_shelf_price\") AS \"min_new_price\",\n  MAX(tip_material.\"new_shelf_price\") AS \"max_new_price\",\n  SUM(tip_material.\"used_shelf_price\") AS \"total_used_price\",\n  MIN(tip_material.\"used_shelf_price\") AS \"min_used_price\",\n  MAX(tip_material.\"used_shelf_price\") AS \"max_used_price\",\n  COUNT(DISTINCT tip_subject_offered.\"offer_school_name\") AS \"total_num_schools\",\n  COUNT(DISTINCT tip_detail.\"tip_material_key\") AS \"total_num_materials\"\nFROM \"tip_detail\" AS \"td\"\nJOIN \"tip_material\" AS \"tm\"\n  ON tip_detail.\"tip_material_key\" = tip_material.\"tip_material_key\"\nJOIN \"tip_material_status\" AS \"tms\"\n  ON tip_detail.\"tip_material_status_key\" = tip_material_status.\"tip_material_status_key\"\nJOIN \"tip_subject_offered\" AS \"tso\"\n  ON tip_detail.\"tip_subject_offered_key\" = tip_subject_offered.\"tip_subject_offered_key\"\nGROUP BY\n  tip_subject_offered.\"course_number\",\n  tip_subject_offered.\"subject_title\",\n  tip_material_status.\"tip_material_status\""
+  },
+  {
+    "question": "What is material status, the total number of materials, the total number of subjects, and the total number of schools for each material status?",
+    "sql": "SELECT tms.TIP_MATERIAL_STATUS, COUNT(DISTINCT td.TIP_MATERIAL_KEY) AS Total_Materials, COUNT(distinct td.SUBJECT_ID) AS Total_Subjects, COUNT(DISTINCT SCHOOL_NAME) AS Total_Num_Schools FROM TIP_DETAIL td JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY JOIN TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY JOIN STUDENT_DEPARTMENT sd ON tso.OFFER_DEPT_CODE = sd.DEPARTMENT_CODE GROUP BY tms.TIP_MATERIAL_STATUS;",
+    "topics": ["material status", "materials", "subjects", "schools"],
+    "mapping": {
+      "material status": ["TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"],
+      "materials": ["TIP_DETAIL.TIP_MATERIAL_KEY"],
+      "subjects": ["TIP_DETAIL.SUBJECT_ID"],
+      "schools": ["STUDENT_DEPARTMENT.SCHOOL_NAME"]
+    },
+    "columns": [
+      "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS",
+      "STUDENT_DEPARTMENT.SCHOOL_NAME",
+      "TIP_DETAIL.SUBJECT_ID",
+      "TIP_DETAIL.TIP_MATERIAL_KEY"
+    ],
+    "qualified": "SELECT\n  tip_material_status.\"tip_material_status\" AS \"tip_material_status\",\n  COUNT(DISTINCT tip_detail.\"tip_material_key\") AS \"total_materials\",\n  COUNT(DISTINCT tip_detail.\"subject_id\") AS \"total_subjects\",\n  COUNT(DISTINCT student_department.\"school_name\") AS \"total_num_schools\"\nFROM \"tip_detail\" AS \"td\"\nJOIN \"tip_material\" AS \"tm\"\n  ON tip_detail.\"tip_material_key\" = tip_material.\"tip_material_key\"\nJOIN \"tip_material_status\" AS \"tms\"\n  ON tip_detail.\"tip_material_status_key\" = tip_material_status.\"tip_material_status_key\"\nJOIN \"tip_subject_offered\" AS \"tso\"\n  ON tip_detail.\"tip_subject_offered_key\" = tip_subject_offered.\"tip_subject_offered_key\"\nJOIN \"student_department\" AS \"sd\"\n  ON tip_subject_offered.\"offer_dept_code\" = student_department.\"department_code\"\nGROUP BY\n  tip_material_status.\"tip_material_status\""
+  },
+  {
+    "question": "What is the term description, whether the term is current or not, total number of types of TIP subjects offered and materials needed, the minimum and maximum number of enrolled students, and the total number of schools offering subjects for each term code?",
+    "sql": "SELECT at.TERM_DESCRIPTION, at.IS_CURRENT_TERM, COUNT(distinct tso.COURSE_NUMBER) AS Total_Courses, COUNT(DISTINCT tm.isbn) AS Total_materials, MIN(tso.NUM_ENROLLED_STUDENTS) AS Min_Enrolled_Students, MAX(tso.NUM_ENROLLED_STUDENTS) AS Max_Enrolled_Students, COUNT(DISTINCT OFFER_SCHOOL_NAME) AS Total_Num_Schools FROM ACADEMIC_TERMS_ALL at LEFT OUTER JOIN TIP_SUBJECT_OFFERED tso ON at.TERM_CODE = tso.TERM_CODE JOIN TIP_DETAIL td ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY GROUP BY at.TERM_CODE, at.TERM_DESCRIPTION, at.IS_CURRENT_TERM;",
+    "topics": [
+      "term description",
+      "current status",
+      "types of TIP subjects",
+      "materials needed",
+      "enrolled students",
+      "schools",
+      "term code"
+    ],
+    "mapping": {
+      "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+      "term is current or not": ["ACADEMIC_TERMS_ALL.IS_CURRENT_TERM"],
+      "TIP subjects": ["TIP_SUBJECT_OFFERED.COURSE_NUMBER"],
+      "materials needed": ["TIP_MATERIAL.ISBN"],
+      "enrolled students": ["TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+      "schools": ["TIP_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"],
+      "term code": ["ACADEMIC_TERMS_ALL.TERM_CODE"]
+    },
+    "columns": [
+      "TIP_MATERIAL.ISBN",
+      "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION",
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM",
+      "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+      "TIP_SUBJECT_OFFERED.COURSE_NUMBER",
+      "TIP_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"
+    ],
+    "qualified": "SELECT\n  academic_terms_all.\"term_description\" AS \"term_description\",\n  academic_terms_all.\"is_current_term\" AS \"is_current_term\",\n  COUNT(DISTINCT tip_subject_offered.\"course_number\") AS \"total_courses\",\n  COUNT(DISTINCT tip_material.\"isbn\") AS \"total_materials\",\n  MIN(tip_subject_offered.\"num_enrolled_students\") AS \"min_enrolled_students\",\n  MAX(tip_subject_offered.\"num_enrolled_students\") AS \"max_enrolled_students\",\n  COUNT(DISTINCT tip_subject_offered.\"offer_school_name\") AS \"total_num_schools\"\nFROM \"academic_terms_all\" AS \"at\"\nLEFT OUTER JOIN \"tip_subject_offered\" AS \"tso\"\n  ON academic_terms_all.\"term_code\" = tip_subject_offered.\"term_code\"\nJOIN \"tip_detail\" AS \"td\"\n  ON tip_detail.\"tip_subject_offered_key\" = tip_subject_offered.\"tip_subject_offered_key\"\nJOIN \"tip_material\" AS \"tm\"\n  ON tip_detail.\"tip_material_key\" = tip_material.\"tip_material_key\"\nJOIN \"tip_material_status\" AS \"tms\"\n  ON tip_detail.\"tip_material_status_key\" = tip_material_status.\"tip_material_status_key\"\nGROUP BY\n  academic_terms_all.\"term_code\",\n  academic_terms_all.\"term_description\",\n  academic_terms_all.\"is_current_term\""
+  },
+  {
+    "question": "List all buildings with their names, building numbers, street address, city, state, department name, assignable square footage, total and average square footage, ordered in descending order of assignable, total, and average square footage.",
+    "sql": "SELECT DISTINCT new.BUILDING_NAME, new.BUILDING_NUMBER, new.BUILDING_STREET_ADDRESS, fba.CITY, fba.STATE, new.HR_DEPARTMENT_NAME, new.BLDG_ASSIGNABLE_SQUARE_FOOTAGE, new.Total_Square_Footage, new.Avg_Square_Footage_Per_Room FROM (SELECT b.BUILDING_NAME, b.BUILDING_NUMBER, b.BUILDING_STREET_ADDRESS,fb.FAC_BUILDING_KEY, fo.HR_DEPARTMENT_NAME, b.BLDG_ASSIGNABLE_SQUARE_FOOTAGE,SUM(fr.AREA) AS Total_Square_Footage, AVG(fr.AREA) AS Avg_Square_Footage_Per_Room FROM BUILDINGS b JOIN FAC_BUILDING fb ON b.BUILDING_KEY = fb.FAC_BUILDING_KEY JOIN FAC_ROOMS fr ON fb.FAC_BUILDING_KEY = fr.BUILDING_KEY JOIN FAC_ORGANIZATION fo ON fr.ORGANIZATION_KEY = fo.ORGANIZATION_KEY GROUP BY b.BUILDING_NAME, b.BUILDING_NUMBER, b.BUILDING_STREET_ADDRESS,fb.FAC_BUILDING_KEY, fo.HR_DEPARTMENT_NAME, b.BLDG_ASSIGNABLE_SQUARE_FOOTAGE ) new JOIN FAC_BUILDING_ADDRESS fba ON new.FAC_BUILDING_KEY = fba.BUILDING_KEY ORDER BY new.BLDG_ASSIGNABLE_SQUARE_FOOTAGE DESC, new.Total_Square_Footage DESC, new.Avg_Square_Footage_Per_Room DESC;",
+    "topics": [
+      "buildings",
+      "names",
+      "building numbers",
+      "street address",
+      "city",
+      "state",
+      "department name",
+      "assignable square footage",
+      "total square footage",
+      "average square footage"
+    ],
+    "mapping": {
+      "names": ["BUILDINGS.BUILDING_NAME"],
+      "building numbers": ["BUILDINGS.BUILDING_NUMBER"],
+      "street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+      "city": ["FAC_BUILDING_ADDRESS.CITY"],
+      "state": ["FAC_BUILDING_ADDRESS.STATE"],
+      "department name": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+      "assignable square footage": ["BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE"],
+      "square footage": ["FAC_ROOMS.AREA"]
+    },
+    "columns": [
+      "FAC_BUILDING.FAC_BUILDING_KEY",
+      "BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE",
+      "FAC_ORGANIZATION.HR_DEPARTMENT_NAME",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "FAC_ROOMS.AREA",
+      "BUILDINGS.BUILDING_NAME",
+      "FAC_BUILDING_ADDRESS.CITY",
+      "FAC_BUILDING_ADDRESS.STATE",
+      "BUILDINGS.BUILDING_NUMBER"
+    ],
+    "qualified": "SELECT DISTINCT\n  \"new\".\"building_name\" AS \"building_name\",\n  \"new\".\"building_number\" AS \"building_number\",\n  \"new\".\"building_street_address\" AS \"building_street_address\",\n  fac_building_address.\"city\" AS \"city\",\n  fac_building_address.\"state\" AS \"state\",\n  \"new\".\"hr_department_name\" AS \"hr_department_name\",\n  \"new\".\"bldg_assignable_square_footage\" AS \"bldg_assignable_square_footage\",\n  \"new\".\"total_square_footage\" AS \"total_square_footage\",\n  \"new\".\"avg_square_footage_per_room\" AS \"avg_square_footage_per_room\"\nFROM (\n  SELECT\n    buildings.\"building_name\" AS \"building_name\",\n    buildings.\"building_number\" AS \"building_number\",\n    buildings.\"building_street_address\" AS \"building_street_address\",\n    fac_building.\"fac_building_key\" AS \"fac_building_key\",\n    fac_organization.\"hr_department_name\" AS \"hr_department_name\",\n    buildings.\"bldg_assignable_square_footage\" AS \"bldg_assignable_square_footage\",\n    SUM(fac_rooms.\"area\") AS \"total_square_footage\",\n    AVG(fac_rooms.\"area\") AS \"avg_square_footage_per_room\"\n  FROM \"buildings\" AS \"b\"\n  JOIN \"fac_building\" AS \"fb\"\n    ON buildings.\"building_key\" = fac_building.\"fac_building_key\"\n  JOIN \"fac_rooms\" AS \"fr\"\n    ON fac_building.\"fac_building_key\" = fac_rooms.\"building_key\"\n  JOIN \"fac_organization\" AS \"fo\"\n    ON fac_rooms.\"organization_key\" = fac_organization.\"organization_key\"\n  GROUP BY\n    buildings.\"building_name\",\n    buildings.\"building_number\",\n    buildings.\"building_street_address\",\n    fac_building.\"fac_building_key\",\n    fac_organization.\"hr_department_name\",\n    buildings.\"bldg_assignable_square_footage\"\n) AS \"new\"\nJOIN \"fac_building_address\" AS \"fba\"\n  ON \"new\".\"fac_building_key\" = fac_building_address.\"building_key\"\nORDER BY\n  \"new\".\"bldg_assignable_square_footage\" DESC,\n  \"new\".\"total_square_footage\" DESC,\n  \"new\".\"avg_square_footage_per_room\" DESC"
+  },
+  {
+    "question": "For the 2023 Fall term, what are the unique term descriptions, subject titles along with their prerequisites, total number of types of subjects per term code, instructor of this course, and the number of types of courses ever taught by the instructor?",
+    "sql": "SELECT DISTINCT at.TERM_DESCRIPTION, ccso.SUBJECT_TITLE, ccso.PREREQUISITES, COUNT(distinct ccso.SUBJECT_ID) OVER (PARTITION BY at.TERM_CODE) AS Total_Subjects, ccso.FALL_INSTRUCTORS, COUNT(distinct ccso.SUBJECT_ID) OVER (PARTITION BY ccso.FALL_INSTRUCTORS) AS Experience FROM COURSE_CATALOG_SUBJECT_OFFERED ccso JOIN ACADEMIC_TERMS at ON ccso.TERM_CODE = at.TERM_CODE WHERE ccso.TERM_CODE = '2023FA';",
+    "topics": [
+      "term descriptions",
+      "subject titles",
+      "prerequisites",
+      "term code",
+      "instructor",
+      "types of courses"
+    ],
+    "mapping": {
+      "term descriptions": ["ACADEMIC_TERMS.TERM_DESCRIPTION"],
+      "subject titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "prerequisites": ["COURSE_CATALOG_SUBJECT_OFFERED.PREREQUISITES"],
+      "term code": [
+        "ACADEMIC_TERMS.TERM_CODE",
+        "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
+      ],
+      "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+      "instructor": ["COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"],
+      "courses": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "ACADEMIC_TERMS.TERM_DESCRIPTION",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.PREREQUISITES",
+      "COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"
+    ],
+    "qualified": "SELECT DISTINCT\n  academic_terms.\"term_description\" AS \"term_description\",\n  course_catalog_subject_offered.\"subject_title\" AS \"subject_title\",\n  course_catalog_subject_offered.\"prerequisites\" AS \"prerequisites\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY academic_terms.\"term_code\") AS \"total_subjects\",\n  course_catalog_subject_offered.\"fall_instructors\" AS \"fall_instructors\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY course_catalog_subject_offered.\"fall_instructors\") AS \"experience\"\nFROM \"course_catalog_subject_offered\" AS \"ccso\"\nJOIN \"academic_terms\" AS \"at\"\n  ON course_catalog_subject_offered.\"term_code\" = academic_terms.\"term_code\"\nWHERE\n  course_catalog_subject_offered.\"term_code\" = '2023FA'"
+  },
+  {
+    "question": "Show the details of rooms including the full name of the rooms, the building names, floor numbers, the organizations occupying them, name of the departments occupying them, and the percentage of the room area over the assignable floor area and building.",
+    "sql": "SELECT fr.ROOM_FULL_NAME, fb.BUILDING_NAME, ff.FLOOR, fo.ORGANIZATION_NAME, fo.HR_DEPARTMENT_NAME, CASE WHEN ff.ASSIGNABLE_AREA = 0 THEN 0 ELSE fr.AREA/ff.ASSIGNABLE_AREA END AS PERC_OF_ASG_FLOOR, CASE WHEN fb.ASSIGNABLE_AREA = 0 THEN 0 ELSE fr.AREA/fb.ASSIGNABLE_AREA END AS PERC_OF_ASG_BUILDING FROM FAC_ROOMS fr JOIN FAC_BUILDING fb ON fr.BUILDING_KEY = fb.FAC_BUILDING_KEY JOIN FAC_FLOOR ff ON fr.FLOOR_KEY = ff.FLOOR_KEY JOIN FAC_ORGANIZATION fo ON fr.ORGANIZATION_KEY = fo.ORGANIZATION_KEY;",
+    "topics": [
+      "room_full_name",
+      "building_name",
+      "floor_number",
+      "organization_name",
+      "department_name",
+      "percentage_room_area_over_assignable_floor_area",
+      "building_area"
+    ],
+    "mapping": {
+      "full name of the rooms": ["FAC_ROOMS.ROOM_FULL_NAME"],
+      "building names": ["FAC_BUILDING.BUILDING_NAME"],
+      "floor numbers": ["FAC_FLOOR.FLOOR"],
+      "organizations": ["FAC_ORGANIZATION.ORGANIZATION_NAME"],
+      "name of the departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+      "room area": ["FAC_ROOMS.AREA"],
+      "assignable floor area": ["FAC_FLOOR.ASSIGNABLE_AREA"]
+    },
+    "columns": [
+      "FAC_BUILDING.ASSIGNABLE_AREA",
+      "FAC_ORGANIZATION.ORGANIZATION_NAME",
+      "FAC_ORGANIZATION.HR_DEPARTMENT_NAME",
+      "FAC_FLOOR.ASSIGNABLE_AREA",
+      "FAC_FLOOR.FLOOR",
+      "FAC_ROOMS.AREA",
+      "FAC_ROOMS.ROOM_FULL_NAME",
+      "FAC_BUILDING.BUILDING_NAME"
+    ],
+    "qualified": "SELECT\n  fac_rooms.\"room_full_name\" AS \"room_full_name\",\n  fac_building.\"building_name\" AS \"building_name\",\n  fac_floor.\"floor\" AS \"floor\",\n  fac_organization.\"organization_name\" AS \"organization_name\",\n  fac_organization.\"hr_department_name\" AS \"hr_department_name\",\n  CASE\n    WHEN fac_floor.\"assignable_area\" = 0\n    THEN 0\n    ELSE fac_rooms.\"area\" / NULLIF(fac_floor.\"assignable_area\", 0)\n  END AS \"perc_of_asg_floor\",\n  CASE\n    WHEN fac_building.\"assignable_area\" = 0\n    THEN 0\n    ELSE fac_rooms.\"area\" / NULLIF(fac_building.\"assignable_area\", 0)\n  END AS \"perc_of_asg_building\"\nFROM \"fac_rooms\" AS \"fr\"\nJOIN \"fac_building\" AS \"fb\"\n  ON fac_rooms.\"building_key\" = fac_building.\"fac_building_key\"\nJOIN \"fac_floor\" AS \"ff\"\n  ON fac_rooms.\"floor_key\" = fac_floor.\"floor_key\"\nJOIN \"fac_organization\" AS \"fo\"\n  ON fac_rooms.\"organization_key\" = fac_organization.\"organization_key\""
+  },
+  {
+    "question": "Show the details of rooms including the full name of the rooms, the building names, floor numbers, the organizations occupying them, name of the departments occupying them, and the percentage of the room area over the floor area and building.",
+    "sql": "SELECT fr.ROOM_FULL_NAME, fb.BUILDING_NAME, ff.FLOOR, fo.ORGANIZATION_NAME, fo.HR_DEPARTMENT_NAME, CASE WHEN FLOOR_AREA = 0 THEN 0 ELSE fr.AREA/FLOOR_AREA END AS PERC_OF_FLOOR, CASE WHEN BUILDING_AREA = 0 THEN 0 ELSE fr.AREA/BUILDING_AREA END AS PERC_OF_BUILDING FROM (SELECT ROOM_FULL_NAME, BUILDING_KEY, FLOOR_KEY,ORGANIZATION_KEY, AREA, SUM(AREA) OVER (PARTITION BY FLOOR_KEY) AS FLOOR_AREA, SUM(AREA) OVER (PARTITION BY BUILDING_KEY) AS BUILDING_AREA FROM FAC_ROOMS) fr JOIN FAC_BUILDING fb ON fr.BUILDING_KEY = fb.FAC_BUILDING_KEY JOIN FAC_FLOOR ff ON fr.FLOOR_KEY = ff.FLOOR_KEY JOIN FAC_ORGANIZATION fo ON fr.ORGANIZATION_KEY = fo.ORGANIZATION_KEY;",
+    "topics": [
+      "rooms",
+      "full name",
+      "building names",
+      "floor numbers",
+      "organizations",
+      "departments",
+      "room area",
+      "floor area",
+      "building"
+    ],
+    "mapping": {
+      "full name": ["FAC_ROOMS.ROOM_FULL_NAME"],
+      "building names": [
+        "FAC_BUILDING.BUILDING_NAME",
+        "FAC_ROOMS.BUILDING_KEY"
+      ],
+      "floor numbers": ["FAC_FLOOR.FLOOR", "FAC_ROOMS.FLOOR_KEY"],
+      "organizations": [
+        "FAC_ORGANIZATION.ORGANIZATION_NAME",
+        "FAC_ROOMS.ORGANIZATION_KEY"
+      ],
+      "departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+      "room area": ["FAC_ROOMS.AREA"],
+      "floor area": ["FAC_ROOMS.AREA", "FAC_ROOMS.FLOOR_KEY"]
+    },
+    "columns": [
+      "FAC_ORGANIZATION.ORGANIZATION_NAME",
+      "FAC_ORGANIZATION.HR_DEPARTMENT_NAME",
+      "FAC_ROOMS.ORGANIZATION_KEY",
+      "FAC_ROOMS.FLOOR_KEY",
+      "FAC_FLOOR.FLOOR",
+      "FAC_ROOMS.AREA",
+      "FAC_ROOMS.ROOM_FULL_NAME",
+      "FAC_BUILDING.BUILDING_NAME",
+      "FAC_ROOMS.BUILDING_KEY"
+    ],
+    "qualified": "SELECT\n  \"fr\".\"room_full_name\" AS \"room_full_name\",\n  fac_building.\"building_name\" AS \"building_name\",\n  fac_floor.\"floor\" AS \"floor\",\n  fac_organization.\"organization_name\" AS \"organization_name\",\n  fac_organization.\"hr_department_name\" AS \"hr_department_name\",\n  CASE\n    WHEN \"fr\".\"floor_area\" = 0\n    THEN 0\n    ELSE \"fr\".\"area\" / NULLIF(\"fr\".\"floor_area\", 0)\n  END AS \"perc_of_floor\",\n  CASE\n    WHEN \"fr\".\"building_area\" = 0\n    THEN 0\n    ELSE \"fr\".\"area\" / NULLIF(\"fr\".\"building_area\", 0)\n  END AS \"perc_of_building\"\nFROM (\n  SELECT\n    \"fac_rooms\".\"room_full_name\" AS \"room_full_name\",\n    \"fac_rooms\".\"building_key\" AS \"building_key\",\n    \"fac_rooms\".\"floor_key\" AS \"floor_key\",\n    \"fac_rooms\".\"organization_key\" AS \"organization_key\",\n    \"fac_rooms\".\"area\" AS \"area\",\n    SUM(\"fac_rooms\".\"area\") OVER (PARTITION BY \"fac_rooms\".\"floor_key\") AS \"floor_area\",\n    SUM(\"fac_rooms\".\"area\") OVER (PARTITION BY \"fac_rooms\".\"building_key\") AS \"building_area\"\n  FROM \"fac_rooms\" AS \"fac_rooms\"\n) AS \"fr\"\nJOIN \"fac_building\" AS \"fb\"\n  ON \"fr\".\"building_key\" = fac_building.\"fac_building_key\"\nJOIN \"fac_floor\" AS \"ff\"\n  ON \"fr\".\"floor_key\" = fac_floor.\"floor_key\"\nJOIN \"fac_organization\" AS \"fo\"\n  ON \"fr\".\"organization_key\" = fac_organization.\"organization_key\""
+  },
+  {
+    "question": "What are the academic year, and instructors names for courses offered in the academic year 2022, along with the total number of types of courses per instructor?",
+    "sql": "SELECT ata.ACADEMIC_YEAR, ed.FULL_NAME, COUNT(distinct so.COURSE_NUMBER) AS Total_Courses FROM SUBJECT_OFFERED so JOIN ACADEMIC_TERMS_ALL ata ON so.TERM_CODE = ata.TERM_CODE JOIN EMPLOYEE_DIRECTORY ed ON so.RESPONSIBLE_FACULTY_MIT_ID = ed.MIT_ID WHERE ata.ACADEMIC_YEAR = 2022 GROUP BY ata.ACADEMIC_YEAR, ed.FULL_NAME;",
+    "topics": [
+      "academic year",
+      "instructors names",
+      "courses",
+      "types of courses"
+    ],
+    "mapping": {
+      "academic year": ["ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"],
+      "instructors names": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+      "courses": ["SUBJECT_OFFERED.COURSE_NUMBER"]
+    },
+    "columns": [
+      "SUBJECT_OFFERED.COURSE_NUMBER",
+      "ACADEMIC_TERMS_ALL.ACADEMIC_YEAR",
+      "EMPLOYEE_DIRECTORY.FULL_NAME"
+    ],
+    "qualified": "SELECT\n  academic_terms_all.\"academic_year\" AS \"academic_year\",\n  employee_directory.\"full_name\" AS \"full_name\",\n  COUNT(DISTINCT subject_offered.\"course_number\") AS \"total_courses\"\nFROM \"subject_offered\" AS \"so\"\nJOIN \"academic_terms_all\" AS \"ata\"\n  ON subject_offered.\"term_code\" = academic_terms_all.\"term_code\"\nJOIN \"employee_directory\" AS \"ed\"\n  ON subject_offered.\"responsible_faculty_mit_id\" = employee_directory.\"mit_id\"\nWHERE\n  academic_terms_all.\"academic_year\" = 2022\nGROUP BY\n  academic_terms_all.\"academic_year\",\n  employee_directory.\"full_name\""
+  },
+  {
+    "question": "What are the building names, department names, organizations, their highest and lowest floor number, along with the total number of rooms per each building key?",
+    "sql": "SELECT fb.BUILDING_NAME, fo.HR_DEPARTMENT_NAME, fo.ORGANIZATION, MAX(ff.LEVEL_ID) as MAX_FLOOR, MIN(ff.LEVEL_ID) as MIN_FLOOR, COUNT(distinct fr.FAC_ROOM_KEY) AS Total_Rooms FROM FAC_BUILDING fb JOIN FAC_ROOMS fr ON fb.FAC_BUILDING_KEY = fr.BUILDING_KEY JOIN FAC_FLOOR ff ON fr.FLOOR_KEY = ff.FLOOR_KEY JOIN FAC_ORGANIZATION fo ON fr.ORGANIZATION_KEY = fo.ORGANIZATION_KEY GROUP BY fb.FAC_BUILDING_KEY, fb.BUILDING_NAME, fo.HR_DEPARTMENT_NAME, fo.ORGANIZATION;",
+    "topics": [
+      "building name",
+      "department name",
+      "organization",
+      "floor number",
+      "room",
+      "building key"
+    ],
+    "mapping": {
+      "building names": ["FAC_BUILDING.BUILDING_NAME"],
+      "department names": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+      "organizations": ["FAC_ORGANIZATION.ORGANIZATION"],
+      "floor number": ["FAC_FLOOR.LEVEL_ID"],
+      "room": ["FAC_ROOMS.FAC_ROOM_KEY"],
+      "building key": ["FAC_BUILDING.FAC_BUILDING_KEY"]
+    },
+    "columns": [
+      "FAC_BUILDING.FAC_BUILDING_KEY",
+      "FAC_ORGANIZATION.HR_DEPARTMENT_NAME",
+      "FAC_ROOMS.FAC_ROOM_KEY",
+      "FAC_ORGANIZATION.ORGANIZATION",
+      "FAC_BUILDING.BUILDING_NAME",
+      "FAC_FLOOR.LEVEL_ID"
+    ],
+    "qualified": "SELECT\n  fac_building.\"building_name\" AS \"building_name\",\n  fac_organization.\"hr_department_name\" AS \"hr_department_name\",\n  fac_organization.\"organization\" AS \"organization\",\n  MAX(fac_floor.\"level_id\") AS \"max_floor\",\n  MIN(fac_floor.\"level_id\") AS \"min_floor\",\n  COUNT(DISTINCT fac_rooms.\"fac_room_key\") AS \"total_rooms\"\nFROM \"fac_building\" AS \"fb\"\nJOIN \"fac_rooms\" AS \"fr\"\n  ON fac_building.\"fac_building_key\" = fac_rooms.\"building_key\"\nJOIN \"fac_floor\" AS \"ff\"\n  ON fac_rooms.\"floor_key\" = fac_floor.\"floor_key\"\nJOIN \"fac_organization\" AS \"fo\"\n  ON fac_rooms.\"organization_key\" = fac_organization.\"organization_key\"\nGROUP BY\n  fac_building.\"fac_building_key\",\n  fac_building.\"building_name\",\n  fac_organization.\"hr_department_name\",\n  fac_organization.\"organization\""
+  },
+  {
+    "question": "What are the details of the students including their full names, emails, department names, department phone numbers, school names, and the total number of students per department and school?",
+    "sql": "SELECT DISTINCT msd.FULL_NAME, msd.EMAIL_ADDRESS, sd.DEPARTMENT_NAME, sad.DEPARTMENT_PHONE_NUMBER, sd.SCHOOL_NAME, COUNT(distinct msd.EMAIL_ADDRESS) OVER (PARTITION BY sd.DEPARTMENT_CODE)AS Total_Students_DEPT, COUNT(distinct msd.EMAIL_ADDRESS) OVER (PARTITION BY sd.SCHOOL_CODE) AS Total_Students_SCHOOLS FROM MIT_STUDENT_DIRECTORY msd JOIN SIS_DEPARTMENT sd ON msd.DEPARTMENT = sd.DEPARTMENT_CODE JOIN SIS_ADMIN_DEPARTMENT sad ON sd.DEPARTMENT_CODE = sad.SIS_ADMIN_DEPARTMENT_CODE;",
+    "topics": [
+      "students",
+      "full names",
+      "emails",
+      "department names",
+      "department phone numbers",
+      "school names",
+      "total number of students per department",
+      "total number of students per school"
+    ],
+    "mapping": {
+      "full names": ["MIT_STUDENT_DIRECTORY.FULL_NAME"],
+      "emails": ["MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS"],
+      "department names": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+      "department phone numbers": [
+        "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER"
+      ],
+      "school names": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+      "department": ["SIS_DEPARTMENT.DEPARTMENT_CODE"]
+    },
+    "columns": [
+      "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
+      "SIS_DEPARTMENT.SCHOOL_CODE",
+      "SIS_DEPARTMENT.DEPARTMENT_CODE",
+      "MIT_STUDENT_DIRECTORY.FULL_NAME",
+      "SIS_DEPARTMENT.SCHOOL_NAME",
+      "SIS_DEPARTMENT.DEPARTMENT_NAME",
+      "MIT_STUDENT_DIRECTORY.EMAIL_ADDRESS"
+    ],
+    "qualified": "SELECT DISTINCT\n  mit_student_directory.\"full_name\" AS \"full_name\",\n  mit_student_directory.\"email_address\" AS \"email_address\",\n  sis_department.\"department_name\" AS \"department_name\",\n  sis_admin_department.\"department_phone_number\" AS \"department_phone_number\",\n  sis_department.\"school_name\" AS \"school_name\",\n  COUNT(DISTINCT mit_student_directory.\"email_address\") OVER (PARTITION BY sis_department.\"department_code\") AS \"total_students_dept\",\n  COUNT(DISTINCT mit_student_directory.\"email_address\") OVER (PARTITION BY sis_department.\"school_code\") AS \"total_students_schools\"\nFROM \"mit_student_directory\" AS \"msd\"\nJOIN \"sis_department\" AS \"sd\"\n  ON mit_student_directory.\"department\" = sis_department.\"department_code\"\nJOIN \"sis_admin_department\" AS \"sad\"\n  ON sis_department.\"department_code\" = sis_admin_department.\"sis_admin_department_code\""
+  },
+  {
+    "question": "What are the unique titles of subjects offered in the fall term along with their instructor names, instructor emails, and the total number of types of subjects per instructor?",
+    "sql": "SELECT DISTINCT ccso.SUBJECT_TITLE, e.FULL_NAME AS INSTRUCTOR, e.EMAIL_ADDRESS, COUNT(distinct ccso.SUBJECT_ID) OVER (PARTITION BY ccso.FALL_INSTRUCTORS) AS Total_Subjects FROM EMPLOYEE_DIRECTORY e JOIN COURSE_CATALOG_SUBJECT_OFFERED ccso ON ccso.RESPONSIBLE_FACULTY_MIT_ID = e.MIT_ID JOIN ACADEMIC_TERMS_ALL at ON ccso.TERM_CODE = at.TERM_CODE WHERE at.TERM_CODE LIKE '%FA';",
+    "topics": [
+      "titles",
+      "subjects",
+      "fall term",
+      "instructor names",
+      "instructor emails",
+      "types of subjects"
+    ],
+    "mapping": {
+      "titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "fall term": [
+        "ACADEMIC_TERMS_ALL.TERM_CODE",
+        "COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"
+      ],
+      "instructor names": ["EMPLOYEE_DIRECTORY.FULL_NAME"],
+      "instructor emails": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "EMPLOYEE_DIRECTORY.FULL_NAME",
+      "COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS"
+    ],
+    "qualified": "SELECT DISTINCT\n  course_catalog_subject_offered.\"subject_title\" AS \"subject_title\",\n  employee_directory.\"full_name\" AS \"instructor\",\n  employee_directory.\"email_address\" AS \"email_address\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY course_catalog_subject_offered.\"fall_instructors\") AS \"total_subjects\"\nFROM \"employee_directory\" AS \"e\"\nJOIN \"course_catalog_subject_offered\" AS \"ccso\"\n  ON course_catalog_subject_offered.\"responsible_faculty_mit_id\" = employee_directory.\"mit_id\"\nJOIN \"academic_terms_all\" AS \"at\"\n  ON course_catalog_subject_offered.\"term_code\" = academic_terms_all.\"term_code\"\nWHERE\n  academic_terms_all.\"term_code\" LIKE '%FA'"
+  },
+  {
+    "question": "List the building names, names of departments occupying them, the total gross square footage, and the total and average assignable square footage per building key.",
+    "sql": "SELECT b.BUILDING_NAME, fo.HR_DEPARTMENT_NAME, SUM(b.BLDG_GROSS_SQUARE_FOOTAGE), SUM(b.BLDG_ASSIGNABLE_SQUARE_FOOTAGE), AVG(b.BLDG_ASSIGNABLE_SQUARE_FOOTAGE) AS Avg_Square_Footage FROM BUILDINGS b JOIN FAC_BUILDING fb ON b.BUILDING_KEY = fb.FAC_BUILDING_KEY JOIN FAC_ROOMS fr ON fb.FAC_BUILDING_KEY = fr.BUILDING_KEY JOIN FAC_ORGANIZATION fo ON fr.ORGANIZATION_KEY = fo.ORGANIZATION_KEY GROUP BY b.BUILDING_KEY, b.BUILDING_NAME, fo.HR_DEPARTMENT_NAME;",
+    "topics": [
+      "building names",
+      "departments",
+      "gross square footage",
+      "assignable square footage",
+      "building key"
+    ],
+    "mapping": {
+      "building names": ["BUILDINGS.BUILDING_NAME"],
+      "names of departments": ["FAC_ORGANIZATION.HR_DEPARTMENT_NAME"],
+      "gross square footage": ["BUILDINGS.BLDG_GROSS_SQUARE_FOOTAGE"],
+      "assignable square footage": ["BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE"],
+      "building key": ["BUILDINGS.BUILDING_KEY"]
+    },
+    "columns": [
+      "BUILDINGS.BLDG_ASSIGNABLE_SQUARE_FOOTAGE",
+      "FAC_ORGANIZATION.HR_DEPARTMENT_NAME",
+      "BUILDINGS.BUILDING_KEY",
+      "BUILDINGS.BUILDING_NAME",
+      "BUILDINGS.BLDG_GROSS_SQUARE_FOOTAGE"
+    ],
+    "qualified": "SELECT\n  buildings.\"building_name\" AS \"building_name\",\n  fac_organization.\"hr_department_name\" AS \"hr_department_name\",\n  SUM(buildings.\"bldg_gross_square_footage\") AS \"_col_2\",\n  SUM(buildings.\"bldg_assignable_square_footage\") AS \"_col_3\",\n  AVG(buildings.\"bldg_assignable_square_footage\") AS \"avg_square_footage\"\nFROM \"buildings\" AS \"b\"\nJOIN \"fac_building\" AS \"fb\"\n  ON buildings.\"building_key\" = fac_building.\"fac_building_key\"\nJOIN \"fac_rooms\" AS \"fr\"\n  ON fac_building.\"fac_building_key\" = fac_rooms.\"building_key\"\nJOIN \"fac_organization\" AS \"fo\"\n  ON fac_rooms.\"organization_key\" = fac_organization.\"organization_key\"\nGROUP BY\n  buildings.\"building_key\",\n  buildings.\"building_name\",\n  fac_organization.\"hr_department_name\""
+  },
+  {
+    "question": "Retrieve the titles of subjects offered in the summer term along with their descriptions, responsible faculty names, email address, building name, room name, floor level, building street address, and the total number of types of courses per departmnet.",
+    "sql": "SELECT ccso.SUBJECT_TITLE, ccso.SUBJECT_DESCRIPTION, ccso.RESPONSIBLE_FACULTY_NAME, ed.EMAIL_ADDRESS, b.BUILDING_NAME, fr.ROOM_FULL_NAME, ff.LEVEL_ID, b.BUILDING_STREET_ADDRESS, COUNT(distinct ccso.SUBJECT_ID) OVER (PARTITION BY ccso.DEPARTMENT_CODE) AS Total_Courses FROM COURSE_CATALOG_SUBJECT_OFFERED ccso JOIN EMPLOYEE_DIRECTORY ed ON ccso.RESPONSIBLE_FACULTY_MIT_ID = ed.MIT_ID JOIN ACADEMIC_TERMS at ON ccso.TERM_CODE = at.TERM_CODE JOIN FAC_ROOMS fr ON ccso.MEET_PLACE = fr.FAC_ROOM_KEY JOIN FAC_FLOOR ff ON ff.FLOOR_KEY = fr.FLOOR_KEY JOIN BUILDINGS b ON fr.BUILDING_KEY = b.BUILDING_KEY WHERE at.TERM_CODE LIKE '%SU';",
+    "topics": [
+      "titles",
+      "descriptions",
+      "faculty names",
+      "email address",
+      "building name",
+      "room name",
+      "floor level",
+      "building street address",
+      "types of courses",
+      "department"
+    ],
+    "mapping": {
+      "titles": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "summer term": ["ACADEMIC_TERMS.TERM_CODE"],
+      "descriptions": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_DESCRIPTION"],
+      "responsible faculty names": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.RESPONSIBLE_FACULTY_NAME"
+      ],
+      "email address": ["EMPLOYEE_DIRECTORY.EMAIL_ADDRESS"],
+      "building name": ["BUILDINGS.BUILDING_NAME"],
+      "room name": ["FAC_ROOMS.ROOM_FULL_NAME"],
+      "floor level": ["FAC_FLOOR.LEVEL_ID"],
+      "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+      "courses": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+      "department": ["COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_CODE"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_DESCRIPTION",
+      "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_CODE",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.RESPONSIBLE_FACULTY_NAME",
+      "EMPLOYEE_DIRECTORY.EMAIL_ADDRESS",
+      "FAC_ROOMS.ROOM_FULL_NAME",
+      "BUILDINGS.BUILDING_NAME",
+      "FAC_FLOOR.LEVEL_ID"
+    ],
+    "qualified": "SELECT\n  course_catalog_subject_offered.\"subject_title\" AS \"subject_title\",\n  course_catalog_subject_offered.\"subject_description\" AS \"subject_description\",\n  course_catalog_subject_offered.\"responsible_faculty_name\" AS \"responsible_faculty_name\",\n  employee_directory.\"email_address\" AS \"email_address\",\n  buildings.\"building_name\" AS \"building_name\",\n  fac_rooms.\"room_full_name\" AS \"room_full_name\",\n  fac_floor.\"level_id\" AS \"level_id\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY course_catalog_subject_offered.\"department_code\") AS \"total_courses\"\nFROM \"course_catalog_subject_offered\" AS \"ccso\"\nJOIN \"employee_directory\" AS \"ed\"\n  ON course_catalog_subject_offered.\"responsible_faculty_mit_id\" = employee_directory.\"mit_id\"\nJOIN \"academic_terms\" AS \"at\"\n  ON course_catalog_subject_offered.\"term_code\" = academic_terms.\"term_code\"\nJOIN \"fac_rooms\" AS \"fr\"\n  ON course_catalog_subject_offered.\"meet_place\" = fac_rooms.\"fac_room_key\"\nJOIN \"fac_floor\" AS \"ff\"\n  ON fac_floor.\"floor_key\" = fac_rooms.\"floor_key\"\nJOIN \"buildings\" AS \"b\"\n  ON fac_rooms.\"building_key\" = buildings.\"building_key\"\nWHERE\n  academic_terms.\"term_code\" LIKE '%SU'"
+  },
+  {
+    "question": "For each term code, list the term description, attribute desciption, department name, school name, and the number of subjects in the area of humanities, arts and social sciences.",
+    "sql": "SELECT ata.TERM_DESCRIPTION, ccso.HASS_ATTRIBUTE_DESC, sd.DEPARTMENT_NAME, sd.SCHOOL_NAME, COUNT(distinct ccso.SUBJECT_ID) OVER (PARTITION BY  ata.TERM_CODE, cha.CIS_ATTRIBUTE_GROUP) AS Total_Subjects FROM COURSE_CATALOG_SUBJECT_OFFERED ccso JOIN CIS_HASS_ATTRIBUTE cha ON ccso.HASS_ATTRIBUTE = cha.HASS_ATTRIBUTE JOIN SIS_DEPARTMENT sd ON ccso.DEPARTMENT_CODE = sd.DEPARTMENT_CODE JOIN ACADEMIC_TERMS_ALL ata ON ccso.TERM_CODE = ata.TERM_CODE WHERE cha.CIS_ATTRIBUTE_GROUP = 'H';",
+    "topics": [
+      "term code",
+      "term description",
+      "attribute desciption",
+      "department name",
+      "school name",
+      "subjects",
+      "area of humanities",
+      "arts",
+      "social sciences"
+    ],
+    "mapping": {
+      "term code": ["ACADEMIC_TERMS_ALL.TERM_CODE"],
+      "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+      "attribute desciption": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.HASS_ATTRIBUTE_DESC"
+      ],
+      "department name": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+      "school name": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+      "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+      "area of humanities, arts and social studies": [
+        "CIS_HASS_ATTRIBUTE.CIS_ATTRIBUTE_GROUP"
+      ]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "CIS_HASS_ATTRIBUTE.CIS_ATTRIBUTE_GROUP",
+      "COURSE_CATALOG_SUBJECT_OFFERED.HASS_ATTRIBUTE_DESC",
+      "SIS_DEPARTMENT.SCHOOL_NAME",
+      "SIS_DEPARTMENT.DEPARTMENT_NAME"
+    ],
+    "qualified": "SELECT\n  academic_terms_all.\"term_description\" AS \"term_description\",\n  course_catalog_subject_offered.\"hass_attribute_desc\" AS \"hass_attribute_desc\",\n  sis_department.\"department_name\" AS \"department_name\",\n  sis_department.\"school_name\" AS \"school_name\",\n  COUNT(DISTINCT course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY academic_terms_all.\"term_code\", cis_hass_attribute.\"cis_attribute_group\") AS \"total_subjects\"\nFROM \"course_catalog_subject_offered\" AS \"ccso\"\nJOIN \"cis_hass_attribute\" AS \"cha\"\n  ON course_catalog_subject_offered.\"hass_attribute\" = cis_hass_attribute.\"hass_attribute\"\nJOIN \"sis_department\" AS \"sd\"\n  ON course_catalog_subject_offered.\"department_code\" = sis_department.\"department_code\"\nJOIN \"academic_terms_all\" AS \"ata\"\n  ON course_catalog_subject_offered.\"term_code\" = academic_terms_all.\"term_code\"\nWHERE\n  cis_hass_attribute.\"cis_attribute_group\" = 'H'"
+  },
+  {
+    "question": "List building names, their height, street address, city, state, postal code, their gross and assignable square footage, the smallest and largest floor level and the total area of all rooms for each building key.",
+    "sql": "SELECT fb.BUILDING_NAME, fb.BUILDING_HEIGHT, b.BUILDING_STREET_ADDRESS, fba.CITY, fba.STATE, fba.POSTAL_CODE, fb.EXT_GROSS_AREA, fb.ASSIGNABLE_AREA, MIN(ff.LEVEL_ID) as SMALLEST_FLOOR, MAX(LEVEL_ID) AS HIGHEST_FLOOR, SUM(fr.AREA) AS Total_Room_Area FROM FAC_BUILDING fb JOIN FAC_BUILDING_ADDRESS fba ON fb.FAC_BUILDING_KEY = fba.BUILDING_KEY JOIN FAC_FLOOR ff ON fb.FAC_BUILDING_KEY = ff.BUILDING_KEY JOIN FAC_ROOMS fr ON ff.FLOOR_KEY = fr.FLOOR_KEY JOIN BUILDINGS b ON b.BUILDING_KEY = fb.FAC_BUILDING_KEY WHERE fba.ADDRESS_PURPOSE = 'STREET' GROUP BY fb.FAC_BUILDING_KEY, fb.BUILDING_NAME, fb.BUILDING_HEIGHT, fba.CITY, fba.POSTAL_CODE, fba.STATE, b.BUILDING_STREET_ADDRESS, fb.EXT_GROSS_AREA, fb.ASSIGNABLE_AREA;",
+    "topics": [
+      "building name",
+      "height",
+      "street address",
+      "city",
+      "state",
+      "postal code",
+      "gross square footage",
+      "assignable square footage",
+      "floor level",
+      "room area",
+      "building key"
+    ],
+    "mapping": {
+      "building names": ["FAC_BUILDING.BUILDING_NAME"],
+      "height": ["FAC_BUILDING.BUILDING_HEIGHT"],
+      "street address": [
+        "BUILDINGS.BUILDING_STREET_ADDRESS",
+        "FAC_BUILDING_ADDRESS.ADDRESS_PURPOSE"
+      ],
+      "city": ["FAC_BUILDING_ADDRESS.CITY"],
+      "state": ["FAC_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FAC_BUILDING_ADDRESS.POSTAL_CODE"],
+      "gross square footage": ["FAC_BUILDING.EXT_GROSS_AREA"],
+      "assignable square footage": ["FAC_BUILDING.ASSIGNABLE_AREA"],
+      "floor level": ["FAC_FLOOR.LEVEL_ID"],
+      "area": ["FAC_ROOMS.AREA"],
+      "building key": ["FAC_BUILDING.FAC_BUILDING_KEY"]
+    },
+    "columns": [
+      "FAC_BUILDING_ADDRESS.CITY",
+      "FAC_BUILDING.ASSIGNABLE_AREA",
+      "FAC_BUILDING.FAC_BUILDING_KEY",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "FAC_BUILDING.BUILDING_HEIGHT",
+      "FAC_BUILDING_ADDRESS.ADDRESS_PURPOSE",
+      "FAC_ROOMS.AREA",
+      "FAC_BUILDING.EXT_GROSS_AREA",
+      "FAC_BUILDING_ADDRESS.POSTAL_CODE",
+      "FAC_BUILDING.BUILDING_NAME",
+      "FAC_BUILDING_ADDRESS.STATE",
+      "FAC_FLOOR.LEVEL_ID"
+    ],
+    "qualified": "SELECT\n  fac_building.\"building_name\" AS \"building_name\",\n  fac_building.\"building_height\" AS \"building_height\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  fac_building_address.\"city\" AS \"city\",\n  fac_building_address.\"state\" AS \"state\",\n  fac_building_address.\"postal_code\" AS \"postal_code\",\n  fac_building.\"ext_gross_area\" AS \"ext_gross_area\",\n  fac_building.\"assignable_area\" AS \"assignable_area\",\n  MIN(fac_floor.\"level_id\") AS \"smallest_floor\",\n  MAX(fac_floor.\"level_id\") AS \"highest_floor\",\n  SUM(fac_rooms.\"area\") AS \"total_room_area\"\nFROM \"fac_building\" AS \"fb\"\nJOIN \"fac_building_address\" AS \"fba\"\n  ON fac_building.\"fac_building_key\" = fac_building_address.\"building_key\"\nJOIN \"fac_floor\" AS \"ff\"\n  ON fac_building.\"fac_building_key\" = fac_floor.\"building_key\"\nJOIN \"fac_rooms\" AS \"fr\"\n  ON fac_floor.\"floor_key\" = fac_rooms.\"floor_key\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_key\" = fac_building.\"fac_building_key\"\nWHERE\n  fac_building_address.\"address_purpose\" = 'STREET'\nGROUP BY\n  fac_building.\"fac_building_key\",\n  fac_building.\"building_name\",\n  fac_building.\"building_height\",\n  fac_building_address.\"city\",\n  fac_building_address.\"postal_code\",\n  fac_building_address.\"state\",\n  buildings.\"building_street_address\",\n  fac_building.\"ext_gross_area\",\n  fac_building.\"assignable_area\""
+  },
+  {
+    "question": "What is the category title, version, department name, school name, total number of courses for each course level, and the total number of degree-granting courses for each CIP category code?",
+    "sql": "SELECT c.CATEGORY_TITLE, c.VERSION, sd.DEPARTMENT_NAME, sd.SCHOOL_NAME, SUM(CASE WHEN scd.COURSE_LEVEL = 'U' THEN 1 ELSE 0 END) AS Total_U_Courses, SUM(CASE WHEN scd.COURSE_LEVEL = 'G' THEN 1 ELSE 0 END) AS Total_G_Courses, SUM(CASE WHEN scd.IS_DEGREE_GRANTING = 'Y' THEN 1 ELSE 0 END) AS Total_Degree_Granting_Courses FROM CIP c JOIN SIS_COURSE_DESCRIPTION scd ON c.PROGRAM_CODE = scd.CIP_PROGRAM_CODE JOIN SIS_DEPARTMENT sd ON scd.DEPARTMENT = sd.DEPARTMENT_CODE GROUP BY c.CATEGORY_CODE, c.CATEGORY_TITLE, c.VERSION, sd.DEPARTMENT_NAME, sd.SCHOOL_NAME;",
+    "topics": [
+      "category title",
+      "version",
+      "department name",
+      "school name",
+      "course level",
+      "CIP category code"
+    ],
+    "mapping": {
+      "category title": ["CIP.CATEGORY_TITLE"],
+      "version": ["CIP.VERSION"],
+      "department name": ["SIS_DEPARTMENT.DEPARTMENT_NAME"],
+      "school name": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+      "course level": ["SIS_COURSE_DESCRIPTION.COURSE_LEVEL"],
+      "courses": ["SIS_COURSE_DESCRIPTION.COURSE_LEVEL"],
+      "degree-granting courses": ["SIS_COURSE_DESCRIPTION.IS_DEGREE_GRANTING"],
+      "CIP category code": ["CIP.CATEGORY_CODE"]
+    },
+    "columns": [
+      "CIP.VERSION",
+      "SIS_COURSE_DESCRIPTION.COURSE_LEVEL",
+      "SIS_COURSE_DESCRIPTION.IS_DEGREE_GRANTING",
+      "CIP.CATEGORY_CODE",
+      "SIS_DEPARTMENT.SCHOOL_NAME",
+      "SIS_DEPARTMENT.DEPARTMENT_NAME",
+      "CIP.CATEGORY_TITLE"
+    ],
+    "qualified": "SELECT\n  cip.\"category_title\" AS \"category_title\",\n  cip.\"version\" AS \"version\",\n  sis_department.\"department_name\" AS \"department_name\",\n  sis_department.\"school_name\" AS \"school_name\",\n  SUM(CASE WHEN sis_course_description.\"course_level\" = 'U' THEN 1 ELSE 0 END) AS \"total_u_courses\",\n  SUM(CASE WHEN sis_course_description.\"course_level\" = 'G' THEN 1 ELSE 0 END) AS \"total_g_courses\",\n  SUM(CASE WHEN sis_course_description.\"is_degree_granting\" = 'Y' THEN 1 ELSE 0 END) AS \"total_degree_granting_courses\"\nFROM \"cip\" AS \"c\"\nJOIN \"sis_course_description\" AS \"scd\"\n  ON cip.\"program_code\" = sis_course_description.\"cip_program_code\"\nJOIN \"sis_department\" AS \"sd\"\n  ON sis_course_description.\"department\" = sis_department.\"department_code\"\nGROUP BY\n  cip.\"category_code\",\n  cip.\"category_title\",\n  cip.\"version\",\n  sis_department.\"department_name\",\n  sis_department.\"school_name\""
+  },
+  {
+    "question": "What is the total number of library materials, the minimum and maximum publication years, and the total number of materials status for each course name?",
+    "sql": "SELECT COUNT(distinct lrc.CATALOG_SYSTEM_NUMBER) AS Total_Materials, MIN(lrc.CATALOG_YEAR) AS Min_Publication_Year, MAX(lrc.CATALOG_YEAR) AS Max_Publication_Year, COUNT(DISTINCT lms.LIBRARY_MATERIAL_STATUS) AS Total_Statuses FROM LIBRARY_COURSE_INSTRUCTOR lci JOIN LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lci.LIBRARY_COURSE_INSTRUCTOR_KEY = lrmd.LIBRARY_COURSE_INSTRUCTOR_KEY JOIN LIBRARY_RESERVE_CATALOG lrc ON lrmd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY JOIN LIBRARY_MATERIAL_STATUS lms ON lrmd.LIBRARY_MATERIAL_STATUS_KEY = lms.LIBRARY_MATERIAL_STATUS_KEY GROUP BY lci.COURSE_NAME;",
+    "topics": [
+      "library materials",
+      "publication years",
+      "materials status",
+      "course name"
+    ],
+    "mapping": {
+      "library materials": ["LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"],
+      "publication years": ["LIBRARY_RESERVE_CATALOG.CATALOG_YEAR"],
+      "materials status": ["LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"],
+      "course name": ["LIBRARY_COURSE_INSTRUCTOR.COURSE_NAME"]
+    },
+    "columns": [
+      "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS",
+      "LIBRARY_RESERVE_CATALOG.CATALOG_YEAR",
+      "LIBRARY_COURSE_INSTRUCTOR.COURSE_NAME",
+      "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"
+    ],
+    "qualified": "SELECT\n  COUNT(DISTINCT library_reserve_catalog.\"catalog_system_number\") AS \"total_materials\",\n  MIN(library_reserve_catalog.\"catalog_year\") AS \"min_publication_year\",\n  MAX(library_reserve_catalog.\"catalog_year\") AS \"max_publication_year\",\n  COUNT(DISTINCT library_material_status.\"library_material_status\") AS \"total_statuses\"\nFROM \"library_course_instructor\" AS \"lci\"\nJOIN \"library_reserve_matrl_detail\" AS \"lrmd\"\n  ON library_course_instructor.\"library_course_instructor_key\" = library_reserve_matrl_detail.\"library_course_instructor_key\"\nJOIN \"library_reserve_catalog\" AS \"lrc\"\n  ON library_reserve_matrl_detail.\"library_reserve_catalog_key\" = library_reserve_catalog.\"library_reserve_catalog_key\"\nJOIN \"library_material_status\" AS \"lms\"\n  ON library_reserve_matrl_detail.\"library_material_status_key\" = library_material_status.\"library_material_status_key\"\nGROUP BY\n  library_course_instructor.\"course_name\""
+  },
+  {
+    "question": "What is the total number of library reserve materials, the minimum and maximum publication years, and the total number of enrolled students for each course instructor?",
+    "sql": "SELECT COUNT(distinct lrc.CATALOG_SYSTEM_NUMBER) AS Total_Materials, MIN(lrc.CATALOG_YEAR) AS Min_Publication_Year, MAX(lrc.CATALOG_YEAR) AS Max_Publication_Year, SUM(lso.NUM_ENROLLED_STUDENTS) AS Total_Enrolled_Students FROM LIBRARY_COURSE_INSTRUCTOR lci JOIN LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lci.LIBRARY_COURSE_INSTRUCTOR_KEY = lrmd.LIBRARY_COURSE_INSTRUCTOR_KEY JOIN LIBRARY_RESERVE_CATALOG lrc ON lrmd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY JOIN LIBRARY_SUBJECT_OFFERED lso ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY GROUP BY lci.INSTRUCTOR_NAME;",
+    "topics": [
+      "library reserve materials",
+      "publication years",
+      "enrolled students",
+      "course instructor"
+    ],
+    "mapping": {
+      "library reserve materials": [
+        "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"
+      ],
+      "publication years": ["LIBRARY_RESERVE_CATALOG.CATALOG_YEAR"],
+      "enrolled students": ["LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+      "course instructor": ["LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME"]
+    },
+    "columns": [
+      "LIBRARY_RESERVE_CATALOG.CATALOG_YEAR",
+      "LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME",
+      "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER",
+      "LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"
+    ],
+    "qualified": "SELECT\n  COUNT(DISTINCT library_reserve_catalog.\"catalog_system_number\") AS \"total_materials\",\n  MIN(library_reserve_catalog.\"catalog_year\") AS \"min_publication_year\",\n  MAX(library_reserve_catalog.\"catalog_year\") AS \"max_publication_year\",\n  SUM(library_subject_offered.\"num_enrolled_students\") AS \"total_enrolled_students\"\nFROM \"library_course_instructor\" AS \"lci\"\nJOIN \"library_reserve_matrl_detail\" AS \"lrmd\"\n  ON library_course_instructor.\"library_course_instructor_key\" = library_reserve_matrl_detail.\"library_course_instructor_key\"\nJOIN \"library_reserve_catalog\" AS \"lrc\"\n  ON library_reserve_matrl_detail.\"library_reserve_catalog_key\" = library_reserve_catalog.\"library_reserve_catalog_key\"\nJOIN \"library_subject_offered\" AS \"lso\"\n  ON library_reserve_matrl_detail.\"library_subject_offered_key\" = library_subject_offered.\"library_subject_offered_key\"\nGROUP BY\n  library_course_instructor.\"instructor_name\""
+  },
+  {
+    "question": "What is the material status, term description, total number of courses and materials, occurences in departments and school, and the total number of instructors for each library material status code and term code?",
+    "sql": "SELECT lms.LIBRARY_MATERIAL_STATUS, ata.TERM_DESCRIPTION, COUNT(DISTINCT lso.COURSE_NUMBER) AS Total_Courses, COUNT(DISTINCT lrc.CATALOG_SYSTEM_NUMBER) AS Total_Materials, COUNT(DISTINCT lso.OFFER_DEPT_CODE), COUNT(DISTINCT lso.OFFER_SCHOOL_NAME), COUNT(DISTINCT lci.INSTRUCTOR_NAME) AS Total_Instructors FROM LIBRARY_MATERIAL_STATUS lms JOIN LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lms.LIBRARY_MATERIAL_STATUS_KEY = lrmd.LIBRARY_MATERIAL_STATUS_KEY JOIN LIBRARY_SUBJECT_OFFERED lso ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY JOIN LIBRARY_COURSE_INSTRUCTOR lci ON lrmd.LIBRARY_COURSE_INSTRUCTOR_KEY = lci.LIBRARY_COURSE_INSTRUCTOR_KEY JOIN LIBRARY_RESERVE_CATALOG lrc ON lrmd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY JOIN ACADEMIC_TERMS_ALL ata ON ata.TERM_CODE = lso.TERM_CODE GROUP BY lms.LIBRARY_MATERIAL_STATUS_CODE, lms.LIBRARY_MATERIAL_STATUS, lso.TERM_CODE, ata.TERM_DESCRIPTION;",
+    "topics": [
+      "material status",
+      "term description",
+      "courses",
+      "materials",
+      "departments",
+      "school",
+      "instructors",
+      "library material status code",
+      "term code"
+    ],
+    "mapping": {
+      "material status": ["LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"],
+      "term description": ["ACADEMIC_TERMS_ALL.TERM_DESCRIPTION"],
+      "courses": ["LIBRARY_SUBJECT_OFFERED.COURSE_NUMBER"],
+      "materials": ["LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER"],
+      "departments": ["LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_CODE"],
+      "school": ["LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"],
+      "instructors": ["LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME"],
+      "library material status code": [
+        "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS_CODE"
+      ],
+      "term code": ["LIBRARY_SUBJECT_OFFERED.TERM_CODE"]
+    },
+    "columns": [
+      "LIBRARY_RESERVE_CATALOG.CATALOG_SYSTEM_NUMBER",
+      "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS_CODE",
+      "LIBRARY_SUBJECT_OFFERED.TERM_CODE",
+      "LIBRARY_COURSE_INSTRUCTOR.INSTRUCTOR_NAME",
+      "LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_CODE",
+      "ACADEMIC_TERMS_ALL.TERM_DESCRIPTION",
+      "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS",
+      "LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME",
+      "LIBRARY_SUBJECT_OFFERED.COURSE_NUMBER"
+    ],
+    "qualified": "SELECT\n  library_material_status.\"library_material_status\" AS \"library_material_status\",\n  academic_terms_all.\"term_description\" AS \"term_description\",\n  COUNT(DISTINCT library_subject_offered.\"course_number\") AS \"total_courses\",\n  COUNT(DISTINCT library_reserve_catalog.\"catalog_system_number\") AS \"total_materials\",\n  COUNT(DISTINCT library_subject_offered.\"offer_dept_code\") AS \"_col_4\",\n  COUNT(DISTINCT library_subject_offered.\"offer_school_name\") AS \"_col_5\",\n  COUNT(DISTINCT library_course_instructor.\"instructor_name\") AS \"total_instructors\"\nFROM \"library_material_status\" AS \"lms\"\nJOIN \"library_reserve_matrl_detail\" AS \"lrmd\"\n  ON library_material_status.\"library_material_status_key\" = library_reserve_matrl_detail.\"library_material_status_key\"\nJOIN \"library_subject_offered\" AS \"lso\"\n  ON library_reserve_matrl_detail.\"library_subject_offered_key\" = library_subject_offered.\"library_subject_offered_key\"\nJOIN \"library_course_instructor\" AS \"lci\"\n  ON library_reserve_matrl_detail.\"library_course_instructor_key\" = library_course_instructor.\"library_course_instructor_key\"\nJOIN \"library_reserve_catalog\" AS \"lrc\"\n  ON library_reserve_matrl_detail.\"library_reserve_catalog_key\" = library_reserve_catalog.\"library_reserve_catalog_key\"\nJOIN \"academic_terms_all\" AS \"ata\"\n  ON academic_terms_all.\"term_code\" = library_subject_offered.\"term_code\"\nGROUP BY\n  library_material_status.\"library_material_status_code\",\n  library_material_status.\"library_material_status\",\n  library_subject_offered.\"term_code\",\n  academic_terms_all.\"term_description\""
+  },
+  {
+    "question": "List all space units, their floor and building name, building street address, as well as their space usage and list how many space units are on the same building and floor.",
+    "sql": "SELECT DISTINCT su.SPACE_UNIT, sf.FLOOR, b.BUILDING_NAME, b.BUILDING_STREET_ADDRESS, su2.SPACE_USAGE, COUNT(distinct su.SPACE_UNIT) OVER (PARTITION BY sd.FLOOR_KEY,sd.BUILDING_KEY) FROM SPACE_UNIT su JOIN SPACE_DETAIL sd ON su.SPACE_UNIT_KEY = sd.SPACE_UNIT_KEY JOIN SPACE_USAGE su2 ON su2.SPACE_USAGE_KEY = sd.SPACE_USAGE_KEY JOIN SPACE_FLOOR sf ON sd.FLOOR_KEY = sf.FLOOR_KEY JOIN BUILDINGS b ON b.BUILDING_KEY = sd.BUILDING_KEY JOIN FCLT_ORGANIZATION fo ON fo.FCLT_ORGANIZATION_KEY = su.FCLT_ORGANIZATION_KEY;",
+    "topics": [
+      "space units",
+      "floor",
+      "building name",
+      "building street address",
+      "space usage"
+    ],
+    "mapping": {
+      "floor": ["SPACE_DETAIL.FLOOR_KEY", "SPACE_FLOOR.FLOOR"],
+      "building name": ["SPACE_DETAIL.BUILDING_KEY", "BUILDINGS.BUILDING_NAME"],
+      "building street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+      "space usage": ["SPACE_USAGE.SPACE_USAGE"],
+      "space units": ["SPACE_UNIT.SPACE_UNIT"]
+    },
+    "columns": [
+      "SPACE_DETAIL.FLOOR_KEY",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "SPACE_DETAIL.BUILDING_KEY",
+      "BUILDINGS.BUILDING_NAME",
+      "SPACE_USAGE.SPACE_USAGE",
+      "SPACE_FLOOR.FLOOR",
+      "SPACE_UNIT.SPACE_UNIT"
+    ],
+    "qualified": "SELECT DISTINCT\n  space_unit.\"space_unit\" AS \"space_unit\",\n  space_floor.\"floor\" AS \"floor\",\n  buildings.\"building_name\" AS \"building_name\",\n  buildings.\"building_street_address\" AS \"building_street_address\",\n  space_usage.\"space_usage\" AS \"space_usage\",\n  COUNT(DISTINCT space_unit.\"space_unit\") OVER (PARTITION BY space_detail.\"floor_key\", space_detail.\"building_key\") AS \"_col_5\"\nFROM \"space_unit\" AS \"su\"\nJOIN \"space_detail\" AS \"sd\"\n  ON space_unit.\"space_unit_key\" = space_detail.\"space_unit_key\"\nJOIN \"space_usage\" AS \"su2\"\n  ON space_usage.\"space_usage_key\" = space_detail.\"space_usage_key\"\nJOIN \"space_floor\" AS \"sf\"\n  ON space_detail.\"floor_key\" = space_floor.\"floor_key\"\nJOIN \"buildings\" AS \"b\"\n  ON buildings.\"building_key\" = space_detail.\"building_key\"\nJOIN \"fclt_organization\" AS \"fo\"\n  ON fclt_organization.\"fclt_organization_key\" = space_unit.\"fclt_organization_key\""
+  }
+]

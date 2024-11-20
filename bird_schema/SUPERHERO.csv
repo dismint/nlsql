@@ -1,0 +1,13 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,INTEGER,PRIMARY KEY,
+superhero_name,TEXT,,
+full_name,TEXT,,
+gender_id,INTEGER,,FOREIGN KEY GENDER (id)
+eye_colour_id,INTEGER,,FOREIGN KEY COLOUR (id)
+hair_colour_id,INTEGER,,FOREIGN KEY COLOUR (id)
+skin_colour_id,INTEGER,,FOREIGN KEY COLOUR (id)
+race_id,INTEGER,,FOREIGN KEY RACE (id)
+publisher_id,INTEGER,,FOREIGN KEY PUBLISHER (id)
+alignment_id,INTEGER,,FOREIGN KEY ALIGNMENT (id)
+height_cm,INTEGER,,
+weight_kg,INTEGER,,

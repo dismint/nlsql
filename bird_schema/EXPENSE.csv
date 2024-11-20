@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+expense_id,TEXT,PRIMARY KEY,
+expense_description,TEXT,,
+expense_date,TEXT,,
+cost,REAL,,
+approved,TEXT,,
+link_to_member,TEXT,,FOREIGN KEY MEMBER (member_id)
+link_to_budget,TEXT,,FOREIGN KEY BUDGET (budget_id)

@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+raceId,INTEGER,"PRIMARY KEYS (raceId,driverId,stop)",FOREIGN KEY DRIVERS (driverId)
+driverId,INTEGER,,FOREIGN KEY DRIVERS (driverId)
+stop,INTEGER,,
+lap,INTEGER,,
+time,TEXT,,
+duration,TEXT,,
+milliseconds,INTEGER,,

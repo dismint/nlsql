@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+constructorResultsId,INTEGER,PRIMARY KEY,
+raceId,INTEGER,,FOREIGN KEY RACES (raceId)
+constructorId,INTEGER,,FOREIGN KEY CONSTRUCTORS (constructorId)
+points,REAL,,
+status,TEXT,,

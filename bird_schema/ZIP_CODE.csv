@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+zip_code,INTEGER,PRIMARY KEY,
+type,TEXT,,
+city,TEXT,,
+county,TEXT,,
+state,TEXT,,
+short_state,TEXT,,

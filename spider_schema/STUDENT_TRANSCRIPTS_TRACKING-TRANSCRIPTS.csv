@@ -1,0 +1,4 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+transcript_id,NUMBER,PRIMARY KEY,
+transcript_date,TIME,,
+other_details,TEXT,,

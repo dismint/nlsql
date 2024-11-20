@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+ID,INTEGER,PRIMARY KEY,
+SEX,TEXT,,
+Birthday,DATE,,
+Description,DATE,,
+First Date,DATE,,
+Admission,TEXT,,
+Diagnosis,TEXT,,

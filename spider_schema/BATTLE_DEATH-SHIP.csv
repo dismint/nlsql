@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+lost_in_battle,NUMBER,,FOREIGN KEY BATTLE_DEATH-BATTLE (id)
+id,NUMBER,PRIMARY KEY,
+name,TEXT,,
+tonnage,TEXT,,
+ship_type,TEXT,,
+location,TEXT,,
+disposition_of_ship,TEXT,,

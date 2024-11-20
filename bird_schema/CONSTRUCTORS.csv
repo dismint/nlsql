@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+constructorId,INTEGER,PRIMARY KEY,
+constructorRef,TEXT,,
+name,TEXT,,
+nationality,TEXT,,
+url,TEXT,,

@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+budget_id,TEXT,PRIMARY KEY,
+category,TEXT,,
+spent,REAL,,
+remaining,REAL,,
+amount,INTEGER,,
+event_status,TEXT,,
+link_to_event,TEXT,,FOREIGN KEY EVENT (event_id)

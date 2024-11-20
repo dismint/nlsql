@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Singer_ID,NUMBER,PRIMARY KEY,
+Name,TEXT,,
+Country,TEXT,,
+Song_Name,TEXT,,
+Song_release_year,TEXT,,
+Age,NUMBER,,
+Is_male,OTHERS,,

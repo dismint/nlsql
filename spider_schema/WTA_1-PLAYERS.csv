@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+player_id,NUMBER,PRIMARY KEY,
+first_name,TEXT,,
+last_name,TEXT,,
+hand,TEXT,,
+birth_date,TIME,,
+country_code,TEXT,,

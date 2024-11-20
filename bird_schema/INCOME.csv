@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+income_id,TEXT,PRIMARY KEY,
+date_received,TEXT,,
+amount,INTEGER,,
+source,TEXT,,
+notes,TEXT,,
+link_to_member,TEXT,,FOREIGN KEY MEMBER (member_id)

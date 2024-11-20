@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+driverStandingsId,INTEGER,PRIMARY KEY,
+raceId,INTEGER,,FOREIGN KEY RACES (raceId)
+driverId,INTEGER,,FOREIGN KEY DRIVERS (driverId)
+points,REAL,,
+position,INTEGER,,
+positionText,TEXT,,
+wins,INTEGER,,

@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+vote_id,NUMBER,PRIMARY KEY,
+phone_number,NUMBER,,
+state,TEXT,,FOREIGN KEY VOTER_1-AREA_CODE_STATE (state)
+contestant_number,NUMBER,,FOREIGN KEY VOTER_1-CONTESTANTS (contestant_number)
+created,TIME,,

@@ -36,24 +36,28 @@ table_set = set()
 
 # get schema
 
-schema = {}
+schemas = {}
 
-path = os.path.join(os.getcwd(), 'schemas')
+path = os.path.join(os.getcwd(), 'spider_schema')
 files = os.listdir(path)
 csv_files = [file for file in files if file.endswith('.csv')]
 
 for file in csv_files:
-    path = os.path.join(os.getcwd(), 'schemas', file)
-    table = file.split('.')[0]
-    schema[table] = {}
+    path = os.path.join(os.getcwd(), 'spider_schema', file)
+    dbtable = file.split('.')[0]
+    db, table = dbtable.split('-')
+    schemas[db] = schemas.get(db, {})
+    schemas[db][table] = {}
     with open(path, 'r') as f:
-        normalized_lines = (re.sub(r'\s*;\s*', ';', line.strip()) for line in f)
-        reader = csv.reader(normalized_lines, delimiter=';')
+        # normalized_lines = (re.sub(r'\s*,\s*', delimiter, line.strip()) for line in f)
+        reader = csv.reader(f, delimiter=",")
         rows = [row for row in reader if row]
-        for row in rows[2:]:
-            assert len(row) == 3
-            schema[table][row[0]] = row[1]
+        for row in rows[1:]:
+            print("\t", row)
+            assert len(row) >= 2
+            schemas[db][table][row[0]] = row[1]
 
+print(schemas)
 def get_children(node):
     depth = node.depth
     children = [child for child in node.walk() if child.depth == depth + 1]
@@ -115,7 +119,7 @@ def find_bad_cols(node):
             bad_cols.append(col)
     return bad_cols
 
-def sql_to_normal_columns(sql):
+def sql_to_normal_columns(sql, db):
     global table_set
     global alias_map
     global schema
@@ -127,7 +131,7 @@ def sql_to_normal_columns(sql):
         alias_map = {}
         parsed = parse_one(sql, read="mysql")
         try:
-            qualify.qualify(parsed, schema=schema)
+            qualify.qualify(parsed, schema=schemas[db])
         except Exception as e:
             print(f"[bold #FF0000]CANNOT QUALIFY[/bold #FF0000]")
             print(parsed.sql(pretty=True))
@@ -195,7 +199,8 @@ def annotate_queries(sample=True):
         annotated_data.append({
             "question": query["question"],
             "sql": query["sql"],
-            "topics": topics.split(",")
+            "topics": topics.split(","),
+            "db_id": query["db_id"]
         })
 
         # write as we go, in case of interruption
@@ -247,7 +252,8 @@ def map_queries():
             columns.append([])
             qualifieds.append(None)
             # columns = metadata.columns + metadata.columns_aliases_names
-            columns[-1], qualifieds[-1] = sql_to_normal_columns(query["sql"])
+            print("sup", query)
+            columns[-1], qualifieds[-1] = sql_to_normal_columns(query["sql"], query["db_id"].upper())
             print("columns:")
             for col in columns[-1]:
                 print("\t" + col)

@@ -1,0 +1,10 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,NUMBER,PRIMARY KEY,
+Episode,TEXT,,
+Air_Date,TEXT,,
+Rating,TEXT,,
+Share,NUMBER,,
+18_49_Rating_Share,TEXT,,
+Viewers_m,TEXT,,
+Weekly_Rank,NUMBER,,
+Channel,TEXT,,FOREIGN KEY TVSHOW-TV_CHANNEL (id)

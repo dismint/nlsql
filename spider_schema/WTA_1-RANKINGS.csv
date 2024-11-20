@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+ranking_date,TIME,,
+ranking,NUMBER,,
+player_id,NUMBER,,FOREIGN KEY WTA_1-PLAYERS (player_id)
+ranking_points,NUMBER,,
+tours,NUMBER,,

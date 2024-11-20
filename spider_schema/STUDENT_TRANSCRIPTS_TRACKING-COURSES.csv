@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+course_id,NUMBER,PRIMARY KEY,
+course_name,TEXT,,
+course_description,TEXT,,
+other_details,TEXT,,

@@ -1,6 +1,6 @@
 import json
 
-with open('mappings/mapped.json') as f:
+with open('spider_annotated_mapped.json') as f:
     data = json.load(f)
     final = []
     for obj in data:
@@ -9,7 +9,7 @@ with open('mappings/mapped.json') as f:
         newobj["sql"] = obj["sql"]
         newobj["mapping"] = obj["mapping"]
         final.append(newobj)
-    with open('clean.json', 'w') as outfile:
+    with open('spider_mapped.json', 'w') as outfile:
         json.dump(final, outfile, indent=2)
 
 

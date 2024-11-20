@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Conductor_ID,NUMBER,PRIMARY KEY,
+Name,TEXT,,
+Age,NUMBER,,
+Nationality,TEXT,,
+Year_of_Work,NUMBER,,

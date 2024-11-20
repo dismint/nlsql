@@ -1,0 +1,4 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+charge_id,NUMBER,PRIMARY KEY,
+charge_type,TEXT,,
+charge_amount,NUMBER,,

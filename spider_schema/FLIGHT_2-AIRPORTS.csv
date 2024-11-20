@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+City,TEXT,,
+AirportCode,TEXT,PRIMARY KEY,
+AirportName,TEXT,,
+Country,TEXT,,
+CountryAbbrev,TEXT,,

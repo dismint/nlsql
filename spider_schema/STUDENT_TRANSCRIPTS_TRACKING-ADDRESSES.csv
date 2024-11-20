@@ -1,0 +1,10 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+address_id,NUMBER,PRIMARY KEY,
+line_1,TEXT,,
+line_2,TEXT,,
+line_3,TEXT,,
+city,TEXT,,
+zip_postcode,TEXT,,
+state_province_county,TEXT,,
+country,TEXT,,
+other_address_details,TEXT,,

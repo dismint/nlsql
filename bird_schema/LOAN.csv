@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+loan_id,INTEGER,PRIMARY KEY,
+account_id,INTEGER,,FOREIGN KEY ACCOUNT (account_id)
+date,DATE,,
+amount,INTEGER,,
+duration,INTEGER,,
+payments,REAL,,
+status,TEXT,,

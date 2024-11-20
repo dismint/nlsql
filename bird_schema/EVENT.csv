@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+event_id,TEXT,PRIMARY KEY,
+event_name,TEXT,,
+event_date,TEXT,,
+type,TEXT,,
+notes,TEXT,,
+location,TEXT,,
+status,TEXT,,

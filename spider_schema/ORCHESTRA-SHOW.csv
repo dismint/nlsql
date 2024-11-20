@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Show_ID,NUMBER,,
+Performance_ID,NUMBER,,FOREIGN KEY ORCHESTRA-PERFORMANCE (Performance_ID)
+If_first_show,OTHERS,,
+Result,TEXT,,
+Attendance,NUMBER,,

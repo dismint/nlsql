@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Stadium_ID,NUMBER,PRIMARY KEY,
+Location,TEXT,,
+Name,TEXT,,
+Capacity,NUMBER,,
+Highest,NUMBER,,
+Lowest,NUMBER,,
+Average,NUMBER,,

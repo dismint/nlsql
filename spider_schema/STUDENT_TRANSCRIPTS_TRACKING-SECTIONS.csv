@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+section_id,NUMBER,PRIMARY KEY,
+course_id,NUMBER,,FOREIGN KEY STUDENT_TRANSCRIPTS_TRACKING-COURSES (course_id)
+section_name,TEXT,,
+section_description,TEXT,,
+other_details,TEXT,,

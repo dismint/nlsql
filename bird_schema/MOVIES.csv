@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+movieid,INTEGER,,
+year,INTEGER,,
+isEnglish,TEXT,,
+country,TEXT,,
+runningtime,INTEGER,,

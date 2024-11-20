@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Orchestra_ID,NUMBER,PRIMARY KEY,
+Orchestra,TEXT,,
+Conductor_ID,NUMBER,,FOREIGN KEY ORCHESTRA-CONDUCTOR (Conductor_ID)
+Record_Company,TEXT,,
+Year_of_Founded,NUMBER,,
+Major_Record_Format,TEXT,,

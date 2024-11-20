@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Document_ID,NUMBER,PRIMARY KEY,
+Template_ID,NUMBER,,FOREIGN KEY CRE_DOC_TEMPLATE_MGT-TEMPLATES (Template_ID)
+Document_Name,TEXT,,
+Document_Description,TEXT,,
+Other_Details,TEXT,,

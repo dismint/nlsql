@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Singer_ID,NUMBER,PRIMARY KEY,
+Name,TEXT,,
+Birth_Year,NUMBER,,
+Net_Worth_Millions,NUMBER,,
+Citizenship,TEXT,,

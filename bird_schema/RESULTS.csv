@@ -1,0 +1,19 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+resultId,INTEGER,PRIMARY KEY,
+raceId,INTEGER,,FOREIGN KEY RACES (raceId)
+driverId,INTEGER,,FOREIGN KEY DRIVERS (driverId)
+constructorId,INTEGER,,FOREIGN KEY CONSTRUCTORS (constructorId)
+number,INTEGER,,
+grid,INTEGER,,
+position,INTEGER,,
+positionText,TEXT,,
+positionOrder,INTEGER,,
+points,REAL,,
+laps,INTEGER,,
+time,TEXT,,
+milliseconds,INTEGER,,
+fastestLap,INTEGER,,
+rank,INTEGER,,
+fastestLapTime,TEXT,,
+fastestLapSpeed,TEXT,,
+statusId,INTEGER,,FOREIGN KEY STATUS (statusId)

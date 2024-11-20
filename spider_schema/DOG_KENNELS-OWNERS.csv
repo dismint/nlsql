@@ -1,0 +1,11 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+owner_id,NUMBER,PRIMARY KEY,
+first_name,TEXT,,
+last_name,TEXT,,
+street,TEXT,,
+city,TEXT,,
+state,TEXT,,
+zip_code,TEXT,,
+email_address,TEXT,,
+home_phone,TEXT,,
+cell_number,TEXT,,

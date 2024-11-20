@@ -1,0 +1,4 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+bond_id,TEXT,PRIMARY KEY,
+molecule_id,TEXT,,FOREIGN KEY MOLECULE (molecule_id)
+bond_type,TEXT,,

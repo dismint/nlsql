@@ -1,0 +1,13 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+student_id,NUMBER,PRIMARY KEY,
+current_address_id,NUMBER,,FOREIGN KEY STUDENT_TRANSCRIPTS_TRACKING-ADDRESSES (address_id)
+permanent_address_id,NUMBER,,FOREIGN KEY STUDENT_TRANSCRIPTS_TRACKING-ADDRESSES (address_id)
+first_name,TEXT,,
+middle_name,TEXT,,
+last_name,TEXT,,
+cell_mobile_number,TEXT,,
+email_address,TEXT,,
+ssn,TEXT,,
+date_first_registered,TIME,,
+date_left,TIME,,
+other_student_details,TEXT,,

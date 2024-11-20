@@ -1,0 +1,711 @@
+[
+  {
+    "question": "How many double bonds does TR006 have and is it carcinogenic?",
+    "sql": "SELECT COUNT(T1.bond_id), T2.label FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '=' AND T2.molecule_id = 'TR006' GROUP BY T2.label",
+    "topics": ["double bonds", "carcinogenic"],
+    "mapping": {
+      "double bonds": ["BOND.BOND_ID", "BOND.BOND_TYPE"],
+      "carcinogenic": ["MOLECULE_ID.MOLECULE_ID", "MOLECULE.LABEL"]
+    },
+    "columns": [
+      "MOLECULE.LABEL",
+      "MOLECULE.MOLECULE_ID",
+      "BOND.BOND_ID",
+      "BOND.BOND_TYPE"
+    ],
+    "qualified": "SELECT\n  COUNT(bond.\"bond_id\") AS \"_col_0\",\n  molecule.\"label\" AS \"label\"\nFROM \"bond\" AS \"t1\"\nINNER JOIN \"molecule\" AS \"t2\"\n  ON bond.\"molecule_id\" = molecule.\"molecule_id\"\nWHERE\n  bond.\"bond_type\" = '=' AND molecule.\"molecule_id\" = 'TR006'\nGROUP BY\n  molecule.\"label\""
+  },
+  {
+    "question": "For the patients whose anti-SSB are normal, how many of them have other symptoms observed in their examination?",
+    "sql": "SELECT COUNT(DISTINCT T1.ID) FROM Examination AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.SSB = 'negative' OR '0' AND T1.Symptoms IS NOT NULL",
+    "topics": ["patients", "anti-SSB", "symptoms", "examination"],
+    "mapping": {
+      "symptoms": ["EXAMINATION.SYMPTOMS"]
+    },
+    "columns": ["LABORATORY.SSB", "EXAMINATION.SYMPTOMS", "EXAMINATION.ID"],
+    "qualified": "SELECT\n  COUNT(DISTINCT examination.\"id\") AS \"_col_0\"\nFROM \"examination\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON examination.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"ssb\" = 'negative' OR '0' AND NOT examination.\"symptoms\" IS NULL"
+  },
+  {
+    "question": "For the examinations done after 1997/1/1, how many of them have the result of an inactivated partial prothrom bin time?",
+    "sql": "SELECT COUNT(T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.Date > '1997-01-01' AND T2.APTT >= 45",
+    "topics": ["examinations", "date", "result"],
+    "mapping": {
+      "1997/1/1": ["LABORATORY.DATE"],
+      "inactivated partial prothrom bin time": ["LABORATORY.APTT"]
+    },
+    "columns": ["LABORATORY.DATE", "PATIENT.ID", "LABORATORY.APTT"],
+    "qualified": "SELECT\n  COUNT(patient.\"id\") AS \"_col_0\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON patient.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"date\" > '1997-01-01' AND laboratory.\"aptt\" >= 45"
+  },
+  {
+    "question": "What is the location coordinates of the circuits for Australian grand prix?",
+    "sql": "SELECT DISTINCT T1.lat, T1.lng FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T2.name = 'Australian Grand Prix'",
+    "topics": ["location coordinates", "circuits", "Australian grand prix"],
+    "mapping": {
+      "location coordinates": ["CIRCUITS.LNG", "CIRCUITS.LAT"],
+      "Australian grand prix": ["RACES.NAME"]
+    },
+    "columns": ["RACES.NAME", "CIRCUITS.LNG", "CIRCUITS.LAT"],
+    "qualified": "SELECT DISTINCT\n  circuits.\"lat\" AS \"lat\",\n  circuits.\"lng\" AS \"lng\"\nFROM \"circuits\" AS \"t1\"\nINNER JOIN \"races\" AS \"t2\"\n  ON races.\"circuitid\" = circuits.\"circuitid\"\nWHERE\n  races.\"name\" = 'Australian Grand Prix'"
+  },
+  {
+    "question": "Which group does superhero A-Bomb belong to?",
+    "sql": "SELECT T2.race FROM superhero AS T1 INNER JOIN race AS T2 ON T1.race_id = T2.id WHERE T1.superhero_name = 'A-Bomb'",
+    "topics": ["group", "superhero"],
+    "mapping": {
+      "group": ["RACE.RACE"],
+      "superhero": ["SUPERHERO.SUPERHERO_NAME"]
+    },
+    "columns": ["SUPERHERO.SUPERHERO_NAME", "RACE.RACE"],
+    "qualified": "SELECT\n  race.\"race\" AS \"race\"\nFROM \"superhero\" AS \"t1\"\nINNER JOIN \"race\" AS \"t2\"\n  ON superhero.\"race_id\" = race.\"id\"\nWHERE\n  superhero.\"superhero_name\" = 'A-Bomb'"
+  },
+  {
+    "question": "Lists all patients by ID who were diagnosed with Behcet's and had their exams between 01/01/197 and 12/31/1997.",
+    "sql": "SELECT ID FROM Examination WHERE `Examination Date` BETWEEN '1997-01-01' AND '1997-12-31' AND Diagnosis = 'Behcet'",
+    "topics": ["patient_id", "diagnosis", "exam_date"],
+    "mapping": {
+      "ID": ["EXAMINATION.ID"],
+      "diagnosed": ["EXAMINATION.DIAGNOSIS"],
+      "exams": ["EXAMINATION.EXAMINATION DATE"]
+    },
+    "columns": [
+      "EXAMINATION.EXAMINATION DATE",
+      "EXAMINATION.DIAGNOSIS",
+      "EXAMINATION.ID"
+    ],
+    "qualified": "SELECT\n  \"examination\".\"id\" AS \"id\"\nFROM \"examination\" AS \"examination\"\nWHERE\n  \"examination\".\"Examination Date\" BETWEEN '1997-01-01' AND '1997-12-31'\n  AND \"examination\".\"diagnosis\" = 'Behcet'"
+  },
+  {
+    "question": "What proportion of single bonds are carcinogenic?",
+    "sql": "SELECT CAST(COUNT(CASE WHEN T2.label = '+' THEN T1.bond_id ELSE NULL END) AS REAL) * 100 / COUNT(T1.bond_id) FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '-'",
+    "topics": ["single bonds", "carcinogenic"],
+    "mapping": {
+      "single bonds": ["BOND.BOND_TYPE", "BOND.BOND_ID"],
+      "carcinogenic": ["MOLECULE.LABEL"]
+    },
+    "columns": ["MOLECULE.LABEL", "BOND.BOND_ID", "BOND.BOND_TYPE"],
+    "qualified": "SELECT\n  CAST(COUNT(CASE WHEN molecule.\"label\" = '+' THEN bond.\"bond_id\" ELSE NULL END) AS FLOAT) * 100 / NULLIF(COUNT(bond.\"bond_id\"), 0) AS \"_col_0\"\nFROM \"bond\" AS \"t1\"\nINNER JOIN \"molecule\" AS \"t2\"\n  ON bond.\"molecule_id\" = molecule.\"molecule_id\"\nWHERE\n  bond.\"bond_type\" = '-'"
+  },
+  {
+    "question": "What is the difference between the number of molecules that are carcinogenic and those that are not?",
+    "sql": "SELECT COUNT(CASE WHEN T.label = '+' THEN T.molecule_id ELSE NULL END) - COUNT(CASE WHEN T.label = '-' THEN T.molecule_id ELSE NULL END) AS diff_car_notcar FROM molecule t",
+    "topics": ["molecules", "carcinogenic"],
+    "mapping": {
+      "molecules": ["MOLECULE.MOLECULE_ID"],
+      "carcinogenic": ["MOLECULE.LABEL"]
+    },
+    "columns": ["MOLECULE.LABEL", "MOLECULE.MOLECULE_ID"],
+    "qualified": "SELECT\n  COUNT(CASE WHEN molecule.\"label\" = '+' THEN molecule.\"molecule_id\" ELSE NULL END) - COUNT(CASE WHEN molecule.\"label\" = '-' THEN molecule.\"molecule_id\" ELSE NULL END) AS \"diff_car_notcar\"\nFROM \"molecule\" AS \"t\""
+  },
+  {
+    "question": "Provide ID, sex and age of patient who has blood glucose (GLU) not within normal range but with total cholesterol(T-CHO) within normal range.",
+    "sql": "SELECT DISTINCT T1.ID, T1.SEX , STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T1.Birthday) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.GLU >= 180 AND T2.`T-CHO` < 250",
+    "topics": ["ID", "sex", "age", "blood glucose", "total cholesterol"],
+    "mapping": {
+      "ID": ["PATIENT.ID"],
+      "sex": ["PATIENT.SEX"],
+      "age": ["PATIENT.BIRTHDAY"],
+      "GLU": ["LABORATORY.GLU"],
+      "T-CHO": ["LABORATORY.T-CHO"]
+    },
+    "columns": [
+      "PATIENT.ID",
+      "LABORATORY.GLU",
+      "PATIENT.SEX",
+      "LABORATORY.T-CHO",
+      "PATIENT.BIRTHDAY"
+    ],
+    "qualified": "SELECT DISTINCT\n  patient.\"id\" AS \"id\",\n  patient.\"sex\" AS \"sex\",\n  STRFTIME('%Y', CURRENT_TIMESTAMP()) - STRFTIME('%Y', patient.\"birthday\") AS \"_col_2\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON patient.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"glu\" >= 180 AND laboratory.\"T-CHO\" < 250"
+  },
+  {
+    "question": "Provide the superpowers of the superhero called Deathlok.",
+    "sql": "SELECT T3.power_name FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id WHERE T1.superhero_name = 'Deathlok'",
+    "topics": ["superpowers", "superhero"],
+    "mapping": {
+      "superpowers": ["SUPERPOWER.POWER_NAME"],
+      "superhero": ["SUPERHERO.SUPERHERO_NAME"]
+    },
+    "columns": ["SUPERHERO.SUPERHERO_NAME", "SUPERPOWER.POWER_NAME"],
+    "qualified": "SELECT\n  superpower.\"power_name\" AS \"power_name\"\nFROM \"superhero\" AS \"t1\"\nINNER JOIN \"hero_power\" AS \"t2\"\n  ON superhero.\"id\" = hero_power.\"hero_id\"\nINNER JOIN \"superpower\" AS \"t3\"\n  ON hero_power.\"power_id\" = superpower.\"id\"\nWHERE\n  superhero.\"superhero_name\" = 'Deathlok'"
+  },
+  {
+    "question": "What is the most expensive item that was spent in support of club events?",
+    "sql": "SELECT expense_description FROM expense ORDER BY cost DESC LIMIT 1",
+    "topics": ["item", "club events"],
+    "mapping": {
+      "club events": ["EXPENSE.EXPENSE_DESCRIPTION"],
+      "expensive": ["EXPENSE.COST"]
+    },
+    "columns": ["EXPENSE.EXPENSE_DESCRIPTION", "EXPENSE.COST"],
+    "qualified": "SELECT\n  \"expense\".\"expense_description\" AS \"expense_description\"\nFROM \"expense\" AS \"expense\"\nORDER BY\n  \"expense\".\"cost\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "What is the average height of a non-human superhero in Dark Horse Comics?",
+    "sql": "SELECT AVG(T1.height_cm) FROM superhero AS T1 INNER JOIN publisher AS T2 ON T1.publisher_id = T2.id INNER JOIN race AS T3 ON T1.race_id = T3.id WHERE T2.publisher_name = 'Dark Horse Comics' AND T3.race != 'Human'",
+    "topics": ["height", "superhero", "Dark Horse Comics"],
+    "mapping": {
+      "height": ["SUPERHERO.HEIGHT_CM"],
+      "non-human": ["RACE.RACE"],
+      "Dark Horse Comics": ["PUBLISHER.PUBLISHER_NAME"]
+    },
+    "columns": ["SUPERHERO.HEIGHT_CM", "RACE.RACE", "PUBLISHER.PUBLISHER_NAME"],
+    "qualified": "SELECT\n  AVG(superhero.\"height_cm\") AS \"_col_0\"\nFROM \"superhero\" AS \"t1\"\nINNER JOIN \"publisher\" AS \"t2\"\n  ON superhero.\"publisher_id\" = publisher.\"id\"\nINNER JOIN \"race\" AS \"t3\"\n  ON superhero.\"race_id\" = race.\"id\"\nWHERE\n  publisher.\"publisher_name\" = 'Dark Horse Comics' AND race.\"race\" <> 'Human'"
+  },
+  {
+    "question": "Please provide the names of the artists who illustrated the card art in Phyrexian.",
+    "sql": "SELECT T1.artist FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Phyrexian'",
+    "topics": ["names", "artists", "illustrated", "card art", "Phyrexian"],
+    "mapping": {
+      "names": ["CARDS.ARTIST"],
+      "artists": ["CARDS.ARTIST"],
+      "Phyrexian": ["FOREIGN_DATA.LANGUAGE"]
+    },
+    "columns": ["FOREIGN_DATA.LANGUAGE", "CARDS.ARTIST"],
+    "qualified": "SELECT\n  cards.\"artist\" AS \"artist\"\nFROM \"cards\" AS \"t1\"\nINNER JOIN \"foreign_data\" AS \"t2\"\n  ON cards.\"uuid\" = foreign_data.\"uuid\"\nWHERE\n  foreign_data.\"language\" = 'Phyrexian'"
+  },
+  {
+    "question": "What is the total amount of Community College District closure in 1989 in the city of San Francisco?",
+    "sql": "SELECT COUNT(School) FROM schools WHERE strftime('%Y', ClosedDate) = '1989' AND City = 'San Francisco' AND DOCType = 'Community College District'",
+    "topics": [
+      "Community College District",
+      "closure",
+      "1989",
+      "San Francisco"
+    ],
+    "mapping": {
+      "Community College District": ["SCHOOLS.DOCTYPE"],
+      "closure": ["SCHOOLS.CLOSEDDATE"],
+      "city": ["SCHOOLS.CITY"]
+    },
+    "columns": [
+      "SCHOOLS.CLOSEDDATE",
+      "SCHOOLS.DOCTYPE",
+      "SCHOOLS.SCHOOL",
+      "SCHOOLS.CITY"
+    ],
+    "qualified": "SELECT\n  COUNT(\"schools\".\"school\") AS \"_col_0\"\nFROM \"schools\" AS \"schools\"\nWHERE\n  STRFTIME('%Y', \"schools\".\"closeddate\") = '1989'\n  AND \"schools\".\"city\" = 'San Francisco'\n  AND \"schools\".\"doctype\" = 'Community College District'"
+  },
+  {
+    "question": "Is there any card from Erica Yang artist in pauper format and available in paper? If so, indicate its ID.",
+    "sql": "SELECT T1.id FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Erica Yang' AND T2.format = 'pauper' AND T1.availability = 'paper'",
+    "topics": ["card", "artist", "format", "paper", "ID"],
+    "mapping": {
+      "card": [
+        "CARDS.ID",
+        "CARDS.AVAILABILITY",
+        "LEGALITIES.FORMAT",
+        "CARDS.ARTIST"
+      ],
+      "artist": ["CARDS.ARTIST"],
+      "format": ["LEGALITIES.FORMAT"],
+      "available": ["CARDS.AVAILABILITY"],
+      "ID": ["CARDS.ID"]
+    },
+    "columns": [
+      "CARDS.ID",
+      "CARDS.AVAILABILITY",
+      "LEGALITIES.FORMAT",
+      "CARDS.ARTIST"
+    ],
+    "qualified": "SELECT\n  cards.\"id\" AS \"id\"\nFROM \"cards\" AS \"t1\"\nINNER JOIN \"legalities\" AS \"t2\"\n  ON cards.\"uuid\" = legalities.\"uuid\"\nWHERE\n  cards.\"artist\" = 'Erica Yang'\n  AND legalities.\"format\" = 'pauper'\n  AND cards.\"availability\" = 'paper'"
+  },
+  {
+    "question": "Find the average number of long-shot done by Ahmed Samir Farag.",
+    "sql": "SELECT CAST(SUM(t2.long_shots) AS REAL) / COUNT(t2.`date`) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Ahmed Samir Farag'",
+    "topics": ["long-shot", "name"],
+    "mapping": {
+      "long-shot": ["PLAYER_ATTRIBUTES.LONG_SHOTS"],
+      "Ahmed Samir Farag": ["PLAYER.PLAYER_NAME"]
+    },
+    "columns": [
+      "PLAYER.PLAYER_NAME",
+      "PLAYER_ATTRIBUTES.DATE",
+      "PLAYER_ATTRIBUTES.LONG_SHOTS"
+    ],
+    "qualified": "SELECT\n  CAST(SUM(player_attributes.\"long_shots\") AS FLOAT) / NULLIF(COUNT(player_attributes.\"date\"), 0) AS \"_col_0\"\nFROM \"player\" AS \"t1\"\nINNER JOIN \"player_attributes\" AS \"t2\"\n  ON player.\"player_api_id\" = player_attributes.\"player_api_id\"\nWHERE\n  player.\"player_name\" = 'Ahmed Samir Farag'"
+  },
+  {
+    "question": "List out the position of members who joined major of Business.",
+    "sql": "SELECT T2.position FROM major AS T1 INNER JOIN member AS T2 ON T1.major_id = T2.link_to_major WHERE T1.major_name = 'Business'",
+    "topics": ["position", "major"],
+    "mapping": {
+      "position": ["MEMBER.POSITION"],
+      "major": ["MAJOR.MAJOR_NAME"]
+    },
+    "columns": ["MEMBER.POSITION", "MAJOR.MAJOR_NAME"],
+    "qualified": "SELECT\n  member.\"position\" AS \"position\"\nFROM \"major\" AS \"t1\"\nINNER JOIN \"member\" AS \"t2\"\n  ON major.\"major_id\" = member.\"link_to_major\"\nWHERE\n  major.\"major_name\" = 'Business'"
+  },
+  {
+    "question": "What is the highest amount of budget spend for an event?",
+    "sql": "SELECT MAX(spent) FROM budget",
+    "topics": ["budget", "event"],
+    "mapping": {
+      "budget": ["BUDGET.SPENT"]
+    },
+    "columns": ["BUDGET.SPENT"],
+    "qualified": "SELECT\n  MAX(\"budget\".\"spent\") AS \"_col_0\"\nFROM \"budget\" AS \"budget\""
+  },
+  {
+    "question": "How many cards available in paper have a positive starting maximum hand size?",
+    "sql": "SELECT SUM(CASE WHEN availability = 'paper' AND hAND LIKE '+%' AND hAND != '+0' THEN 1 ELSE 0 END) FROM cards",
+    "topics": ["cards", "availability", "format of cards", "maximum hand size"],
+    "mapping": {
+      "available": ["CARDS.AVAILABILITY"],
+      "hand size": ["CARDS.HAND"]
+    },
+    "columns": ["CARDS.HAND", "CARDS.AVAILABILITY"],
+    "qualified": "SELECT\n  SUM(\n    CASE\n      WHEN \"cards\".\"availability\" = 'paper'\n      AND \"cards\".\"hand\" LIKE '+%'\n      AND \"cards\".\"hand\" <> '+0'\n      THEN 1\n      ELSE 0\n    END\n  ) AS \"_col_0\"\nFROM \"cards\" AS \"cards\""
+  },
+  {
+    "question": "List out top 3 German drivers who were born from 1980-1990 and have the earliest lap time.",
+    "sql": "SELECT T2.driverId FROM pitStops AS T1 INNER JOIN drivers AS T2 on T1.driverId = T2.driverId WHERE T2.nationality = 'German' AND STRFTIME('%Y', T2.dob) BETWEEN '1980' AND '1990' ORDER BY T1.time LIMIT 3",
+    "topics": ["drivers", "nationality", "birthdate", "lap time"],
+    "mapping": {
+      "drivers": ["DRIVERS.DRIVERID"],
+      "German": ["DRIVERS.NATIONALITY"],
+      "born": ["DRIVERS.DOB"],
+      "lap time": ["PITSTOPS.TIME"]
+    },
+    "columns": [
+      "DRIVERS.NATIONALITY",
+      "PITSTOPS.TIME",
+      "DRIVERS.DRIVERID",
+      "DRIVERS.DOB"
+    ],
+    "qualified": "SELECT\n  drivers.\"driverid\" AS \"driverid\"\nFROM \"pitstops\" AS \"t1\"\nINNER JOIN \"drivers\" AS \"t2\"\n  ON pitstops.\"driverid\" = drivers.\"driverid\"\nWHERE\n  drivers.\"nationality\" = 'German'\n  AND STRFTIME('%Y', drivers.\"dob\") BETWEEN '1980' AND '1990'\nORDER BY\n  pitstops.\"time\"\nLIMIT 3"
+  },
+  {
+    "question": "How old is the youngest Japanese driver? What is his name?",
+    "sql": "SELECT STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', dob), forename , surname FROM drivers WHERE nationality = 'Japanese' ORDER BY dob DESC LIMIT 1",
+    "topics": ["age", "nationality", "name"],
+    "mapping": {
+      "old": ["DRIVERS.DOB"],
+      "Japanese": ["DRIVERS.NATIONALITY"],
+      "name": ["DRIVERS.FORENAME", "DRIVERS.SURNAME"]
+    },
+    "columns": [
+      "DRIVERS.FORENAME",
+      "DRIVERS.NATIONALITY",
+      "DRIVERS.SURNAME",
+      "DRIVERS.DOB"
+    ],
+    "qualified": "SELECT\n  STRFTIME('%Y', CURRENT_TIMESTAMP()) - STRFTIME('%Y', \"drivers\".\"dob\") AS \"_col_0\",\n  \"drivers\".\"forename\" AS \"forename\",\n  \"drivers\".\"surname\" AS \"surname\"\nFROM \"drivers\" AS \"drivers\"\nWHERE\n  \"drivers\".\"nationality\" = 'Japanese'\nORDER BY\n  \"drivers\".\"dob\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "Among the molecules which contain \"c\" element, which of them are not carcinogenic?",
+    "sql": "SELECT DISTINCT T1.molecule_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'c' AND T2.label = '-'",
+    "topics": ["molecules", "element", "carcinogenic"],
+    "mapping": {
+      "molecules": ["ATOM.MOLECULE_ID"],
+      "element": ["ATOM.ELEMENT"],
+      "carcinogenic": ["MOLECULE.LABEL"]
+    },
+    "columns": ["MOLECULE.LABEL", "ATOM.ELEMENT", "ATOM.MOLECULE_ID"],
+    "qualified": "SELECT DISTINCT\n  atom.\"molecule_id\" AS \"molecule_id\"\nFROM \"atom\" AS \"t1\"\nINNER JOIN \"molecule\" AS \"t2\"\n  ON atom.\"molecule_id\" = molecule.\"molecule_id\"\nWHERE\n  atom.\"element\" = 'c' AND molecule.\"label\" = '-'"
+  },
+  {
+    "question": "Please list the IDs of the patients who had the examination done after 1997/1/1 and had a normal anti-scl70.",
+    "sql": "SELECT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.SC170 IN ('negative','0') AND T2.Date > 1997-01-01",
+    "topics": ["patient_id", "examination_date", "anti-scl70"],
+    "mapping": {
+      "IDs": ["PATIENT.ID"],
+      "1997/1/1": ["LABORATORY.DATE"],
+      "anti-scl70": ["LABORATORY.SC170"]
+    },
+    "columns": ["LABORATORY.DATE", "PATIENT.ID", "LABORATORY.SC170"],
+    "qualified": "SELECT\n  patient.\"id\" AS \"id\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON patient.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"sc170\" IN ('negative', '0') AND laboratory.\"date\" > 1997 - 01 - 01"
+  },
+  {
+    "question": "Of all the schools with a mailing state address in California, how many are active in San Joaquin?",
+    "sql": "SELECT COUNT(CDSCode) FROM schools WHERE City = 'San Joaquin' AND MailState = 'CA' AND StatusType = 'Active'",
+    "topics": [
+      "schools",
+      "mailing state address",
+      "California",
+      "active",
+      "San Joaquin"
+    ],
+    "mapping": {
+      "mailing state address": ["SCHOOLS.MAILSTATE"],
+      "active": ["SCHOOLS.STATUSTYPE"],
+      "San Joaquin": ["SCHOOLS.CITY"]
+    },
+    "columns": [
+      "SCHOOLS.MAILSTATE",
+      "SCHOOLS.CDSCODE",
+      "SCHOOLS.STATUSTYPE",
+      "SCHOOLS.CITY"
+    ],
+    "qualified": "SELECT\n  COUNT(\"schools\".\"cdscode\") AS \"_col_0\"\nFROM \"schools\" AS \"schools\"\nWHERE\n  \"schools\".\"city\" = 'San Joaquin'\n  AND \"schools\".\"mailstate\" = 'CA'\n  AND \"schools\".\"statustype\" = 'Active'"
+  },
+  {
+    "question": "How many patients hadn't undergone a medical examination until at least a year following their initial hospital visit?",
+    "sql": "SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Examination AS T2 ON T1.ID = T2.ID WHERE T1.Admission = '+' AND STRFTIME('%Y', T2.`Examination Date`) - STRFTIME('%Y', T1.`First Date`) >= 1",
+    "topics": ["patients", "medical examination", "hospital visit"],
+    "mapping": {
+      "patients": ["PATIENT.ID"],
+      "medical examination": ["EXAMINATION.EXAMINATION DATE"],
+      "initial hospital visit": ["PATIENT.FIRST DATE"]
+    },
+    "columns": [
+      "EXAMINATION.EXAMINATION DATE",
+      "PATIENT.ADMISSION",
+      "PATIENT.ID",
+      "PATIENT.FIRST DATE"
+    ],
+    "qualified": "SELECT\n  COUNT(DISTINCT patient.\"id\") AS \"_col_0\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"examination\" AS \"t2\"\n  ON patient.\"id\" = examination.\"id\"\nWHERE\n  patient.\"admission\" = '+'\n  AND STRFTIME('%Y', examination.\"Examination Date\") - STRFTIME('%Y', patient.\"First Date\") >= 1"
+  },
+  {
+    "question": "How much, in total, did client number 617 pay for all of the transactions in 1998?",
+    "sql": "SELECT SUM(T3.amount) FROM client AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE STRFTIME('%Y', T3.date)= '1998' AND T1.client_id = 617",
+    "topics": ["client number", "amount", "date"],
+    "mapping": {
+      "client number": ["CLIENT.CLIENT_ID"],
+      "pay": ["TRANS.AMOUNT"],
+      "1998": ["TRANS.DATE"]
+    },
+    "columns": ["CLIENT.CLIENT_ID", "TRANS.AMOUNT", "TRANS.DATE"],
+    "qualified": "SELECT\n  SUM(trans.\"amount\") AS \"_col_0\"\nFROM \"client\" AS \"t1\"\nINNER JOIN \"account\" AS \"t2\"\n  ON client.\"district_id\" = account.\"district_id\"\nINNER JOIN \"trans\" AS \"t3\"\n  ON account.\"account_id\" = trans.\"account_id\"\nWHERE\n  STRFTIME('%Y', trans.\"date\") = '1998' AND client.\"client_id\" = 617"
+  },
+  {
+    "question": "State the name of badge that the user whose display name is \"Sharpie\" obtained.",
+    "sql": "SELECT T2.Name FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T1.DisplayName = 'Sharpie'",
+    "topics": ["badge", "user", "display name"],
+    "mapping": {
+      "name of badge": ["BADGES.NAME"],
+      "display name": ["USERS.DISPLAYNAME"]
+    },
+    "columns": ["BADGES.NAME", "USERS.DISPLAYNAME"],
+    "qualified": "SELECT\n  badges.\"name\" AS \"name\"\nFROM \"users\" AS \"t1\"\nINNER JOIN \"badges\" AS \"t2\"\n  ON users.\"id\" = badges.\"userid\"\nWHERE\n  users.\"displayname\" = 'Sharpie'"
+  },
+  {
+    "question": "Which active district has the highest average score in Reading?",
+    "sql": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1",
+    "topics": ["district", "status", "average_score", "Reading"],
+    "mapping": {
+      "district": ["SCHOOLS.DISTRICT"],
+      "active": ["SCHOOLS.STATUSTYPE"],
+      "score in Reading": ["SATSCORES.AVGSCRREAD"]
+    },
+    "columns": [
+      "SATSCORES.AVGSCRREAD",
+      "SCHOOLS.STATUSTYPE",
+      "SCHOOLS.DISTRICT"
+    ],
+    "qualified": "SELECT\n  schools.\"district\" AS \"district\"\nFROM \"schools\" AS \"t1\"\nINNER JOIN \"satscores\" AS \"t2\"\n  ON schools.\"cdscode\" = satscores.\"cds\"\nWHERE\n  schools.\"statustype\" = 'Active'\nORDER BY\n  satscores.\"avgscrread\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "Please list the name of the districts with accounts that made withdrawal transactions.",
+    "sql": "SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ'",
+    "topics": ["districts", "accounts", "withdrawal transactions"],
+    "mapping": {
+      "name": ["DISTRICT.A2"],
+      "withdrawal transactions": ["TRANS.TYPE"]
+    },
+    "columns": ["TRANS.TYPE", "DISTRICT.A2"],
+    "qualified": "SELECT DISTINCT\n  district.\"a2\" AS \"a2\"\nFROM \"district\" AS \"t1\"\nINNER JOIN \"account\" AS \"t2\"\n  ON district.\"district_id\" = account.\"district_id\"\nINNER JOIN \"trans\" AS \"t3\"\n  ON account.\"account_id\" = trans.\"account_id\"\nWHERE\n  trans.\"type\" = 'VYDAJ'"
+  },
+  {
+    "question": "Among the badges obtained by csgillespie, how many of them were obtained in the year 2011?",
+    "sql": "SELECT COUNT(T1.Id) FROM badges AS T1 INNER JOIN users AS T2 ON T1.UserId = T2.Id WHERE STRFTIME('%Y', T1.Date) = '2011' AND T2.DisplayName = 'csgillespie'",
+    "topics": ["badges", "username", "date"],
+    "mapping": {
+      "obtained": ["BADGES.DATE"],
+      "csgillespie": ["USERS.DISPLAYNAME"],
+      "badges": ["BADGES.ID"]
+    },
+    "columns": ["BADGES.DATE", "USERS.DISPLAYNAME", "BADGES.ID"],
+    "qualified": "SELECT\n  COUNT(badges.\"id\") AS \"_col_0\"\nFROM \"badges\" AS \"t1\"\nINNER JOIN \"users\" AS \"t2\"\n  ON badges.\"userid\" = users.\"id\"\nWHERE\n  STRFTIME('%Y', badges.\"date\") = '2011' AND users.\"displayname\" = 'csgillespie'"
+  },
+  {
+    "question": "In which Formula_1 race did Lewis Hamilton rank the highest?",
+    "sql": "SELECT name FROM races WHERE raceId IN ( SELECT raceId FROM results WHERE rank = 1 AND driverId = ( SELECT driverId FROM drivers WHERE forename = 'Lewis' AND surname = 'Hamilton' ) )",
+    "topics": ["Formula_1", "Lewis_Hamilton"],
+    "mapping": {
+      "Formula_1 race": ["RACES.RACEID", "RACES.NAME"],
+      "Lewis_Hamilton": ["DRIVERS.FORENAME", "DRIVERS.SURNAME"],
+      "rank": ["RESULTS.RANK"]
+    },
+    "columns": [
+      "RESULTS.DRIVERID",
+      "RESULTS.RACEID",
+      "DRIVERS.FORENAME",
+      "RACES.RACEID",
+      "RESULTS.RANK",
+      "DRIVERS.DRIVERID",
+      "RACES.NAME",
+      "DRIVERS.SURNAME"
+    ],
+    "qualified": "SELECT\n  \"races\".\"name\" AS \"name\"\nFROM \"races\" AS \"races\"\nWHERE\n  \"races\".\"raceid\" IN (\n    SELECT\n      \"results\".\"raceid\" AS \"raceid\"\n    FROM \"results\" AS \"results\"\n    WHERE\n      \"results\".\"rank\" = 1\n      AND \"results\".\"driverid\" = (\n        SELECT\n          \"drivers\".\"driverid\" AS \"driverid\"\n        FROM \"drivers\" AS \"drivers\"\n        WHERE\n          \"drivers\".\"forename\" = 'Lewis' AND \"drivers\".\"surname\" = 'Hamilton'\n      )\n  )"
+  },
+  {
+    "question": "Which race was Alex Yoong in when he was in track number less than 10?",
+    "sql": "SELECT T1.name FROM races AS T1 INNER JOIN driverStandings AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T3.forename = 'Alex' AND T3.surname = 'Yoong' AND T2.position < 10",
+    "topics": ["race", "track number"],
+    "mapping": {
+      "race": ["RACES.NAME"],
+      "Alex Yoong": ["DRIVERS.FORENAME", "DRIVERS.SURNAME"],
+      "track number": ["DRIVERSTANDINGS.POSITION"]
+    },
+    "columns": [
+      "DRIVERS.FORENAME",
+      "DRIVERSTANDINGS.POSITION",
+      "DRIVERS.SURNAME",
+      "RACES.NAME"
+    ],
+    "qualified": "SELECT\n  races.\"name\" AS \"name\"\nFROM \"races\" AS \"t1\"\nINNER JOIN \"driverstandings\" AS \"t2\"\n  ON driverstandings.\"raceid\" = races.\"raceid\"\nINNER JOIN \"drivers\" AS \"t3\"\n  ON drivers.\"driverid\" = driverstandings.\"driverid\"\nWHERE\n  drivers.\"forename\" = 'Alex'\n  AND drivers.\"surname\" = 'Yoong'\n  AND driverstandings.\"position\" < 10"
+  },
+  {
+    "question": "When was the ruling for the card 'Reminisce' created?",
+    "sql": "SELECT T2.date FROM cards AS T1 INNER JOIN rulings AS T2 ON T2.uuid = T1.uuid WHERE T1.name = 'Reminisce'",
+    "topics": ["ruling", "card"],
+    "mapping": {
+      "created": ["RULINGS.DATE"],
+      "card": ["CARDS.NAME"]
+    },
+    "columns": ["CARDS.NAME", "RULINGS.DATE"],
+    "qualified": "SELECT\n  rulings.\"date\" AS \"date\"\nFROM \"cards\" AS \"t1\"\nINNER JOIN \"rulings\" AS \"t2\"\n  ON rulings.\"uuid\" = cards.\"uuid\"\nWHERE\n  cards.\"name\" = 'Reminisce'"
+  },
+  {
+    "question": "Which driver created the fastest lap speed in a Formula_1 race? Please give both his forename and surname.",
+    "sql": "SELECT T1.forename, T1.surname FROM drivers AS T1 INNER JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.fastestLapTime IS NOT NULL ORDER BY T2.fastestLapSpeed DESC LIMIT 1",
+    "topics": ["driver", "forename", "surname", "fastest lap speed"],
+    "mapping": {
+      "forename": ["DRIVERS.FORENAME"],
+      "surname": ["DRIVERS.SURNAME"],
+      "fastest lap speed": ["RESULTS.FASTESTLAPSPEED"]
+    },
+    "columns": [
+      "RESULTS.FASTESTLAPSPEED",
+      "DRIVERS.FORENAME",
+      "DRIVERS.SURNAME",
+      "RESULTS.FASTESTLAPTIME"
+    ],
+    "qualified": "SELECT\n  drivers.\"forename\" AS \"forename\",\n  drivers.\"surname\" AS \"surname\"\nFROM \"drivers\" AS \"t1\"\nINNER JOIN \"results\" AS \"t2\"\n  ON results.\"driverid\" = drivers.\"driverid\"\nWHERE\n  NOT results.\"fastestlaptime\" IS NULL\nORDER BY\n  results.\"fastestlapspeed\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "Please list top two sets of cards with their IDs that have Italian-language cards and are located in the Shadowmoor block in alphabetical order.",
+    "sql": "SELECT T1.name, T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T1.block = 'Shadowmoor' AND T2.language = 'Italian' ORDER BY T1.id LIMIT 2",
+    "topics": ["cards", "IDs", "language", "location"],
+    "mapping": {
+      "sets": ["SETS.NAME"],
+      "IDs": ["SETS.ID"],
+      "language": ["SET_TRANSLATIONS.LANGUAGE"],
+      "block": ["SETS.BLOCK"]
+    },
+    "columns": [
+      "SETS.ID",
+      "SET_TRANSLATIONS.LANGUAGE",
+      "SETS.NAME",
+      "SETS.BLOCK"
+    ],
+    "qualified": "SELECT\n  sets.\"name\" AS \"name\",\n  sets.\"id\" AS \"id\"\nFROM \"sets\" AS \"t1\"\nINNER JOIN \"set_translations\" AS \"t2\"\n  ON sets.\"code\" = set_translations.\"setcode\"\nWHERE\n  sets.\"block\" = 'Shadowmoor' AND set_translations.\"language\" = 'Italian'\nORDER BY\n  sets.\"id\"\nLIMIT 2"
+  },
+  {
+    "question": "How many bond id have element iodine?",
+    "sql": "SELECT COUNT(T3.bond_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T1.element = 'i'",
+    "topics": ["bond id", "element iodine"],
+    "mapping": {
+      "bond id": ["BOND.BOND_ID"],
+      "element": ["ATOM.ELEMENT"]
+    },
+    "columns": ["ATOM.ELEMENT", "BOND.BOND_ID"],
+    "qualified": "SELECT\n  COUNT(bond.\"bond_id\") AS \"_col_0\"\nFROM \"atom\" AS \"t1\"\nINNER JOIN \"molecule\" AS \"t2\"\n  ON atom.\"molecule_id\" = molecule.\"molecule_id\"\nINNER JOIN \"bond\" AS \"t3\"\n  ON molecule.\"molecule_id\" = bond.\"molecule_id\"\nWHERE\n  atom.\"element\" = 'i'"
+  },
+  {
+    "question": "Where is Malaysian Grand Prix held? Give the location coordinates.",
+    "sql": "SELECT DISTINCT T1.lat, T1.lng FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T2.name = 'Malaysian Grand Prix'",
+    "topics": ["Malaysian Grand Prix", "location coordinates"],
+    "mapping": {
+      "Malaysian Grand Prix": ["RACES.NAME"],
+      "location coordinates": ["CIRCUITS.LNG", "CIRCUITS.LAT"]
+    },
+    "columns": ["RACES.NAME", "CIRCUITS.LNG", "CIRCUITS.LAT"],
+    "qualified": "SELECT DISTINCT\n  circuits.\"lat\" AS \"lat\",\n  circuits.\"lng\" AS \"lng\"\nFROM \"circuits\" AS \"t1\"\nINNER JOIN \"races\" AS \"t2\"\n  ON races.\"circuitid\" = circuits.\"circuitid\"\nWHERE\n  races.\"name\" = 'Malaysian Grand Prix'"
+  },
+  {
+    "question": "What is the average writing score of each of the schools managed by Ricci Ulrich? List the schools and the corresponding average writing scores.",
+    "sql": "SELECT T2.School, T1.AvgScrWrite FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.AdmFName1 = 'Ricci' AND T2.AdmLName1 = 'Ulrich'",
+    "topics": ["writing score", "schools"],
+    "mapping": {
+      "average writing score": ["SATSCORES.AVGSCRWRITE"],
+      "Ricci Ulrich": ["SCHOOLS.ADMFNAME1", "SCHOOLS.ADMLNAME1"],
+      "schools": ["SCHOOLS.SCHOOL"]
+    },
+    "columns": [
+      "SCHOOLS.SCHOOL",
+      "SCHOOLS.ADMLNAME1",
+      "SCHOOLS.ADMFNAME1",
+      "SATSCORES.AVGSCRWRITE"
+    ],
+    "qualified": "SELECT\n  schools.\"school\" AS \"school\",\n  satscores.\"avgscrwrite\" AS \"avgscrwrite\"\nFROM \"satscores\" AS \"t1\"\nINNER JOIN \"schools\" AS \"t2\"\n  ON satscores.\"cds\" = schools.\"cdscode\"\nWHERE\n  schools.\"admfname1\" = 'Ricci' AND schools.\"admlname1\" = 'Ulrich'"
+  },
+  {
+    "question": "What is the location of the owner of the post \"Eliciting priors from experts\"?",
+    "sql": "SELECT T2.Location FROM posts AS T1 INNER JOIN users AS T2 ON T1.OwnerUserId = T2.Id WHERE T1.Title = 'Eliciting priors from experts'",
+    "topics": ["location", "owner", "post"],
+    "mapping": {
+      "location": ["USERS.LOCATION"],
+      "post": ["POSTS.TITLE"]
+    },
+    "columns": ["POSTS.TITLE", "USERS.LOCATION"],
+    "qualified": "SELECT\n  users.\"location\" AS \"location\"\nFROM \"posts\" AS \"t1\"\nINNER JOIN \"users\" AS \"t2\"\n  ON posts.\"owneruserid\" = users.\"id\"\nWHERE\n  posts.\"title\" = 'Eliciting priors from experts'"
+  },
+  {
+    "question": "Among the players with finishing rate of 1, pick the eldest player and state the player's name.",
+    "sql": "SELECT DISTINCT t1.player_name FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t2.finishing = 1 ORDER BY t1.birthday ASC LIMIT 1",
+    "topics": ["players", "finishing rate", "date of birth", "name"],
+    "mapping": {
+      "players": [
+        "PLAYER.PLAYER_NAME",
+        "PLAYER_ATTRIBUTES.FINISHING",
+        "PLAYER.BIRTHDAY"
+      ],
+      "finishing rate": ["PLAYER_ATTRIBUTES.FINISHING"],
+      "eldest": ["PLAYER.BIRTHDAY"],
+      "name": ["PLAYER.PLAYER_NAME"]
+    },
+    "columns": [
+      "PLAYER.PLAYER_NAME",
+      "PLAYER_ATTRIBUTES.FINISHING",
+      "PLAYER.BIRTHDAY"
+    ],
+    "qualified": "SELECT DISTINCT\n  player.\"player_name\" AS \"player_name\"\nFROM \"player\" AS \"t1\"\nINNER JOIN \"player_attributes\" AS \"t2\"\n  ON player.\"player_api_id\" = player_attributes.\"player_api_id\"\nWHERE\n  player_attributes.\"finishing\" = 1\nORDER BY\n  player.\"birthday\" ASC\nLIMIT 1"
+  },
+  {
+    "question": "Which year has the lowest speed of lap time?",
+    "sql": "SELECT T2.year FROM lapTimes AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId ORDER BY T1.time DESC LIMIT 1",
+    "topics": ["year", "speed of lap time"],
+    "mapping": {
+      "year": ["RACES.YEAR"],
+      "speed of lap time": ["LAPTIMES.TIME"]
+    },
+    "columns": ["RACES.YEAR", "LAPTIMES.TIME"],
+    "qualified": "SELECT\n  races.\"year\" AS \"year\"\nFROM \"laptimes\" AS \"t1\"\nINNER JOIN \"races\" AS \"t2\"\n  ON laptimes.\"raceid\" = races.\"raceid\"\nORDER BY\n  laptimes.\"time\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "List all the withdrawals in cash transactions that the client with the id 3356 makes.",
+    "sql": "SELECT T4.trans_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 3356 AND T4.operation = 'VYBER'",
+    "topics": ["withdrawals", "cash transactions", "client id"],
+    "mapping": {
+      "withdrawals": ["TRANS.OPERATION"],
+      "cash transactions": ["TRANS.TRANS_ID", "TRANS.OPERATION"],
+      "client with the id": ["CLIENT.CLIENT_ID"]
+    },
+    "columns": ["CLIENT.CLIENT_ID", "TRANS.TRANS_ID", "TRANS.OPERATION"],
+    "qualified": "SELECT\n  trans.\"trans_id\" AS \"trans_id\"\nFROM \"client\" AS \"t1\"\nINNER JOIN \"disp\" AS \"t2\"\n  ON client.\"client_id\" = disp.\"client_id\"\nINNER JOIN \"account\" AS \"t3\"\n  ON disp.\"account_id\" = account.\"account_id\"\nINNER JOIN \"trans\" AS \"t4\"\n  ON account.\"account_id\" = trans.\"account_id\"\nWHERE\n  client.\"client_id\" = 3356 AND trans.\"operation\" = 'VYBER'"
+  },
+  {
+    "question": "How much did customer 6 consume in total between August and November 2013?",
+    "sql": "SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID = 6 AND Date BETWEEN '201308' AND '201311'",
+    "topics": ["customer", "consume", "date"],
+    "mapping": {
+      "customer": ["YEARMONTH.CUSTOMERID"],
+      "consume": ["YEARMONTH.CONSUMPTION"],
+      "August and November 2013": ["YEARMONTH.DATE"]
+    },
+    "columns": [
+      "YEARMONTH.CUSTOMERID",
+      "YEARMONTH.DATE",
+      "YEARMONTH.CONSUMPTION"
+    ],
+    "qualified": "SELECT\n  SUM(\"yearmonth\".\"consumption\") AS \"_col_0\"\nFROM \"yearmonth\" AS \"yearmonth\"\nWHERE\n  \"yearmonth\".\"customerid\" = 6 AND \"yearmonth\".\"date\" BETWEEN '201308' AND '201311'"
+  },
+  {
+    "question": "How many patients with a normal RF don't have thrombosis?",
+    "sql": "SELECT COUNT(DISTINCT T1.ID) FROM Examination AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.RF < 20 AND T1.Thrombosis = 0",
+    "topics": ["patients", "RF", "thrombosis"],
+    "mapping": {
+      "RF": ["LABORATORY.RF"],
+      "thrombosis": ["EXAMINATION.THROMBOSIS"]
+    },
+    "columns": ["EXAMINATION.THROMBOSIS", "EXAMINATION.ID", "LABORATORY.RF"],
+    "qualified": "SELECT\n  COUNT(DISTINCT examination.\"id\") AS \"_col_0\"\nFROM \"examination\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON examination.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"rf\" < 20 AND examination.\"thrombosis\" = 0"
+  },
+  {
+    "question": "Which students manage to generate the highest income. State his/her full name along with the income source.",
+    "sql": "SELECT T1.first_name, T1.last_name, T2.source FROM member AS T1 INNER JOIN income AS T2 ON T1.member_id = T2.link_to_member GROUP BY T1.first_name, T1.last_name, T2.source ORDER BY SUM(T2.amount) DESC LIMIT 1",
+    "topics": ["students", "full name", "income", "income source"],
+    "mapping": {
+      "full name": ["MEMBER.FIRST_NAME", "MEMBER.LAST_NAME"],
+      "income": ["INCOME.AMOUNT"],
+      "income source": ["INCOME.SOURCE"]
+    },
+    "columns": [
+      "MEMBER.FIRST_NAME",
+      "INCOME.SOURCE",
+      "MEMBER.LAST_NAME",
+      "INCOME.AMOUNT"
+    ],
+    "qualified": "SELECT\n  member.\"first_name\" AS \"first_name\",\n  member.\"last_name\" AS \"last_name\",\n  income.\"source\" AS \"source\"\nFROM \"member\" AS \"t1\"\nINNER JOIN \"income\" AS \"t2\"\n  ON member.\"member_id\" = income.\"link_to_member\"\nGROUP BY\n  member.\"first_name\",\n  member.\"last_name\",\n  income.\"source\"\nORDER BY\n  SUM(income.\"amount\") DESC\nLIMIT 1"
+  },
+  {
+    "question": "What is the display name of the user who has obtained the most number of badges?",
+    "sql": "SELECT T2.DisplayName FROM badges AS T1 INNER JOIN users AS T2 ON T1.UserId = T2.Id GROUP BY T2.DisplayName ORDER BY COUNT(T1.Id) DESC LIMIT 1",
+    "topics": ["display name", "user", "badges"],
+    "mapping": {
+      "display name": ["USERS.DISPLAYNAME"],
+      "badges": ["BADGES.ID"]
+    },
+    "columns": ["USERS.DISPLAYNAME", "BADGES.ID"],
+    "qualified": "SELECT\n  users.\"displayname\" AS \"displayname\"\nFROM \"badges\" AS \"t1\"\nINNER JOIN \"users\" AS \"t2\"\n  ON badges.\"userid\" = users.\"id\"\nGROUP BY\n  users.\"displayname\"\nORDER BY\n  COUNT(badges.\"id\") DESC\nLIMIT 1"
+  },
+  {
+    "question": "What is the ratio of male to female patients among all those with abnormal uric acid counts?",
+    "sql": "SELECT CAST(SUM(CASE WHEN T2.UA <= 8.0 AND T1.SEX = 'M' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN T2.UA <= 6.5 AND T1.SEX = 'F' THEN 1 ELSE 0 END) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID",
+    "topics": ["gender", "uric acid count"],
+    "mapping": {
+      "male to female": ["PATIENT.SEX"],
+      "uric acid count": ["LABORATORY.UA"]
+    },
+    "columns": ["LABORATORY.UA", "PATIENT.SEX"],
+    "qualified": "SELECT\n  CAST(SUM(CASE WHEN laboratory.\"ua\" <= 8.0 AND patient.\"sex\" = 'M' THEN 1 ELSE 0 END) AS FLOAT) / NULLIF(SUM(CASE WHEN laboratory.\"ua\" <= 6.5 AND patient.\"sex\" = 'F' THEN 1 ELSE 0 END), 0) AS \"_col_0\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON patient.\"id\" = laboratory.\"id\""
+  },
+  {
+    "question": "Among the players born before the year 1986, how many of them would remain in his position and defense while the team attacked?",
+    "sql": "SELECT COUNT(DISTINCT t1.player_name) FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE SUBSTR(t1.birthday, 1, 4) < '1986' AND t2.defensive_work_rate = 'high'",
+    "topics": ["players", "birth_year", "position", "defense", "team"],
+    "mapping": {
+      "players": ["PLAYER.PLAYER_NAME"],
+      "born": ["PLAYER.BIRTHDAY"],
+      "defense": ["PLAYER_ATTRIBUTES.DEFENSIVE_WORK_RATE"]
+    },
+    "columns": [
+      "PLAYER.PLAYER_NAME",
+      "PLAYER_ATTRIBUTES.DEFENSIVE_WORK_RATE",
+      "PLAYER.BIRTHDAY"
+    ],
+    "qualified": "SELECT\n  COUNT(DISTINCT player.\"player_name\") AS \"_col_0\"\nFROM \"player\" AS \"t1\"\nINNER JOIN \"player_attributes\" AS \"t2\"\n  ON player.\"player_api_id\" = player_attributes.\"player_api_id\"\nWHERE\n  SUBSTRING(player.\"birthday\", 1, 4) < '1986'\n  AND player_attributes.\"defensive_work_rate\" = 'high'"
+  },
+  {
+    "question": "List out the account numbers of female clients who are oldest and has lowest average salary, calculate the gap between this lowest average salary with the highest average salary?",
+    "sql": "SELECT T1.account_id , ( SELECT MAX(A11) - MIN(A11) FROM district ) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.district_id = ( SELECT district_id FROM client WHERE gender = 'F' ORDER BY birth_date ASC LIMIT 1 ) ORDER BY T2.A11 DESC LIMIT 1",
+    "topics": ["account numbers", "clients", "average salary", "salary"],
+    "mapping": {
+      "account numbers": ["ACCOUNT.ACCOUNT_ID"],
+      "female": ["CLIENT.GENDER"],
+      "oldest": ["CLIENT.BIRTH_DATE"],
+      "salary": ["DISTRICT.A11"]
+    },
+    "columns": [
+      "CLIENT.DISTRICT_ID",
+      "CLIENT.GENDER",
+      "CLIENT.BIRTH_DATE",
+      "DISTRICT.DISTRICT_ID",
+      "ACCOUNT.ACCOUNT_ID",
+      "DISTRICT.A11"
+    ],
+    "qualified": "SELECT\n  account.\"account_id\" AS \"account_id\",\n  (\n    SELECT\n      MAX(\"district\".\"a11\") - MIN(\"district\".\"a11\") AS \"_col_0\"\n    FROM \"district\" AS \"district\"\n  ) AS \"_col_1\"\nFROM \"account\" AS \"t1\"\nINNER JOIN \"district\" AS \"t2\"\n  ON account.\"district_id\" = district.\"district_id\"\nWHERE\n  district.\"district_id\" = (\n    SELECT\n      \"client\".\"district_id\" AS \"district_id\"\n    FROM \"client\" AS \"client\"\n    WHERE\n      \"client\".\"gender\" = 'F'\n    ORDER BY\n      \"client\".\"birth_date\" ASC\n    LIMIT 1\n  )\nORDER BY\n  district.\"a11\" DESC\nLIMIT 1"
+  },
+  {
+    "question": "Which patient has a normal proteinuria level and is diagnosed with SLE? Please give his or her patient ID.",
+    "sql": "SELECT DISTINCT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.`U-PRO` > 0 AND T2.`U-PRO` < 30 AND T1.Diagnosis = 'SLE'",
+    "topics": ["patient", "proteinuria level", "diagnosis", "patient ID"],
+    "mapping": {
+      "proteinuria level": ["LABORATORY.U-PRO"],
+      "diagnosis": ["PATIENT.DIAGNOSIS"],
+      "patient ID": ["PATIENT.ID"]
+    },
+    "columns": ["PATIENT.DIAGNOSIS", "PATIENT.ID", "LABORATORY.U-PRO"],
+    "qualified": "SELECT DISTINCT\n  patient.\"id\" AS \"id\"\nFROM \"patient\" AS \"t1\"\nINNER JOIN \"laboratory\" AS \"t2\"\n  ON patient.\"id\" = laboratory.\"id\"\nWHERE\n  laboratory.\"U-PRO\" > 0 AND laboratory.\"U-PRO\" < 30 AND patient.\"diagnosis\" = 'SLE'"
+  }
+]

@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+feature_id,NUMBER,PRIMARY KEY,
+feature_type_code,TEXT,,FOREIGN KEY REAL_ESTATE_PROPERTIES-REF_FEATURE_TYPES (feature_type_code)
+feature_name,TEXT,,
+feature_description,TEXT,,

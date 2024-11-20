@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+People_ID,NUMBER,PRIMARY KEY,
+Nationality,TEXT,,
+Name,TEXT,,
+Birth_Date,TEXT,,
+Height,NUMBER,,

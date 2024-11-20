@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Performance_ID,NUMBER,PRIMARY KEY,
+Orchestra_ID,NUMBER,,FOREIGN KEY ORCHESTRA-ORCHESTRA (Orchestra_ID)
+Type,TEXT,,
+Date,TEXT,,
+Official_ratings_(millions),NUMBER,,
+Weekly_rank,TEXT,,
+Share,TEXT,,

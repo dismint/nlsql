@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,NUMBER,PRIMARY KEY,
+Title,TEXT,,
+Directed_by,TEXT,,
+Written_by,TEXT,,
+Original_air_date,TEXT,,
+Production_code,NUMBER,,
+Channel,TEXT,,FOREIGN KEY TVSHOW-TV_CHANNEL (id)

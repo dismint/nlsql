@@ -1,0 +1,10 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+member_id,TEXT,PRIMARY KEY,
+first_name,TEXT,,
+last_name,TEXT,,
+email,TEXT,,
+position,TEXT,,
+t_shirt_size,TEXT,,
+phone,TEXT,,
+zip,INTEGER,,FOREIGN KEY ZIP_CODE (zip_code)
+link_to_major,TEXT,,FOREIGN KEY MAJOR (major_id)

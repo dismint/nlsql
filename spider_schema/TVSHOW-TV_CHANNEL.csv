@@ -1,0 +1,10 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,TEXT,PRIMARY KEY,
+series_name,TEXT,,
+Country,TEXT,,
+Language,TEXT,,
+Content,TEXT,,
+Pixel_aspect_ratio_PAR,TEXT,,
+Hight_definition_TV,TEXT,,
+Pay_per_view_PPV,TEXT,,
+Package_Option,TEXT,,

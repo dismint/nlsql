@@ -1,0 +1,4 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+atom_id,TEXT,"PRIMARY KEYS (atom_id,atom_id2)",FOREIGN KEY ATOM (atom_id)
+atom_id2,TEXT,,FOREIGN KEY ATOM (atom_id)
+bond_id,TEXT,,FOREIGN KEY BOND (bond_id)

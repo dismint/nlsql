@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,NUMBER,PRIMARY KEY,
+name,TEXT,,
+date,TEXT,,
+bulgarian_commander,TEXT,,
+latin_commander,TEXT,,
+result,TEXT,,

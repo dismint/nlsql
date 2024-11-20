@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+department_id,NUMBER,PRIMARY KEY,
+department_name,TEXT,,
+department_description,TEXT,,
+other_details,TEXT,,

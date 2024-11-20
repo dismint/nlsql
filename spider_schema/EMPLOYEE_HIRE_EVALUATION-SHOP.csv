@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+Shop_ID,NUMBER,PRIMARY KEY,
+Name,TEXT,,
+Location,TEXT,,
+District,TEXT,,
+Number_products,NUMBER,,
+Manager_name,TEXT,,

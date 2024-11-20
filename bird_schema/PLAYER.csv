@@ -1,0 +1,8 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+id,INTEGER,PRIMARY KEY,
+player_api_id,INTEGER,,
+player_name,TEXT,,
+player_fifa_api_id,INTEGER,,
+birthday,TEXT,,
+height,INTEGER,,
+weight,INTEGER,,

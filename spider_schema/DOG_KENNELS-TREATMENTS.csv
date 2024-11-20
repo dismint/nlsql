@@ -1,0 +1,7 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+treatment_id,NUMBER,PRIMARY KEY,
+dog_id,NUMBER,,FOREIGN KEY DOG_KENNELS-DOGS (dog_id)
+professional_id,NUMBER,,FOREIGN KEY DOG_KENNELS-PROFESSIONALS (professional_id)
+treatment_type_code,TEXT,,FOREIGN KEY DOG_KENNELS-TREATMENT_TYPES (treatment_type_code)
+date_of_treatment,TIME,,
+cost_of_treatment,NUMBER,,

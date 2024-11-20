@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+major_id,TEXT,PRIMARY KEY,
+major_name,TEXT,,
+department,TEXT,,
+college,TEXT,,

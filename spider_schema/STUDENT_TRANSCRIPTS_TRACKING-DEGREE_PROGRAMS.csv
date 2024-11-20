@@ -1,0 +1,6 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+degree_program_id,NUMBER,PRIMARY KEY,
+department_id,NUMBER,,FOREIGN KEY STUDENT_TRANSCRIPTS_TRACKING-DEPARTMENTS (department_id)
+degree_summary_name,TEXT,,
+degree_summary_description,TEXT,,
+other_details,TEXT,,

@@ -1,0 +1,9 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+StuID,NUMBER,PRIMARY KEY,
+LName,TEXT,,
+Fname,TEXT,,
+Age,NUMBER,,
+Sex,TEXT,,
+Major,NUMBER,,
+Advisor,NUMBER,,
+city_code,TEXT,,

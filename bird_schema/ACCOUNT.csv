@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+account_id,INTEGER,PRIMARY KEY,
+district_id,INTEGER,,FOREIGN KEY DISTRICT (district_id)
+frequency,TEXT,,
+date,DATE,,

@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+uid,NUMBER,PRIMARY KEY,
+Airline,TEXT,,
+Abbreviation,TEXT,,
+Country,TEXT,,

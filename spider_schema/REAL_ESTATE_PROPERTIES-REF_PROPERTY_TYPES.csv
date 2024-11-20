@@ -1,0 +1,3 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+property_type_code,TEXT,PRIMARY KEY,
+property_type_description,TEXT,,

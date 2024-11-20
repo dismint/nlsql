@@ -1,0 +1,14 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+dog_id,NUMBER,PRIMARY KEY,
+owner_id,NUMBER,,FOREIGN KEY DOG_KENNELS-OWNERS (owner_id)
+abandoned_yn,TEXT,,
+breed_code,TEXT,,FOREIGN KEY DOG_KENNELS-BREEDS (breed_code)
+size_code,TEXT,,FOREIGN KEY DOG_KENNELS-SIZES (size_code)
+name,TEXT,,
+age,TEXT,,
+date_of_birth,TIME,,
+gender,TEXT,,
+weight,TEXT,,
+date_arrived,TIME,,
+date_adopted,TIME,,
+date_departed,TIME,,

@@ -1,0 +1,5 @@
+COLUMN_NAME,DATA_TYPE,PKEY,FKEY
+client_id,INTEGER,PRIMARY KEY,
+gender,TEXT,,
+birth_date,DATE,,
+district_id,INTEGER,,FOREIGN KEY DISTRICT (district_id)

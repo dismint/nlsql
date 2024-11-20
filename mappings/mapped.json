@@ -249,7 +249,8 @@
                 "BUILDINGS.BUILDING_KEY"
             ],
             "building street address": [
-                "BUILDINGS.BUILDING_STREET_ADDRESS"
+                "BUILDINGS.BUILDING_STREET_ADDRESS",
+                "FCLT_BUILDING_ADDRESS.ADDRESS_PURPOSE"
             ],
             "city": [
                 "FCLT_BUILDING_ADDRESS.CITY"
@@ -355,7 +356,7 @@
             "building key",
             "building name",
             "courses",
-            "Center for International Studies"
+            "number of courses offered by the Center for International Studies"
         ],
         "mapping": {
             "building key": [
@@ -364,10 +365,7 @@
             "building name": [
                 "FCLT_BUILDING.BUILDING_NAME"
             ],
-            "courses": [
-                "CIS_COURSE_CATALOG.SUBJECT_ID"
-            ],
-            "Center for International Studies": [
+            "number of courses offered by the Center for International Studies": [
                 "CIS_COURSE_CATALOG.SUBJECT_ID"
             ]
         },
@@ -390,7 +388,6 @@
                 "FCLT_BUILDING.BUILDING_NAME"
             ],
             "students": [
-                "FCLT_ROOMS.FCLT_BUILDING_KEY",
                 "MIT_STUDENT_DIRECTORY.FULL_NAME"
             ]
         },
@@ -439,9 +436,6 @@
             "maximum enrollment"
         ],
         "mapping": {
-            "IAP category": [
-                "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"
-            ],
             "academic year": [
                 "TIME_DAY.ACADEMIC_YEAR"
             ],
@@ -484,9 +478,6 @@
         "mapping": {
             "sponsor": [
                 "IAP_SUBJECT_SPONSOR.SPONSOR_NAME"
-            ],
-            "independent activity periods": [
-                "IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"
             ],
             "sponsor name": [
                 "IAP_SUBJECT_SPONSOR.SPONSOR_NAME"
@@ -593,7 +584,7 @@
             "building",
             "subjects",
             "fee",
-            "session location"
+            "sessions"
         ],
         "mapping": {
             "building": [
@@ -605,7 +596,7 @@
             "fee": [
                 "IAP_SUBJECT_DETAIL.FEE"
             ],
-            "session location": [
+            "sessions": [
                 "IAP_SUBJECT_SESSION.SESSION_END_TIME",
                 "IAP_SUBJECT_SESSION.SESSION_START_TIME"
             ]
@@ -638,12 +629,6 @@
             "sessions": [
                 "IAP_SUBJECT_SESSION.SESSION_END_TIME",
                 "IAP_SUBJECT_SESSION.SESSION_START_TIME"
-            ],
-            "IAP sessions": [
-                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE",
-                "IAP_SUBJECT_DETAIL.FEE",
-                "IAP_SUBJECT_SESSION.SESSION_START_TIME",
-                "IAP_SUBJECT_SESSION.SESSION_END_TIME"
             ]
         },
         "columns": [
@@ -710,15 +695,6 @@
             "phone numbers"
         ],
         "mapping": {
-            "schools": [
-                "SIS_SUBJECT_CODE.SCHOOL_NAME",
-                "SIS_SUBJECT_CODE.SCHOOL_CODE"
-            ],
-            "departments": [
-                "SIS_DEPARTMENT.DEPARTMENT_CODE",
-                "SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"
-            ],
-            "courses": [],
             "school code": [
                 "SIS_SUBJECT_CODE.SCHOOL_CODE"
             ],
@@ -808,20 +784,15 @@
                 "SPACE_DETAIL.BUILDING_COMPONENT"
             ],
             "building": [
-                "SPACE_DETAIL.BUILDING_KEY",
                 "BUILDINGS.BUILDING_NAME"
             ],
             "square footage": [
                 "SPACE_DETAIL.ROOM_SQUARE_FOOTAGE"
             ],
             "rooms": [
-                "SPACE_DETAIL.BUILDING_ROOM",
-                "SPACE_DETAIL.ROOM_NUMBER",
-                "SPACE_DETAIL.ROOM_COUNTER",
-                "SPACE_DETAIL.BUILDING_ROOM_NAME"
+                "SPACE_DETAIL.BUILDING_ROOM"
             ],
             "floors": [
-                "SPACE_DETAIL.FLOOR_KEY",
                 "SPACE_FLOOR.FLOOR"
             ],
             "facility organizations": [
@@ -955,9 +926,6 @@
             "email address"
         ],
         "mapping": {
-            "courses": [
-                "ACADEMIC_TERMS.IS_CURRENT_TERM"
-            ],
             "academic year": [
                 "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR"
             ],
@@ -1010,9 +978,6 @@
             "total number of sessions"
         ],
         "mapping": {
-            "IAP subjects": [
-                "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"
-            ],
             "titles": [
                 "IAP_SUBJECT_DETAIL.ACTIVITY_TITLE"
             ],
@@ -1103,7 +1068,7 @@
                 "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM",
                 "ACADEMIC_TERM_PARAMETER.IS_CURRENT_TERM"
             ],
-            "CIS course types count": [
+            "types of CIS courses": [
                 "CIS_COURSE_CATALOG.SUBJECT_ID"
             ]
         },

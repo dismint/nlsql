@@ -7,7 +7,7 @@ import json
 console = Console()
 console.clear()
 
-MAPPING_FILE = "mappings/bird_mapped.json"
+MAPPING_FILE = "mappings/moira_mapped.json"
 
 with open(MAPPING_FILE) as f:
     mappings = json.load(f)

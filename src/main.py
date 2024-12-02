@@ -38,31 +38,50 @@ table_set = set()
 
 schemas = {}
 
-path = os.path.join(os.getcwd(), 'spider_schema')
+path = os.path.join(os.getcwd(), 'schemas')
 files = os.listdir(path)
 csv_files = [file for file in files if file.endswith('.csv')]
 
 for file in csv_files:
-    path = os.path.join(os.getcwd(), 'spider_schema', file)
-    dbtable = file.split('.')[0]
-    db, table = dbtable.split('-')
-    schemas[db] = schemas.get(db, {})
-    schemas[db][table] = {}
+    path = os.path.join(os.getcwd(), 'schemas', file)
+    table = file.split('.')[0]
+    schemas[table] = schemas.get(table, {})
     with open(path, 'r') as f:
-        # normalized_lines = (re.sub(r'\s*,\s*', delimiter, line.strip()) for line in f)
-        reader = csv.reader(f, delimiter=",")
+        normalized_lines = (re.sub(r'\s*;\s*', ',', line.strip())
+                            for line in f)
+        reader = csv.reader(normalized_lines, delimiter=",")
         rows = [row for row in reader if row]
-        for row in rows[1:]:
+        for row in rows[2:]:
             print("\t", row)
             assert len(row) >= 2
-            schemas[db][table][row[0]] = row[1]
+            schemas[table][row[0]] = row[1]
+
+# for spider_queries, multiple style
+
+# for file in csv_files:
+#     path = os.path.join(os.getcwd(), 'schemas', file)
+#     dbtable = file.split('.')[0]
+#     db, table = dbtable.split('-')
+#     schemas[db] = schemas.get(db, {})
+#     schemas[db][table] = {}
+#     with open(path, 'r') as f:
+#         # normalized_lines = (re.sub(r'\s*,\s*', delimiter, line.strip()) for line in f)
+#         reader = csv.reader(f, delimiter=",")
+#         rows = [row for row in reader if row]
+#         for row in rows[1:]:
+#             print("\t", row)
+#             assert len(row) >= 2
+#             schemas[db][table][row[0]] = row[1]
 
 print(schemas)
+
+
 def get_children(node):
     depth = node.depth
     children = [child for child in node.walk() if child.depth == depth + 1]
     children.reverse()
     return children
+
 
 def recur(node):
     global table_set
@@ -77,6 +96,7 @@ def recur(node):
     for child in get_children(node):
         recur(child)
 
+
 def rename(node):
     global table_set
     global alias_map
@@ -87,10 +107,12 @@ def rename(node):
     for child in get_children(node):
         rename(child)
 
+
 def find_bad_cols(node):
     # get all columns in the node
     columns = [col for col in node.find_all(sqlglot.exp.Column)]
-    columns = [col for col in columns if col.table and col.table.upper() in table_set]
+    columns = [col for col in columns if col.table and col.table.upper()
+               in table_set]
     count = {}
     for col in columns:
         id = col.table.upper() + "." + col.name.upper()
@@ -101,7 +123,8 @@ def find_bad_cols(node):
     joincols = []
     for join in joins:
         cols = [col for col in join.find_all(sqlglot.exp.Column)]
-        cols = [col for col in cols if col.table and col.table.upper() in table_set]
+        cols = [col for col in cols if col.table and col.table.upper()
+                in table_set]
         joincols.extend(cols)
     joincount = {}
     for col in joincols:
@@ -119,6 +142,7 @@ def find_bad_cols(node):
             bad_cols.append(col)
     return bad_cols
 
+
 def sql_to_normal_columns(sql, db):
     global table_set
     global alias_map
@@ -131,7 +155,8 @@ def sql_to_normal_columns(sql, db):
         alias_map = {}
         parsed = parse_one(sql, read="mysql")
         try:
-            qualify.qualify(parsed, schema=schemas[db])
+            # qualify.qualify(parsed, schema=schemas[db])
+            qualify.qualify(parsed, schema=schemas)
         except Exception as e:
             print(f"[bold #FF0000]CANNOT QUALIFY[/bold #FF0000]")
             print(parsed.sql(pretty=True))
@@ -144,10 +169,12 @@ def sql_to_normal_columns(sql, db):
         # get all columns
         columns = set([col for col in parsed.find_all(sqlglot.exp.Column)])
         # filter by columns that actually belong to true tables
-        columns = set([col for col in columns if col.table.upper() in table_set])
+        columns = set(
+            [col for col in columns if col.table.upper() in table_set])
         # get table, column
         # columns = set([(col.table.upper(), col.name.upper()) for col in columns])
-        columns = set([f"{col.table.upper()}.{col.name.upper()}" for col in columns])
+        columns = set(
+            [f"{col.table.upper()}.{col.name.upper()}" for col in columns])
         columns = columns.difference(bad_cols)
         allcol = allcol.union(columns)
     except Exception as ee:
@@ -161,6 +188,7 @@ def sql_to_normal_columns(sql, db):
         print(ee)
 
     return list(allcol), qualified
+
 
 def annotate_queries(sample=True):
     global ANNOTATED_FILE
@@ -183,18 +211,20 @@ def annotate_queries(sample=True):
         console.print(f"[bold #87C3AA]{i} [#308673]/ [#87C3AA]{len(data)}\n")
 
         console.print(f"[bold #C7E8D3]{query["question"]}[/bold #C7E8D3]\n")
-        console.print(sqlparse.format(query["sql"], reindent=True, keyword_case='upper'), highlight=False)
+        console.print(sqlparse.format(
+            query["sql"], reindent=True, keyword_case='upper'), highlight=False)
         completion = client.chat.completions.create(
-          model="gpt-4o",
-          messages=[
-            {"role": "system", "content": "For the following Natural Language description of a SQL query, please list the topics involved in the query. We are looking for topics that a column in the database might correspond to. Please give the answer as solely a comma separated, with no spaces after the commas, list of topics in as they appear in the input."},
-            {"role": "user", "content": f"Natural Lanauge: {query['question']}"},
-          ]
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "For the following Natural Language description of a SQL query, please list the topics involved in the query. We are looking for topics that a column in the database might correspond to. Please give the answer as solely a comma separated, with no spaces after the commas, list of topics in as they appear in the input."},
+                {"role": "user",
+                 "content": f"Natural Lanauge: {query['question']}"},
+            ]
         )
 
         topics = completion.choices[0].message.content
 
-        assert(topics is not None)
+        assert (topics is not None)
         console.print(f"[bold #C7E8D3]{topics}\n")
         annotated_data.append({
             "question": query["question"],
@@ -206,7 +236,7 @@ def annotate_queries(sample=True):
         # write as we go, in case of interruption
         # data (for now) is small enough where no performance hit
 
-        assert(ANNOTATED_FILE is not None)
+        assert (ANNOTATED_FILE is not None)
         with open(ANNOTATED_FILE, "w") as f:
             f.write(json.dumps(annotated_data, indent=4))
 
@@ -214,7 +244,7 @@ def annotate_queries(sample=True):
 
     console.print("Done annotating queries.")
     console.clear()
-    
+
 
 def map_queries():
     global ANNOTATED_FILE
@@ -226,7 +256,7 @@ def map_queries():
         MAPPED_FILE = "mapped.json"
     MAPPED_FILE = f"mappings/{MAPPED_FILE}"
 
-    assert(ANNOTATED_FILE is not None)
+    assert (ANNOTATED_FILE is not None)
     if not os.path.exists(ANNOTATED_FILE):
         console.print("Please run --annotate first.")
         exit(1)
@@ -243,7 +273,8 @@ def map_queries():
         console.print(f"[bold #87C3AA]{i} [#308673]/ [#87C3AA]{len(data)}\n")
 
         console.print(f"[bold #C7E8D3]{query["question"]}[/bold #C7E8D3]\n")
-        console.print(sqlparse.format(query["sql"], reindent=True, keyword_case='upper'), highlight=False)
+        console.print(sqlparse.format(
+            query["sql"], reindent=True, keyword_case='upper'), highlight=False)
         console.print(f"\n[bold #C7E8D3]{query["topics"]}\n")
 
         metadata = sql_metadata.Parser(query["sql"])
@@ -253,7 +284,8 @@ def map_queries():
             qualifieds.append(None)
             # columns = metadata.columns + metadata.columns_aliases_names
             print("sup", query)
-            columns[-1], qualifieds[-1] = sql_to_normal_columns(query["sql"], query["db_id"].upper())
+            columns[-1], qualifieds[-1] = sql_to_normal_columns(
+                query["sql"], query["db_id"].upper())
             print("columns:")
             for col in columns[-1]:
                 print("\t" + col)
@@ -274,21 +306,22 @@ def map_queries():
             # mapping[-1] = json.loads(strmap)
 
             completion = client.chat.completions.create(
-              model="gpt-4o",
-              messages=[
-                  {"role": "system", "content": f"Given these columns: {columns[-1]} and this SQL query: {query['sql']} with these topics: {query['topics']} generated from this natural language: {query['question']}, please generate a mapping from columns, exactly as I gave in the first list, to a list of topics, exactly as I gave them in the third list. The columns should correspond to the topics, and there may be one or more topics each column corresponds to. Please answer EXACTLY and ONLY as a single json as plain text, NOT in a json code block."},
-                {"role": "user", "content": f"Natural Language: {query['question']}\nSQL: {query['sql']}\nConcepts: {query['topics']}\nColumns: {columns[-1]}"},
-              ]
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": f"Given these columns: {columns[-1]} and this SQL query: {query['sql']} with these topics: {query['topics']} generated from this natural language: {query['question']}, please generate a mapping from columns, exactly as I gave in the first list, to a list of topics, exactly as I gave them in the third list. The columns should correspond to the topics, and there may be one or more topics each column corresponds to. Please answer EXACTLY and ONLY as a single json as plain text, NOT in a json code block."},
+                    {"role": "user",
+                     "content": f"Natural Language: {query['question']}\nSQL: {query['sql']}\nConcepts: {query['topics']}\nColumns: {columns[-1]}"},
+                ]
             )
 
             strmap = completion.choices[0].message.content
-            assert(strmap is not None)
+            assert (strmap is not None)
             print(strmap)
             mapprog = {topic: set() for topic in query["topics"]}
             jsonmap = json.loads(strmap)
             for key in jsonmap:
                 for val in jsonmap[key]:
-                    assert(val in mapprog)
+                    assert (val in mapprog)
                     mapprog[val].add(key)
             mapprog = {key: list(val) for key, val in mapprog.items()}
             mapping[-1] = mapprog
@@ -351,6 +384,6 @@ def main(annotate, map):
     if map:
         map_queries()
 
+
 if __name__ == '__main__':
     main()
-

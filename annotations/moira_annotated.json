@@ -1,0 +1,183 @@
+[
+    {
+        "question": "For every distinct mailing list with more than 1000 people, provide its name, whether it is a mailing list, whether it is a moira group, whether it is a NFS group, the owner of the mailing list, and the number of people in the list.",
+        "sql": "SELECT DISTINCT\n    ml.MOIRA_LIST_NAME,\n    ml.IS_MOIRA_MAILING_LIST,\n    ml.IS_MOIRA_GROUP,\n    ml.IS_NFS_GROUP,\n    mlo.OWNER,\n    COUNT(mld.MOIRA_LIST_MEMBER) AS occurrences\nFROM \n    MOIRA_LIST_DETAIL mld\nJOIN \n    MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\nJOIN \n    MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\nHAVING \n    COUNT(mld.MOIRA_LIST_KEY) > 1000\nGROUP BY ml.MOIRA_LIST_NAME,\nml.IS_MOIRA_MAILING_LIST,\n    ml.IS_MOIRA_GROUP,\n    ml.IS_NFS_GROUP,\n    mlo.OWNER;\n\n\n",
+        "topics": [
+            "mailing list",
+            "name",
+            "moira group",
+            "NFS group",
+            "owner",
+            "number of people"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "List the mailing lists with the largest number of members and the least number of members, their names, their respective owners, their public status, hidden status, and number of people in the list.",
+        "sql": "WITH Occurrences AS (\n    SELECT \n        ml.MOIRA_LIST_NAME,\n    mlo.OWNER,\n    ml.IS_PUBLIC,\n        ml.IS_HIDDEN,\n    COUNT(mld.MOIRA_LIST_MEMBER) AS occurrences\n    FROM \n        MOIRA_LIST_DETAIL mld\n    JOIN \n        MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\n    JOIN \n        MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\n    GROUP BY \n        ml.MOIRA_LIST_NAME, ml.IS_PUBLIC, ml.IS_HIDDEN, mlo.OWNER\n),\nMaxMinOccurrences AS (\n    SELECT \n        MAX(occurrences) AS max_occurrences,\n        MIN(occurrences) AS min_occurrences\n    FROM \n        Occurrences\n)\nSELECT \n    o.MOIRA_LIST_NAME,\n    o.OWNER,\n o.IS_PUBLIC,\n    o.IS_HIDDEN,\n  o.occurrences\nFROM \n    Occurrences o\nJOIN \n    MaxMinOccurrences mm\nON \n    o.occurrences = mm.max_occurrences OR o.occurrences = mm.min_occurrences;\n",
+        "topics": [
+            "mailing lists",
+            "names",
+            "owners",
+            "public status",
+            "hidden status",
+            "members"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For email lists containing faculty who teach courses in the summer in financial aid years after 2001, provide the name of the list, the number of people in the list, and the number of faculty in the list.",
+        "sql": "SELECT\n    DISTINCT ml.MOIRA_LIST_NAME AS Moira_List_Name,\n    COUNT(mld.MOIRA_LIST_MEMBER) AS Member_Count,\n    COUNT(DISTINCT ed.MIT_ID) AS Distinct_Faculty_Count\nFROM\n    COURSE_CATALOG_SUBJECT_OFFERED ccso\nJOIN\n    EMPLOYEE_DIRECTORY ed ON ccso.RESPONSIBLE_FACULTY_MIT_ID = ed.MIT_ID\nJOIN\n    MOIRA_LIST_DETAIL mld ON upper(ed.KRB_NAME) = upper(mld.MOIRA_LIST_MEMBER)\nJOIN\n    MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\nJOIN\n    ACADEMIC_TERMS at ON ccso.TERM_CODE = at.TERM_CODE\nWHERE\n    at.TERM_CODE LIKE '%SU'\n    AND CAST(at.FINANCIAL_AID_YEAR AS INT) > 2001\nGROUP BY\n    ml.MOIRA_LIST_NAME;\n",
+        "topics": [
+            "email lists",
+            "faculty",
+            "courses",
+            "summer",
+            "financial aid years",
+            "name",
+            "number of people",
+            "faculty"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "Regarding the mailing list about duo users, provide the number of students in this list, and the number of departments and schools associated with these students.",
+        "sql": "SELECT \n    COUNT(DISTINCT se.MIT_ID) AS Student_Count,\n    COUNT(DISTINCT sd.DEPARTMENT_CODE) AS Department_Count,\n    COUNT(DISTINCT sd.SCHOOL_CODE) AS School_Count\nFROM \n    MOIRA_LIST ml\nJOIN \n    MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\nJOIN\n    WAREUSER.SE_PERSON se ON upper(mld.MOIRA_LIST_MEMBER) = se.KRB_NAME\nJOIN \n    MIT_STUDENT_DIRECTORY msd ON msd.FULL_NAME = se.FULL_NAME\nJOIN \n    SIS_DEPARTMENT sd ON msd.DEPARTMENT = sd.DEPARTMENT_CODE\nWHERE \n    ml.MOIRA_LIST_NAME = 'azure-duo-users'\n\n\n\n",
+        "topics": [
+            "duo users",
+            "students",
+            "departments",
+            "schools"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For faculty who are responsible for courses in 2023 fall term, list the name of mailing lists they subscribe to, the number of people in these lists, the name of the faculty, and the number of courses associated with each faculty.",
+        "sql": "WITH rel_lists AS (\nSELECT DISTINCT\n    ml.MOIRA_LIST_KEY AS MOIRA_LIST_KEY,\n   ccso.RESPONSIBLE_FACULTY_MIT_ID, ccso.RESPONSIBLE_FACULTY_NAME AS RESPONSIBLE_FACULTY_NAME\nFROM\n    COURSE_CATALOG_SUBJECT_OFFERED ccso,\n    WAREUSER.SE_PERSON se,\n    MOIRA_LIST_DETAIL mld,\n    MOIRA_LIST ml\nWHERE\n    ccso.TERM_CODE = '2023FA'\n    AND ccso.RESPONSIBLE_FACULTY_MIT_ID = se.MIT_ID\n    AND se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\n    AND mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\n),\nmembership AS (\nSELECT\n  ml.MOIRA_LIST_KEY AS moira_list_name,\n  COUNT(*) AS membership_num\nFROM\n    MOIRA_LIST ml,\n    MOIRA_LIST_DETAIL mld,\n    (SELECT DISTINCT MOIRA_LIST_KEY FROM rel_lists) rl\nWHERE\n    ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\n    AND rl.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\nGROUP BY\n    ml.MOIRA_LIST_KEY\n),\ncourse_count AS (\nSELECT\n  ccso.RESPONSIBLE_FACULTY_MIT_ID, ccso.RESPONSIBLE_FACULTY_NAME AS RESPONSIBLE_FACULTY_NAME,\n  COUNT(DISTINCT ccso.SUBJECT_TITLE) AS course_count\nFROM\n  COURSE_CATALOG_SUBJECT_OFFERED ccso\nGROUP BY\n  ccso.RESPONSIBLE_FACULTY_MIT_ID, ccso.RESPONSIBLE_FACULTY_NAME\n)\nSELECT\n  moira_list_name,\n  membership_num,\n  cct.RESPONSIBLE_FACULTY_NAME,\n  cct.course_count\nFROM\n  membership m,\n  rel_lists rl,\n  course_count cct\nWHERE\n  rl.MOIRA_LIST_KEY = m.moira_list_name\n  AND rl.RESPONSIBLE_FACULTY_MIT_ID = cct.RESPONSIBLE_FACULTY_MIT_ID;",
+        "topics": [
+            "faculty",
+            "courses",
+            "term",
+            "mailing lists"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For each course instructor, provide the name of mailing lists they subscribe to, their name, earliest and latest publication years, and total number of enrolled students.",
+        "sql": "SELECT \n ml.MOIRA_LIST_NAME,\n lci.INSTRUCTOR_NAME,\n MIN(lrc.CATALOG_YEAR) AS Min_Publication_Year, \n MAX(lrc.CATALOG_YEAR) AS Max_Publication_Year, \n SUM(lso.NUM_ENROLLED_STUDENTS) AS Total_Enrolled_Students \nFROM \n LIBRARY_COURSE_INSTRUCTOR lci \nJOIN \n LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lci.LIBRARY_COURSE_INSTRUCTOR_KEY = lrmd.LIBRARY_COURSE_INSTRUCTOR_KEY \nJOIN \n LIBRARY_RESERVE_CATALOG lrc ON lrmd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY \nJOIN \n LIBRARY_SUBJECT_OFFERED lso ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY \nJOIN\n WAREUSER.SE_PERSON se ON lci.INSTRUCTOR_NAME = se.FULL_NAME\nJOIN \n MOIRA_LIST_DETAIL mld ON se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\nJOIN \n MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\nGROUP BY \n  ml.MOIRA_LIST_NAME,lci.INSTRUCTOR_NAME;\n",
+        "topics": [
+            "course instructor",
+            "mailing lists",
+            "publication years",
+            "students"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For each mailing list that Professor Michael Stonebraker subscribes to, list its name, description, owner, number of people in the list, and number of tenured faculty in the list.",
+        "sql": "WITH MemberCounts AS (\r\n    SELECT \r\n        ml.MOIRA_LIST_NAME,\r\n        COUNT(DISTINCT mld.MOIRA_LIST_MEMBER) AS Member_Count\r\n    FROM \r\n        WAREUSER.SE_PERSON se\r\n    JOIN \r\n        MOIRA_LIST_DETAIL mld ON se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\r\n    JOIN \r\n        MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\r\n    JOIN \r\n        MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\n    WHERE \r\n        ml.MOIRA_LIST_NAME IN (\r\n            SELECT DISTINCT ml_sub.MOIRA_LIST_NAME\r\n            FROM \r\n                WAREUSER.SE_PERSON se_sub\r\n            JOIN \r\n                MOIRA_LIST_DETAIL mld_sub ON se_sub.KRB_NAME = upper(mld_sub.MOIRA_LIST_MEMBER)\r\n            JOIN \r\n                MOIRA_LIST ml_sub ON mld_sub.MOIRA_LIST_KEY = ml_sub.MOIRA_LIST_KEY\r\n            WHERE \r\n                se_sub.FULL_NAME = 'Stonebraker, Michael'\r\n        )\r\n    GROUP BY \r\n        ml.MOIRA_LIST_NAME\r\n),\r\nFacultyTenuredCounts AS (\r\n    SELECT \r\n        ml.MOIRA_LIST_NAME,\r\n        COUNT(DISTINCT mld.MOIRA_LIST_MEMBER) AS Faculty_Tenured_Count\r\n    FROM \r\n        WAREUSER.SE_PERSON se\r\n    JOIN \r\n        MOIRA_LIST_DETAIL mld ON se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\r\n    JOIN \r\n        MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\r\n    JOIN \r\n        MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\n    WHERE \r\n        ml.MOIRA_LIST_NAME IN (\r\n            SELECT DISTINCT ml_sub.MOIRA_LIST_NAME\r\n            FROM \r\n                WAREUSER.SE_PERSON se_sub\r\n            JOIN \r\n                MOIRA_LIST_DETAIL mld_sub ON se_sub.KRB_NAME = upper(mld_sub.MOIRA_LIST_MEMBER)\r\n            JOIN \r\n                MOIRA_LIST ml_sub ON mld_sub.MOIRA_LIST_KEY = ml_sub.MOIRA_LIST_KEY\r\n            WHERE \r\n                se_sub.FULL_NAME = 'Stonebraker, Michael'\r\n        )\r\n        AND se.PAYROLL_RANK = 'Faculty Tenured'\r\n    GROUP BY \r\n        ml.MOIRA_LIST_NAME\r\n)\r\nSELECT  DISTINCT mc.MOIRA_LIST_NAME,   ml.MOIRA_LIST_DESCRIPTION, mlo.OWNER, mc.Member_Count,  COALESCE(ftc.Faculty_Tenured_Count, 0) AS Faculty_Tenured_Count   FROM \r\n    MemberCounts mc\r\nLEFT JOIN \r\n    FacultyTenuredCounts ftc ON mc.MOIRA_LIST_NAME = ftc.MOIRA_LIST_NAME\r\nJOIN \r\n    MOIRA_LIST ml ON mc.MOIRA_LIST_NAME = ml.MOIRA_LIST_NAME\r\nJOIN \r\n    MOIRA_LIST_DETAIL mld ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\nJOIN \r\n    MOIRA_LIST_OWNER mlo ON MLD.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\r\nORDER BY \r\n    mc.Member_Count DESC;",
+        "topics": [
+            "mailing list",
+            "name",
+            "description",
+            "owner",
+            "number of people",
+            "tenured faculty"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For email lists that include more than 75% computer science students, list the name of the list, owner, and the number of computer science students in the list.",
+        "sql": "SELECT \n  ml.MOIRA_LIST_NAME,\n    mlo.OWNER,\n    COUNT(CASE WHEN msd.DEPARTMENT = '6' THEN 1 ELSE NULL END) AS CS_STUDENT_COUNT\nFROM \n    MIT_STUDENT_DIRECTORY msd \nJOIN \n    WAREUSER.SE_PERSON se ON msd.FULL_NAME = se.FULL_NAME\nJOIN \n    MOIRA_LIST_DETAIL mld ON se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\nJOIN \n    MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\nJOIN \n    MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\nGROUP BY \n    ml.MOIRA_LIST_NAME, \n    mlo.OWNER\nHAVING \n    SUM(CASE WHEN msd.DEPARTMENT = '6' THEN 1 ELSE 0 END) > \n    0.75 * COUNT(mld.MOIRA_LIST_MEMBER);\n\n\n",
+        "topics": [
+            "email lists",
+            "computer science students",
+            "name",
+            "owner"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For the building with the most floors, list the building name and the names of the mailing lists that the building employees subscribe to.",
+        "sql": "WITH FloorsWithLevels AS (\r\n    SELECT\r\n        fb.BUILDING_NAME,\r\n        e.FULL_NAME,\r\n        ml.MOIRA_LIST_NAME,\r\n        MAX(ff.LEVEL_ID) OVER (PARTITION BY ff.BUILDING_KEY) AS MAX_LEVEL,\r\n        MIN(ff.LEVEL_ID) OVER (PARTITION BY ff.BUILDING_KEY) AS MIN_LEVEL\r\n    FROM\r\n        FAC_BUILDING fb\r\n    JOIN\r\n        FAC_ROOMS fr ON fb.FAC_BUILDING_KEY = fr.BUILDING_KEY\r\n    JOIN\r\n        FAC_FLOOR ff ON fr.FLOOR_KEY = ff.FLOOR_KEY\r\n    JOIN\r\n        EMPLOYEE_DIRECTORY e ON e.OFFICE_LOCATION = fr.FAC_ROOM_KEY\r\n    JOIN\r\n        MOIRA_LIST_DETAIL mld ON e.KRB_NAME = mld.MOIRA_LIST_MEMBER\r\n    JOIN\r\n        MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\n),\r\nFloorsPerBuilding AS (\r\n    SELECT\r\n        BUILDING_NAME,\r\n        FULL_NAME,\r\n        MOIRA_LIST_NAME,\r\n        MAX_LEVEL - MIN_LEVEL AS NUM_FLOORS\r\n    FROM\r\n        FloorsWithLevels\r\n    GROUP BY\r\n        BUILDING_NAME, FULL_NAME, MOIRA_LIST_NAME, MAX_LEVEL, MIN_LEVEL\r\n),\r\nMaxFloors AS (\r\n    SELECT MAX(NUM_FLOORS) AS MAX_FLOORS FROM FloorsPerBuilding\r\n)\r\nSELECT\r\n    a.BUILDING_NAME,\r\n    a.MOIRA_LIST_NAME\r\nFROM\r\n    FloorsPerBuilding a\r\nJOIN\r\n    MaxFloors b ON a.NUM_FLOORS = b.MAX_FLOORS;\n",
+        "topics": [
+            "floors",
+            "building name",
+            "mailing lists",
+            "building employees"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For the email lists subscribed by faculty members with last names begin with Y, list the names of the lists, the total number of subjects managed by faculty in those mailing lists, and the number of such faculty in the lists.",
+        "sql": "\nSELECT \n    DISTINCT ml.MOIRA_LIST_NAME,\n    COUNT(ccso.SUBJECT_ID) AS course_count,\n    COUNT(DISTINCT ccso.RESPONSIBLE_FACULTY_NAME) AS distinct_faculty_count\n    FROM \n        COURSE_CATALOG_SUBJECT_OFFERED CCSO\n    JOIN\n        EMPLOYEE_DIRECTORY E ON ccso.RESPONSIBLE_FACULTY_MIT_ID = E.MIT_ID\n    JOIN \n        MOIRA_LIST_DETAIL mld ON e.KRB_NAME_UPPERCASE = upper(mld.MOIRA_LIST_MEMBER)\n    JOIN \n        MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\n    WHERE \n        ccso.RESPONSIBLE_FACULTY_NAME LIKE 'Y%'\n    GROUP BY\n        ML.MOIRA_LIST_NAME",
+        "topics": [
+            "email lists",
+            "last names",
+            "names",
+            "subjects",
+            "faculty"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For students whose last names begin with K, list their names, the phone numbers of departments they belong to, total number of mailing lists each student is in, and the average size of the mailing lists each student is in.",
+        "sql": "WITH MailingListSizes AS (\r\n    SELECT \r\n        ml.MOIRA_LIST_KEY, \r\n        ml.MOIRA_LIST_NAME, \r\n        COUNT(mld.MOIRA_LIST_MEMBER) AS List_Size -- Count members in each mailing list\r\n    FROM \r\n        MOIRA_LIST ml\r\n    JOIN \r\n        MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\r\n    GROUP BY \r\n        ml.MOIRA_LIST_KEY, \r\n        ml.MOIRA_LIST_NAME\r\n)\r\nSELECT \r\n    msd.FULL_NAME AS Student_Name,\r\n    sad.DEPARTMENT_PHONE_NUMBER,\r\n    COUNT(ml.MOIRA_LIST_NAME) AS Total_Lists,\r\n    AVG(MLS.List_Size) AS Avg_List_Size \r\nFROM \r\n    MIT_STUDENT_DIRECTORY msd\r\nJOIN \r\n    SIS_DEPARTMENT sd ON msd.DEPARTMENT = sd.DEPARTMENT_CODE\r\nJOIN \r\n    SIS_ADMIN_DEPARTMENT sad ON sd.DEPARTMENT_CODE = sad.SIS_ADMIN_DEPARTMENT_CODE\r\nJOIN\r\n    WAREUSER.SE_PERSON se ON msd.FULL_NAME = se.FULL_NAME\r\nJOIN \r\n    MOIRA_LIST_DETAIL mld ON se.KRB_NAME = upper(mld.MOIRA_LIST_MEMBER)\r\nJOIN \r\n    MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\nJOIN \r\n    MailingListSizes MLS ON ml.MOIRA_LIST_KEY = MLS.MOIRA_LIST_KEY\r\nWHERE \r\n    msd.FULL_NAME LIKE 'K%'\r\nGROUP BY \r\n    msd.FULL_NAME, sad.DEPARTMENT_PHONE_NUMBER",
+        "topics": [
+            "students' names",
+            "phone numbers of departments",
+            "total number of mailing lists",
+            "average size of mailing lists"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "Provide the number of mailing lists whose name begin with B and have members in the department of Electrical Engineering and Computer Science, the name of the mailing list whose name begin with B and has the most number of members belonging to the department of Electrical Engineering and Computer Science as well as the the number of such members.",
+        "sql": "WITH DistinctLists AS (\n    SELECT\n        ml.MOIRA_LIST_NAME,\n        COUNT(DISTINCT se.FULL_NAME) AS Member_Count\n    FROM\n        MOIRA_LIST ml\n    JOIN\n        MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\n    JOIN\n        MOIRA_LIST_OWNER mlo ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY\n    JOIN\n        WAREUSER.SE_PERSON se ON UPPER(mld.MOIRA_LIST_MEMBER) = se.KRB_NAME\n    WHERE\n        UPPER(ml.MOIRA_LIST_NAME) LIKE 'B%' AND se.ORGANIZATION = 'Electrical Engineering-Computer Science'\n    GROUP BY\n        ml.MOIRA_LIST_NAME\n),\nMoira_List_With_Most_Members AS (\n    SELECT MOIRA_LIST_NAME\n    FROM DistinctLists\n    WHERE Member_Count = (SELECT MAX(Member_Count) FROM DistinctLists)\n)\nSELECT\n    COUNT(DISTINCT dl.MOIRA_LIST_NAME) AS Moira_Lists_Start_With_B,\n    MAX(mll.MOIRA_LIST_NAME) AS Moira_List_With_Most_Members,\n    Max(dl.Member_Count) AS Most_Number_Of_Members\nFROM\n    DistinctLists dl\nLEFT JOIN\n    Moira_List_With_Most_Members mll ON dl.MOIRA_LIST_NAME = mll.MOIRA_LIST_NAME;",
+        "topics": [
+            "mailing lists",
+            "name",
+            "members",
+            "department"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "From the 100 email lists with the most number of subscribers, list their names, their total number of subscribers, their public status, the name of the department with the most presence in the list, and the number of students from this department in the list.",
+        "sql": "SELECT*\nFROM (WITH ListMemberCount AS (\n    SELECT\n        ml.MOIRA_LIST_NAME,\n        ml.IS_PUBLIC,\n        COUNT(mld.MOIRA_LIST_MEMBER) AS Member_Count\n    FROM\n        MOIRA_LIST ml\n    JOIN\n        MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\n    GROUP BY\n        ml.MOIRA_LIST_NAME, ml.IS_PUBLIC\n),\nDepartmentCounts AS (\n    SELECT\n        lmc.MOIRA_LIST_NAME,\n        sd.DEPARTMENT_NAME,\n        COUNT(msd.FULL_NAME) AS Student_Count,\n        ROW_NUMBER() OVER (\n            PARTITION BY lmc.MOIRA_LIST_NAME\n            ORDER BY COUNT(msd.FULL_NAME) DESC\n        ) AS Rank\n    FROM\n        ListMemberCount lmc\n    JOIN\n        MOIRA_LIST ml ON lmc.MOIRA_LIST_NAME = ml.MOIRA_LIST_NAME\n    JOIN\n        MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\n    JOIN\n        WAREUSER.SE_PERSON se ON UPPER(mld.MOIRA_LIST_MEMBER) = se.KRB_NAME\n    JOIN\n        MIT_STUDENT_DIRECTORY msd ON msd.FULL_NAME = se.FULL_NAME\n    JOIN\n        SIS_DEPARTMENT sd ON msd.DEPARTMENT = sd.DEPARTMENT_CODE\n    GROUP BY\n        lmc.MOIRA_LIST_NAME, sd.DEPARTMENT_NAME\n)\nSELECT\n    lmc.MOIRA_LIST_NAME,\n    lmc.Member_Count,\n    lmc.IS_PUBLIC,\n    dc.DEPARTMENT_NAME AS Most_Prominent_Department,\n    dc.Student_Count\nFROM\n    ListMemberCount lmc\nLEFT JOIN\n    DepartmentCounts dc ON lmc.MOIRA_LIST_NAME = dc.MOIRA_LIST_NAME AND dc.Rank = 1\nORDER BY\n    lmc.Member_Count DESC\n)\nWHERE ROWNUM <= 100;\n\n\n\n\n\n\n\n\n\n\n",
+        "topics": [
+            "email lists",
+            "names",
+            "subscribers",
+            "public status",
+            "department",
+            "students"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "Among the mailing lists subscribed by people with physical offices in building 24, provide the name of the most subscribed mailing list and the total number of subscribers.",
+        "sql": "WITH MailingListStats AS (\r\n    SELECT \r\n        ml.MOIRA_LIST_NAME,\r\n        COUNT(DISTINCT mld.MOIRA_LIST_MEMBER) AS Total_Members\r\n    FROM \r\n        MOIRA_LIST ml\r\n    JOIN \r\n        MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\r\n    JOIN \r\n        EMPLOYEE_DIRECTORY ed ON mld.MOIRA_LIST_MEMBER = ed.KRB_NAME\r\n    WHERE \r\n        ed.OFFICE_LOCATION LIKE '24%'\r\n    GROUP BY \r\n        ml.MOIRA_LIST_NAME\r\n),\r\nLargest AS (\r\n    SELECT \r\n        MOIRA_LIST_NAME,\r\n        Total_Members,\r\n        RANK() OVER (ORDER BY Total_Members DESC) AS Size_Rank\r\n    FROM \r\n        MailingListStats\r\n)\r\nSELECT \r\n    MAX(CASE WHEN Size_Rank = 1 THEN MOIRA_LIST_NAME END) AS Largest_Mailing_List,\r\n    MAX(CASE WHEN Size_Rank = 1 THEN Total_Members END) AS Member_Count\r\nFROM \r\n    Largest;\r\n\n",
+        "topics": [
+            "mailing lists",
+            "physical offices",
+            "building",
+            "name",
+            "subscribers"
+        ],
+        "db_id": "dw"
+    },
+    {
+        "question": "For email lists subscribed by either support staff or faculty, list its name, the number of subscribes that are support staff, the number of subscribers that are faculty, as well as its active status.",
+        "sql": "SELECT \r\n    ml.MOIRA_LIST_NAME,\r\n    SUM(CASE WHEN se.EMPLOYEE_TYPE = 'Support Staff' THEN 1 ELSE 0 END) AS SUPPORT_COUNT,\r\n    SUM(CASE WHEN se.EMPLOYEE_TYPE = 'Faculty' THEN 1 ELSE 0 END) AS FACULTY_COUNT,\r\n    ml.IS_ACTIVE\r\nFROM \r\n    MOIRA_LIST ml\r\nJOIN \r\n    MOIRA_LIST_DETAIL mld ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY\r\nJOIN \r\n    WAREUSER.SE_PERSON se ON upper(mld.MOIRA_LIST_MEMBER) = upper(se.KRB_NAME)\r\nWHERE\r\n    se.EMPLOYEE_TYPE IN ('Support Staff', 'Faculty')\r\nGROUP BY \r\n    ml.MOIRA_LIST_NAME,\r\n    ml.IS_ACTIVE;\n",
+        "topics": [
+            "email lists",
+            "name",
+            "number of subscribers",
+            "support staff",
+            "faculty",
+            "active status"
+        ],
+        "db_id": "dw"
+    }
+]

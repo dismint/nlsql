@@ -1,6 +1,6 @@
 import json
 
-with open('moira_annotated_mapped.json') as f:
+with open('fabian2_annotated_mapped.json') as f:
     data = json.load(f)
     final = []
     for obj in data:
@@ -10,5 +10,5 @@ with open('moira_annotated_mapped.json') as f:
         newobj["sql"] = obj["sql"]
         newobj["mapping"] = obj["mapping"]
         final.append(newobj)
-    with open('moira_mapped.json', 'w') as outfile:
+    with open('fabian2_mapped.json', 'w') as outfile:
         json.dump(final, outfile, indent=2)

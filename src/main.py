@@ -316,13 +316,16 @@ def map_queries():
 
             strmap = completion.choices[0].message.content
             assert (strmap is not None)
-            print(strmap)
             mapprog = {topic: set() for topic in query["topics"]}
             jsonmap = json.loads(strmap)
             for key in jsonmap:
                 for val in jsonmap[key]:
-                    assert (val in mapprog)
-                    mapprog[val].add(key)
+                    if val not in mapprog:
+                        if "LOST_CATEGORY" not in mapprog:
+                            mapprog["LOST_CATEGORY"] = set()
+                        mapprog["LOST_CATEGORY"].add(val)
+                    else:
+                        mapprog[val].add(key)
             mapprog = {key: list(val) for key, val in mapprog.items()}
             mapping[-1] = mapprog
             print(json.dumps(mapprog, indent=4))
@@ -330,7 +333,7 @@ def map_queries():
             print(e)
             console.print("[red]Error parsing SQL[/red]")
             errors.append(i)
-            mapping[-1] = {"progress": "error"}
+            mapping[-1] = {"progress": f"{e}"}
             time.sleep(2)
 
         with open(MAPPED_FILE, "w") as f:

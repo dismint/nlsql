@@ -1,0 +1,425 @@
+[
+  {
+    "question": "List the department, school, course number, subject title, total number of enrolled students, term code, and count of distinct catalog ISBNs. Add a summary row at the bottom showing the total number of students and distinct catalog ISBNs for the current term in the format of ('TOTAL:', null, null, null, total number of students, null, number of distinct catalog ISBNs).",
+    "sql": "SELECT * FROM (SELECT OFFER_DEPT_NAME AS \"DEPT\", OFFER_SCHOOL_NAME AS \"SCHOOL\", COURSE_NUMBER AS COURSE_NR, SUBJECT_TITLE AS TITLE, SUM(NUM_ENROLLED_STUDENTS) AS TYPE, lso.TERM_CODE, COUNT(DISTINCT CATALOG_ISBN) AS OWNERSHIP FROM LIBRARY_SUBJECT_OFFERED lso JOIN LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY JOIN LIBRARY_RESERVE_CATALOG lrc ON lrc.LIBRARY_RESERVE_CATALOG_KEY = lrmd.LIBRARY_RESERVE_CATALOG_KEY GROUP BY OFFER_DEPT_NAME, OFFER_SCHOOL_NAME, COURSE_NUMBER, SUBJECT_TITLE, lso.TERM_CODE ORDER BY OFFER_DEPT_NAME, COURSE_NUMBER, SUBJECT_TITLE, lso.TERM_CODE) UNION ALL SELECT 'TOTAL:', NULL, NULL, NULL, SUM(NUM_ENROLLED_STUDENTS), NULL, COUNT(DISTINCT CATALOG_ISBN) FROM LIBRARY_SUBJECT_OFFERED lso JOIN LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY JOIN LIBRARY_RESERVE_CATALOG lrc ON lrc.LIBRARY_RESERVE_CATALOG_KEY = lrmd.LIBRARY_RESERVE_CATALOG_KEY JOIN ACADEMIC_TERM_PARAMETER acp ON lso.TERM_CODE = acp.TERM_CODE WHERE IS_CURRENT_TERM = 'Y'",
+    "topics": [
+      "department",
+      "school",
+      "course number",
+      "subject title",
+      "total number of enrolled students",
+      "term code",
+      "catalog ISBNs"
+    ],
+    "mapping": {
+      "department": ["LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_NAME"],
+      "school": ["LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME"],
+      "course number": ["LIBRARY_SUBJECT_OFFERED.COURSE_NUMBER"],
+      "subject title": ["LIBRARY_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "enrolled students": ["LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"],
+      "term code": ["LIBRARY_SUBJECT_OFFERED.TERM_CODE"],
+      "catalog ISBNs": ["LIBRARY_RESERVE_CATALOG.CATALOG_ISBN"]
+    },
+    "columns": [
+      "LIBRARY_RESERVE_CATALOG.CATALOG_ISBN",
+      "ACADEMIC_TERM_PARAMETER.IS_CURRENT_TERM",
+      "LIBRARY_SUBJECT_OFFERED.TERM_CODE",
+      "LIBRARY_SUBJECT_OFFERED.COURSE_NUMBER",
+      "LIBRARY_SUBJECT_OFFERED.OFFER_DEPT_NAME",
+      "LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS",
+      "LIBRARY_SUBJECT_OFFERED.OFFER_SCHOOL_NAME",
+      "LIBRARY_SUBJECT_OFFERED.SUBJECT_TITLE"
+    ],
+    "qualified": "SELECT\n  \"_q_0\".\"DEPT\" AS \"DEPT\",\n  \"_q_0\".\"SCHOOL\" AS \"SCHOOL\",\n  \"_q_0\".\"course_nr\" AS \"course_nr\",\n  \"_q_0\".\"title\" AS \"title\",\n  \"_q_0\".\"type\" AS \"type\",\n  \"_q_0\".\"term_code\" AS \"term_code\",\n  \"_q_0\".\"ownership\" AS \"ownership\"\nFROM (\n  SELECT\n    library_subject_offered.\"offer_dept_name\" AS \"DEPT\",\n    library_subject_offered.\"offer_school_name\" AS \"SCHOOL\",\n    library_subject_offered.\"course_number\" AS \"course_nr\",\n    library_subject_offered.\"subject_title\" AS \"title\",\n    SUM(library_subject_offered.\"num_enrolled_students\") AS \"type\",\n    library_subject_offered.\"term_code\" AS \"term_code\",\n    COUNT(DISTINCT library_reserve_catalog.\"catalog_isbn\") AS \"ownership\"\n  FROM \"library_subject_offered\" AS \"lso\"\n  JOIN \"library_reserve_matrl_detail\" AS \"lrmd\"\n    ON library_reserve_matrl_detail.\"library_subject_offered_key\" = library_subject_offered.\"library_subject_offered_key\"\n  JOIN \"library_reserve_catalog\" AS \"lrc\"\n    ON library_reserve_catalog.\"library_reserve_catalog_key\" = library_reserve_matrl_detail.\"library_reserve_catalog_key\"\n  GROUP BY\n    library_subject_offered.\"offer_dept_name\",\n    library_subject_offered.\"offer_school_name\",\n    library_subject_offered.\"course_number\",\n    library_subject_offered.\"subject_title\",\n    library_subject_offered.\"term_code\"\n  ORDER BY\n    \"DEPT\",\n    \"course_nr\",\n    \"title\",\n    \"term_code\"\n) AS \"_q_0\"\nUNION ALL\nSELECT\n  'TOTAL:' AS \"TOTAL:\",\n  NULL AS \"_col_1\",\n  NULL AS \"_col_2\",\n  NULL AS \"_col_3\",\n  SUM(library_subject_offered.\"num_enrolled_students\") AS \"_col_4\",\n  NULL AS \"_col_5\",\n  COUNT(DISTINCT library_reserve_catalog.\"catalog_isbn\") AS \"_col_6\"\nFROM \"library_subject_offered\" AS \"lso\"\nJOIN \"library_reserve_matrl_detail\" AS \"lrmd\"\n  ON library_reserve_matrl_detail.\"library_subject_offered_key\" = library_subject_offered.\"library_subject_offered_key\"\nJOIN \"library_reserve_catalog\" AS \"lrc\"\n  ON library_reserve_catalog.\"library_reserve_catalog_key\" = library_reserve_matrl_detail.\"library_reserve_catalog_key\"\nJOIN \"academic_term_parameter\" AS \"acp\"\n  ON library_subject_offered.\"term_code\" = academic_term_parameter.\"term_code\"\nWHERE\n  academic_term_parameter.\"is_current_term\" = 'Y'"
+  },
+  {
+    "question": "For each mailing list that involves subscribers that work in departments that have names starting with 'Computer Science', state the ownership type, the list name, the number of owners, and the number of subscribers. Display the ownership type only if it differs from the previous entry. Include subtotals (the corresponding type field shoud be 'SUBTOTAL') for each ownership type and a grand total (the corresponding type field shoud be 'TOTAL') across all ownership types.",
+    "sql": "SELECT CASE WHEN LAG(OWNERSHIP_TYPE) OVER (ORDER BY OWNERSHIP_TYPE_gr DESC, ML) = OWNERSHIP_TYPE THEN NULL ELSE OWNERSHIP_TYPE END AS OWNERSHIP_TYPE, ML, nr_owner, nr_member FROM (SELECT CASE WHEN GROUPING(OWNER_TYPE) = 1 AND GROUPING(MOIRA_LIST_NAME) = 0 THEN OWNER_TYPE || '1' ELSE OWNER_TYPE || '2' END AS OWNERSHIP_TYPE_gr, CASE WHEN GROUPING(MOIRA_LIST_NAME) = 1 AND GROUPING(OWNER_TYPE) = 0 THEN 'SUBTOTAL' WHEN GROUPING(MOIRA_LIST_NAME) = 1 AND GROUPING(OWNER_TYPE) = 1 THEN 'TOTAL' ELSE OWNER_TYPE END AS OWNERSHIP_TYPE, MOIRA_LIST_NAME AS ML, COUNT(DISTINCT OWNER) AS nr_owner, COUNT(DISTINCT MOIRA_LIST_MEMBER_MIT_ID) AS nr_member FROM MOIRA_LIST_OWNER mlo JOIN MOIRA_LIST_DETAIL mld ON mld.MOIRA_LIST_OWNER_KEY = mlo.MOIRA_LIST_OWNER_KEY JOIN MOIRA_LIST ml ON ml.MOIRA_LIST_KEY = mld.MOIRA_LIST_KEY JOIN EMPLOYEE_DIRECTORY ON MIT_ID = MOIRA_LIST_MEMBER_MIT_ID WHERE department_name LIKE 'Computer Science%' GROUP BY ROLLUP(OWNER_TYPE, MOIRA_LIST_NAME) ORDER BY OWNER_TYPE DESC, MOIRA_LIST_NAME) tbltmp",
+    "topics": [
+      "mailing list",
+      "subscribers",
+      "departments",
+      "ownership type",
+      "list name",
+      "number of owners",
+      "number of subscribers"
+    ],
+    "mapping": {
+      "departments": ["EMPLOYEE_DIRECTORY.DEPARTMENT_NAME"],
+      "ownership type": ["MOIRA_LIST_OWNER.OWNER_TYPE"],
+      "list name": ["MOIRA_LIST.MOIRA_LIST_NAME"],
+      "owners": ["MOIRA_LIST_OWNER.OWNER"],
+      "subscribers": ["MOIRA_LIST_DETAIL.MOIRA_LIST_MEMBER_MIT_ID"]
+    },
+    "columns": [
+      "MOIRA_LIST_DETAIL.MOIRA_LIST_MEMBER_MIT_ID",
+      "EMPLOYEE_DIRECTORY.DEPARTMENT_NAME",
+      "MOIRA_LIST.MOIRA_LIST_NAME",
+      "MOIRA_LIST_OWNER.OWNER",
+      "MOIRA_LIST_OWNER.OWNER_TYPE"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"ownership_type\") OVER (ORDER BY \"tbltmp\".\"ownership_type_gr\" DESC, \"tbltmp\".\"ml\") = \"tbltmp\".\"ownership_type\"\n    THEN NULL\n    ELSE \"tbltmp\".\"ownership_type\"\n  END AS \"ownership_type\",\n  \"tbltmp\".\"ml\" AS \"ml\",\n  \"tbltmp\".\"nr_owner\" AS \"nr_owner\",\n  \"tbltmp\".\"nr_member\" AS \"nr_member\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(moira_list_owner.\"owner_type\") = 1\n      AND GROUPING(moira_list.\"moira_list_name\") = 0\n      THEN moira_list_owner.\"owner_type\" OR '1'\n      ELSE moira_list_owner.\"owner_type\" OR '2'\n    END AS \"ownership_type_gr\",\n    CASE\n      WHEN GROUPING(moira_list.\"moira_list_name\") = 1\n      AND GROUPING(moira_list_owner.\"owner_type\") = 0\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(moira_list.\"moira_list_name\") = 1\n      AND GROUPING(moira_list_owner.\"owner_type\") = 1\n      THEN 'TOTAL'\n      ELSE moira_list_owner.\"owner_type\"\n    END AS \"ownership_type\",\n    moira_list.\"moira_list_name\" AS \"ml\",\n    COUNT(DISTINCT moira_list_owner.\"owner\") AS \"nr_owner\",\n    COUNT(DISTINCT moira_list_detail.\"moira_list_member_mit_id\") AS \"nr_member\"\n  FROM \"moira_list_owner\" AS \"mlo\"\n  JOIN \"moira_list_detail\" AS \"mld\"\n    ON moira_list_detail.\"moira_list_owner_key\" = moira_list_owner.\"moira_list_owner_key\"\n  JOIN \"moira_list\" AS \"ml\"\n    ON moira_list.\"moira_list_key\" = moira_list_detail.\"moira_list_key\"\n  JOIN \"employee_directory\" AS \"employee_directory\"\n    ON \"employee_directory\".\"mit_id\" = moira_list_detail.\"moira_list_member_mit_id\"\n  WHERE\n    \"employee_directory\".\"department_name\" LIKE 'Computer Science%'\n  GROUP BY\n    ROLLUP (\n      moira_list_owner.\"owner_type\",\n      moira_list.\"moira_list_name\"\n    )\n  ORDER BY\n    moira_list_owner.\"owner_type\" DESC,\n    \"ml\"\n) AS \"tbltmp\""
+  },
+  {
+    "question": "For each IAP category, list its name, number of unique sessions, total number of attendees, active period (in the format of 'beginning term code-end term code'), the most common sponsor name, and the most common session start time. Include a grand total row showing the total number of sessions and attendees across all categories in the format of ('TOTAL', number of sessions, number of attendees, null, null, null).",
+    "sql": "WITH SponsorAndStartTime AS (\n    SELECT\n        isc.IAP_CATEGORY_NAME,\n        isp.SPONSOR_NAME,\n        iss.SESSION_START_TIME,\n        COUNT(isp.SPONSOR_NAME) AS sponsor_count,\n        COUNT(iss.SESSION_START_TIME) AS start_time_count\n    FROM \n        IAP_SUBJECT_CATEGORY isc\n    JOIN \n        IAP_SUBJECT_DETAIL isd ON isd.IAP_SUBJECT_CATEGORY_KEY = isc.IAP_SUBJECT_CATEGORY_KEY\n    LEFT JOIN \n        IAP_SUBJECT_SESSION iss ON isd.IAP_SUBJECT_SESSION_KEY = iss.IAP_SUBJECT_SESSION_KEY\n    LEFT JOIN \n        IAP_SUBJECT_SPONSOR isp ON isd.IAP_SUBJECT_SPONSOR_KEY = isp.IAP_SUBJECT_SPONSOR_KEY\n    GROUP BY \n        isc.IAP_CATEGORY_NAME, isp.SPONSOR_NAME, iss.SESSION_START_TIME\n),\nMostCommonDetails AS (\n    SELECT\n        IAP_CATEGORY_NAME,\n        MAX(SPONSOR_NAME) KEEP (DENSE_RANK FIRST ORDER BY sponsor_count DESC) AS most_common_sponsor,\n        MAX(SESSION_START_TIME) KEEP (DENSE_RANK FIRST ORDER BY start_time_count DESC) AS most_common_start_time\n    FROM \n        SponsorAndStartTime\n    GROUP BY \n        IAP_CATEGORY_NAME\n),\nCategorySummary AS (\n    SELECT \n        isc.IAP_CATEGORY_NAME AS TYPE,\n        COUNT(DISTINCT isd.IAP_SUBJECT_SESSION_KEY) AS nr_sessions,\n        TO_CHAR(SUM(isd.MAX_ENROLLMENT), '999,999,999,999') AS total_attend,\n        MIN(isd.TERM_CODE) AS first_active_year,\n        MAX(isd.TERM_CODE) AS last_active_year,\n        mcd.most_common_sponsor,\n        mcd.most_common_start_time\n    FROM \n        IAP_SUBJECT_CATEGORY isc\n    JOIN \n        IAP_SUBJECT_DETAIL isd ON isd.IAP_SUBJECT_CATEGORY_KEY = isc.IAP_SUBJECT_CATEGORY_KEY\n    LEFT JOIN \n        MostCommonDetails mcd ON isc.IAP_CATEGORY_NAME = mcd.IAP_CATEGORY_NAME\n    GROUP BY \n        isc.IAP_CATEGORY_NAME, mcd.most_common_sponsor, mcd.most_common_start_time\n)\nSELECT \n    TYPE,\n    nr_sessions,\n    total_attend,\n    first_active_year || '-' || last_active_year AS active_years,\n    most_common_sponsor,\n    most_common_start_time\nFROM \n    CategorySummary\nUNION ALL\nSELECT \n    'TOTAL',\n    COUNT(DISTINCT IAP_SUBJECT_SESSION_KEY),\n    TO_CHAR(SUM(MAX_ENROLLMENT), '999,999,999,999'),\n    NULL,\n    NULL,\n    NULL\nFROM \n    IAP_SUBJECT_DETAIL\nORDER BY \n    TYPE;\n",
+    "topics": [
+      "IAP category",
+      "name",
+      "unique sessions",
+      "attendees",
+      "active period",
+      "term code",
+      "sponsor name",
+      "session start time"
+    ],
+    "mapping": {
+      "name": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+      "sessions": ["IAP_SUBJECT_SESSION.IAP_SUBJECT_SESSION_KEY"],
+      "attendees": ["IAP_SUBJECT_DETAIL.MAX_ENROLLMENT"],
+      "active period": ["IAP_SUBJECT_DETAIL.TERM_CODE"],
+      "sponsor name": ["IAP_SUBJECT_SPONSOR.SPONSOR_NAME"],
+      "start time": ["IAP_SUBJECT_SESSION.SESSION_START_TIME"]
+    },
+    "columns": [],
+    "qualified": "SELECT *"
+  },
+  {
+    "question": "For each building type, list the name of the building type, the number of buildings that are not subdivisions, number of employees, number of unique building street address, number of unique city, number of unique state, number of unique postal code, and average gross square footage per employee. For building type of 'resident', display it as 'RESIDENTIAL'. Include a grand total across all building types (the corresponding type field is 'TOTAL').",
+    "sql": "SELECT * FROM (SELECT CASE WHEN BUILDING_TYPE = 'RESIDENT' THEN 'RESIDENTIAL' ELSE BUILDING_TYPE END AS TYPE, COUNT(DISTINCT NVL(PARENT_BUILDING_NUMBER, FCLT_BUILDING_KEY)) AS BUILDINGS,count(distinct MIT_ID),count(distinct BUILDINGS.BUILDING_STREET_ADDRESS), count(distinct fac_building_address.CITY), count(distinct fac_building_address.STATE), count(distinct fac_building_address.POSTAL_CODE),SUM(FLOOR.EXT_GROSS_AREA)/count(distinct MIT_ID) FROM WAREUSER.FCLT_BUILDING_HIST FLOOR JOIN fac_building_address ON FLOOR.fclt_building_key = fac_building_address.BUILDING_KEY JOIN BUILDINGS ON BUILDINGS.BUILDING_KEY = fac_building_address.BUILDING_KEY  JOIN FAC_ROOMS fr ON fr.BUILDING_KEY = BUILDINGS.BUILDING_KEY JOIN EMPLOYEE_DIRECTORY e ON e.OFFICE_LOCATION = fr.FAC_ROOM_KEY WHERE fac_building_address.ADDRESS_PURPOSE = 'STREET' GROUP BY BUILDING_TYPE ORDER BY BUILDING_TYPE ASC) UNION ALL SELECT 'TOTAL', COUNT(DISTINCT NVL(PARENT_BUILDING_NUMBER, FCLT_BUILDING_KEY)), count(distinct MIT_ID), count(distinct BUILDINGS.BUILDING_STREET_ADDRESS), count(distinct fac_building_address.CITY), count(distinct fac_building_address.STATE), count(distinct fac_building_address.POSTAL_CODE),SUM(FLOOR.EXT_GROSS_AREA)/count(distinct MIT_ID) FROM WAREUSER.FCLT_BUILDING_HIST FLOOR JOIN fac_building_address ON FLOOR.fclt_building_key = fac_building_address.BUILDING_KEY JOIN BUILDINGS ON BUILDINGS.BUILDING_KEY = fac_building_address.BUILDING_KEY JOIN FAC_ROOMS fr ON fr.BUILDING_KEY = BUILDINGS.BUILDING_KEY JOIN EMPLOYEE_DIRECTORY e ON e.OFFICE_LOCATION = fr.FAC_ROOM_KEY WHERE fac_building_address.ADDRESS_PURPOSE = 'STREET'",
+    "topics": [
+      "building type",
+      "name",
+      "buildings",
+      "subdivisions",
+      "employees",
+      "street address",
+      "city",
+      "state",
+      "postal code",
+      "gross square footage per employee"
+    ],
+    "mapping": {
+      "name of the building type": ["FCLT_BUILDING_HIST.BUILDING_TYPE"],
+      "buildings": [
+        "FCLT_BUILDING_HIST.FCLT_BUILDING_KEY",
+        "FCLT_BUILDING_HIST.PARENT_BUILDING_NUMBER"
+      ],
+      "employees": ["EMPLOYEE_DIRECTORY.MIT_ID"],
+      "street address": ["BUILDINGS.BUILDING_STREET_ADDRESS"],
+      "city": ["FAC_BUILDING_ADDRESS.CITY"],
+      "state": ["FAC_BUILDING_ADDRESS.STATE"],
+      "postal code": ["FAC_BUILDING_ADDRESS.POSTAL_CODE"],
+      "gross square footage": ["FCLT_BUILDING_HIST.EXT_GROSS_AREA"]
+    },
+    "columns": [
+      "EMPLOYEE_DIRECTORY.MIT_ID",
+      "FAC_BUILDING_ADDRESS.STATE",
+      "FAC_BUILDING_ADDRESS.CITY",
+      "FCLT_BUILDING_HIST.PARENT_BUILDING_NUMBER",
+      "BUILDINGS.BUILDING_STREET_ADDRESS",
+      "FAC_BUILDING_ADDRESS.POSTAL_CODE",
+      "FCLT_BUILDING_HIST.BUILDING_TYPE",
+      "FAC_BUILDING_ADDRESS.ADDRESS_PURPOSE",
+      "FCLT_BUILDING_HIST.FCLT_BUILDING_KEY",
+      "FCLT_BUILDING_HIST.EXT_GROSS_AREA"
+    ],
+    "qualified": "SELECT\n  \"_q_0\".\"type\" AS \"type\",\n  \"_q_0\".\"buildings\" AS \"buildings\",\n  \"_q_0\".\"_col_2\" AS \"_col_2\",\n  \"_q_0\".\"_col_3\" AS \"_col_3\",\n  \"_q_0\".\"_col_4\" AS \"_col_4\",\n  \"_q_0\".\"_col_5\" AS \"_col_5\",\n  \"_q_0\".\"_col_6\" AS \"_col_6\",\n  \"_q_0\".\"_col_7\" AS \"_col_7\"\nFROM (\n  SELECT\n    CASE\n      WHEN fclt_building_hist.\"building_type\" = 'RESIDENT'\n      THEN 'RESIDENTIAL'\n      ELSE fclt_building_hist.\"building_type\"\n    END AS \"type\",\n    COUNT(\n      DISTINCT COALESCE(\n        fclt_building_hist.\"parent_building_number\",\n        fclt_building_hist.\"fclt_building_key\"\n      )\n    ) AS \"buildings\",\n    COUNT(DISTINCT employee_directory.\"mit_id\") AS \"_col_2\",\n    COUNT(DISTINCT \"buildings\".\"building_street_address\") AS \"_col_3\",\n    COUNT(DISTINCT \"fac_building_address\".\"city\") AS \"_col_4\",\n    COUNT(DISTINCT \"fac_building_address\".\"state\") AS \"_col_5\",\n    COUNT(DISTINCT \"fac_building_address\".\"postal_code\") AS \"_col_6\",\n    SUM(fclt_building_hist.\"ext_gross_area\") / NULLIF(COUNT(DISTINCT employee_directory.\"mit_id\"), 0) AS \"_col_7\"\n  FROM \"wareuser\".\"fclt_building_hist\" AS \"floor\"\n  JOIN \"fac_building_address\" AS \"fac_building_address\"\n    ON fclt_building_hist.\"fclt_building_key\" = \"fac_building_address\".\"building_key\"\n  JOIN \"buildings\" AS \"buildings\"\n    ON \"buildings\".\"building_key\" = \"fac_building_address\".\"building_key\"\n  JOIN \"fac_rooms\" AS \"fr\"\n    ON fac_rooms.\"building_key\" = \"buildings\".\"building_key\"\n  JOIN \"employee_directory\" AS \"e\"\n    ON employee_directory.\"office_location\" = fac_rooms.\"fac_room_key\"\n  WHERE\n    \"fac_building_address\".\"address_purpose\" = 'STREET'\n  GROUP BY\n    fclt_building_hist.\"building_type\"\n  ORDER BY\n    fclt_building_hist.\"building_type\" ASC\n) AS \"_q_0\"\nUNION ALL\nSELECT\n  'TOTAL' AS \"TOTAL\",\n  COUNT(\n    DISTINCT COALESCE(\n      fclt_building_hist.\"parent_building_number\",\n      fclt_building_hist.\"fclt_building_key\"\n    )\n  ) AS \"_col_1\",\n  COUNT(DISTINCT employee_directory.\"mit_id\") AS \"_col_2\",\n  COUNT(DISTINCT \"buildings\".\"building_street_address\") AS \"_col_3\",\n  COUNT(DISTINCT \"fac_building_address\".\"city\") AS \"_col_4\",\n  COUNT(DISTINCT \"fac_building_address\".\"state\") AS \"_col_5\",\n  COUNT(DISTINCT \"fac_building_address\".\"postal_code\") AS \"_col_6\",\n  SUM(fclt_building_hist.\"ext_gross_area\") / NULLIF(COUNT(DISTINCT employee_directory.\"mit_id\"), 0) AS \"_col_7\"\nFROM \"wareuser\".\"fclt_building_hist\" AS \"floor\"\nJOIN \"fac_building_address\" AS \"fac_building_address\"\n  ON fclt_building_hist.\"fclt_building_key\" = \"fac_building_address\".\"building_key\"\nJOIN \"buildings\" AS \"buildings\"\n  ON \"buildings\".\"building_key\" = \"fac_building_address\".\"building_key\"\nJOIN \"fac_rooms\" AS \"fr\"\n  ON fac_rooms.\"building_key\" = \"buildings\".\"building_key\"\nJOIN \"employee_directory\" AS \"e\"\n  ON employee_directory.\"office_location\" = fac_rooms.\"fac_room_key\"\nWHERE\n  \"fac_building_address\".\"address_purpose\" = 'STREET'"
+  },
+  {
+    "question": "Group spaces in the Stata building by the access level and usage type. For each group, state the access level, usage type, name of the space, the number of spaces, total area across all rooms in the space, and average area across all rooms in the sapce. Display the access level only if it differs from the previous entry. Include subtotals for each access level, usage type, and space name, subtotals for each access level, and a grand total across all access levels. Exclude usage type that includes \"STORAGE\". All numerical values should be rounded to integers and formatted using commas as thousands separators.",
+    "sql": "SELECT CASE WHEN LAG(assign) OVER (ORDER BY assign) = assign THEN NULL ELSE assign END AS assign, CASE WHEN LAG(muse) OVER (ORDER BY assign, muse_sort) = muse THEN NULL ELSE muse END AS muse, rmuse, rmcnt, area, area_avg FROM (SELECT CASE WHEN GROUPING(ACCESS_LEVEL) = 1 THEN 'TOTAL' ELSE ACCESS_LEVEL END AS assign, CASE WHEN GROUPING(su2.SPACE_USAGE) = 1 AND GROUPING(ACCESS_LEVEL) = 0 THEN 'SUBTOTAL' ELSE su2.SPACE_USAGE END AS muse, CASE WHEN GROUPING(su2.SPACE_USAGE) = 1 AND GROUPING(ACCESS_LEVEL) = 0 THEN 'zzz' ELSE su2.SPACE_USAGE END AS muse_sort, CASE WHEN GROUPING(DLC_NAME) = 1 AND GROUPING(su2.SPACE_USAGE) = 0 THEN 'SUBTOTAL' ELSE DLC_NAME END AS rmuse, CASE WHEN GROUPING(DLC_NAME) = 1 AND GROUPING(su2.SPACE_USAGE) = 0 THEN 'zzz' ELSE DLC_NAME END AS rmuse_sort, TO_CHAR(COUNT(DISTINCT SPACE_UNIT), '999,999,999') AS rmcnt,TO_CHAR(SUM(ROOM_SQUARE_FOOTAGE), '999,999,999') AS area, TO_CHAR(AVG(ROOM_SQUARE_FOOTAGE), '999,999,999') AS area_avg FROM SPACE_UNIT su JOIN (SELECT * FROM SPACE_DETAIL WHERE BUILDING_KEY = '32') sd ON sd.SPACE_UNIT_KEY=su.SPACE_UNIT_KEY JOIN SPACE_USAGE su2 ON su2.SPACE_USAGE_KEY=sd.SPACE_USAGE_KEY JOIN (SELECT * FROM WAREUSER.ZPM_ROOMS_LOAD where BUILDING_COMPONENT='32') zrl ON zrl.SPACE_UNIT_CODE = su.SPACE_UNIT_CODE JOIN FCLT_ORGANIZATION fo ON fo.FCLT_ORGANIZATION_KEY = su.FCLT_ORGANIZATION_KEY WHERE su2.SPACE_USAGE NOT LIKE '%STORAGE%' GROUP BY ROLLUP(ACCESS_LEVEL, su2.SPACE_USAGE, DLC_NAME) ORDER BY assign, muse_sort, rmuse_sort) tbltmp",
+    "topics": [
+      "spaces",
+      "access level",
+      "usage type",
+      "name",
+      "number of spaces",
+      "total area",
+      "average area"
+    ],
+    "mapping": {
+      "access level": ["ZPM_ROOMS_LOAD.ACCESS_LEVEL"],
+      "usage type": ["SPACE_USAGE.SPACE_USAGE"],
+      "name": ["SPACE_DETAIL.BUILDING_ROOM_NAME"],
+      "spaces": ["SPACE_UNIT.SPACE_UNIT"],
+      "area": ["SPACE_DETAIL.ROOM_SQUARE_FOOTAGE"]
+    },
+    "columns": [
+      "FCLT_ORGANIZATION.DLC_NAME",
+      "SPACE_USAGE.SPACE_USAGE",
+      "SPACE_UNIT.SPACE_UNIT"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"assign\") OVER (ORDER BY \"tbltmp\".\"assign\") = \"tbltmp\".\"assign\"\n    THEN NULL\n    ELSE \"tbltmp\".\"assign\"\n  END AS \"assign\",\n  CASE\n    WHEN LAG(\"tbltmp\".\"muse\") OVER (ORDER BY \"tbltmp\".\"assign\", \"tbltmp\".\"muse_sort\") = \"tbltmp\".\"muse\"\n    THEN NULL\n    ELSE \"tbltmp\".\"muse\"\n  END AS \"muse\",\n  \"tbltmp\".\"rmuse\" AS \"rmuse\",\n  \"tbltmp\".\"rmcnt\" AS \"rmcnt\",\n  \"tbltmp\".\"area\" AS \"area\",\n  \"tbltmp\".\"area_avg\" AS \"area_avg\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(\"zrl\".\"access_level\") = 1\n      THEN 'TOTAL'\n      ELSE \"zrl\".\"access_level\"\n    END AS \"assign\",\n    CASE\n      WHEN GROUPING(space_usage.\"space_usage\") = 1 AND GROUPING(\"zrl\".\"access_level\") = 0\n      THEN 'SUBTOTAL'\n      ELSE space_usage.\"space_usage\"\n    END AS \"muse\",\n    CASE\n      WHEN GROUPING(space_usage.\"space_usage\") = 1 AND GROUPING(\"zrl\".\"access_level\") = 0\n      THEN 'zzz'\n      ELSE space_usage.\"space_usage\"\n    END AS \"muse_sort\",\n    CASE\n      WHEN GROUPING(fclt_organization.\"dlc_name\") = 1\n      AND GROUPING(space_usage.\"space_usage\") = 0\n      THEN 'SUBTOTAL'\n      ELSE fclt_organization.\"dlc_name\"\n    END AS \"rmuse\",\n    CASE\n      WHEN GROUPING(fclt_organization.\"dlc_name\") = 1\n      AND GROUPING(space_usage.\"space_usage\") = 0\n      THEN 'zzz'\n      ELSE fclt_organization.\"dlc_name\"\n    END AS \"rmuse_sort\",\n    CAST(COUNT(DISTINCT space_unit.\"space_unit\") AS TEXT) AS \"rmcnt\",\n    CAST(SUM(\"sd\".\"room_square_footage\") AS TEXT) AS \"area\",\n    CAST(AVG(\"sd\".\"room_square_footage\") AS TEXT) AS \"area_avg\"\n  FROM \"space_unit\" AS \"su\"\n  JOIN (\n    SELECT\n      \"space_detail\".\"building_key\" AS \"building_key\",\n      \"space_detail\".\"floor_key\" AS \"floor_key\",\n      \"space_detail\".\"space_unit_key\" AS \"space_unit_key\",\n      \"space_detail\".\"space_usage_key\" AS \"space_usage_key\",\n      \"space_detail\".\"building_room\" AS \"building_room\",\n      \"space_detail\".\"building_room_name\" AS \"building_room_name\",\n      \"space_detail\".\"room_number\" AS \"room_number\",\n      \"space_detail\".\"room_square_footage\" AS \"room_square_footage\",\n      \"space_detail\".\"room_counter\" AS \"room_counter\",\n      \"space_detail\".\"building_component\" AS \"building_component\",\n      \"space_detail\".\"warehouse_load_date\" AS \"warehouse_load_date\"\n    FROM \"space_detail\" AS \"space_detail\"\n    WHERE\n      \"space_detail\".\"building_key\" = '32'\n  ) AS \"sd\"\n    ON \"sd\".\"space_unit_key\" = space_unit.\"space_unit_key\"\n  JOIN \"space_usage\" AS \"su2\"\n    ON space_usage.\"space_usage_key\" = \"sd\".\"space_usage_key\"\n  JOIN (\n    SELECT\n      \"zpm_rooms_load\".\"building_room\" AS \"building_room\",\n      \"zpm_rooms_load\".\"building_component\" AS \"building_component\",\n      \"zpm_rooms_load\".\"floor\" AS \"floor\",\n      \"zpm_rooms_load\".\"space_usage\" AS \"space_usage\",\n      \"zpm_rooms_load\".\"space_unit_code\" AS \"space_unit_code\",\n      \"zpm_rooms_load\".\"hr_org_unit_id\" AS \"hr_org_unit_id\",\n      \"zpm_rooms_load\".\"access_level\" AS \"access_level\"\n    FROM \"wareuser\".\"zpm_rooms_load\" AS \"zpm_rooms_load\"\n    WHERE\n      \"zpm_rooms_load\".\"building_component\" = '32'\n  ) AS \"zrl\"\n    ON \"zrl\".\"space_unit_code\" = space_unit.\"space_unit_code\"\n  JOIN \"fclt_organization\" AS \"fo\"\n    ON fclt_organization.\"fclt_organization_key\" = space_unit.\"fclt_organization_key\"\n  WHERE\n    NOT space_usage.\"space_usage\" LIKE '%STORAGE%'\n  GROUP BY\n    ROLLUP (\n      \"zrl\".\"access_level\",\n      space_usage.\"space_usage\",\n      fclt_organization.\"dlc_name\"\n    )\n  ORDER BY\n    \"assign\",\n    \"muse_sort\",\n    \"rmuse_sort\"\n) AS \"tbltmp\""
+  },
+  {
+    "question": "List each organization's break group, ID, name, and formatted name according to its level, along with whether its members are emeritus or non-emeritus. Also, include the organization number, level, employer count, and hierarchy type for each organization. Exclude the  organizations: '139',and '250'. Sort the results by hierarchy type and ensure totals for employer counts are displayed.",
+    "sql": "SELECT SUBSTR(organization_sort, 5, 2) AS breakgrp, organization_id, organization_name, CASE WHEN organization_level = 4 THEN '    ' || organization_name WHEN organization_level = 5 THEN '          ' || organization_name WHEN organization_level = 6 THEN '                ' || organization_name ELSE organization_name END AS formatted_name, CASE WHEN EMERITUS_STATUS = 'Emeritus' THEN 'EMERITUS' ELSE 'NON-EMERITUS' END AS assign, organization_number, organization_level, (SELECT COUNT(DISTINCT hfr2.MIT_ID) AS employer_count FROM HR_FACULTY_ROSTER hfr2 WHERE hfr2.HR_ORG_UNIT_TITLE=hou.HR_ORG_UNIT_TITLE) , HIERARCHY_TYPE, organization_sort FROM FCLT_ORGANIZATION JOIN MASTER_DEPT_HIERARCHY ON FCLT_ORGANIZATION.DLC_KEY = MASTER_DEPT_HIERARCHY.DLC_KEY JOIN HR_ORG_UNIT hou on hou.DLC_KEY=FCLT_ORGANIZATION.DLC_KEY JOIN HR_FACULTY_ROSTER hfr ON hfr.HR_ORG_UNIT_TITLE=hou.HR_ORG_UNIT_TITLE WHERE organization_level IN ('3', '4', '5', '6') AND organization_id NOT IN ('139', '250')  ORDER BY HIERARCHY_TYPE",
+    "topics": [
+      "organization break group",
+      "organization ID",
+      "organization name",
+      "formatted name",
+      "level",
+      "emeritus status",
+      "organization number",
+      "employer count",
+      "hierarchy type"
+    ],
+    "mapping": {
+      "break group": ["FCLT_ORGANIZATION.ORGANIZATION_SORT"],
+      "ID": ["FCLT_ORGANIZATION.ORGANIZATION_ID"],
+      "name": ["FCLT_ORGANIZATION.ORGANIZATION_NAME"],
+      "level": ["FCLT_ORGANIZATION.ORGANIZATION_LEVEL"],
+      "number": ["FCLT_ORGANIZATION.ORGANIZATION_NUMBER"],
+      "employer": ["HR_FACULTY_ROSTER.MIT_ID"],
+      "hierarchy type": ["MASTER_DEPT_HIERARCHY.HIERARCHY_TYPE"]
+    },
+    "columns": [
+      "HR_FACULTY_ROSTER.HR_ORG_UNIT_TITLE",
+      "FCLT_ORGANIZATION.ORGANIZATION_LEVEL",
+      "HR_FACULTY_ROSTER.EMERITUS_STATUS",
+      "MASTER_DEPT_HIERARCHY.HIERARCHY_TYPE",
+      "FCLT_ORGANIZATION.ORGANIZATION_SORT",
+      "HR_FACULTY_ROSTER.MIT_ID",
+      "FCLT_ORGANIZATION.ORGANIZATION_NAME",
+      "FCLT_ORGANIZATION.ORGANIZATION_ID",
+      "HR_ORG_UNIT.HR_ORG_UNIT_TITLE",
+      "FCLT_ORGANIZATION.ORGANIZATION_NUMBER"
+    ],
+    "qualified": "SELECT\n  SUBSTRING(\"fclt_organization\".\"organization_sort\", 5, 2) AS \"breakgrp\",\n  \"fclt_organization\".\"organization_id\" AS \"organization_id\",\n  \"fclt_organization\".\"organization_name\" AS \"organization_name\",\n  CASE\n    WHEN \"fclt_organization\".\"organization_level\" = 4\n    THEN '    ' OR \"fclt_organization\".\"organization_name\"\n    WHEN \"fclt_organization\".\"organization_level\" = 5\n    THEN '          ' OR \"fclt_organization\".\"organization_name\"\n    WHEN \"fclt_organization\".\"organization_level\" = 6\n    THEN '                ' OR \"fclt_organization\".\"organization_name\"\n    ELSE \"fclt_organization\".\"organization_name\"\n  END AS \"formatted_name\",\n  CASE\n    WHEN hr_faculty_roster.\"emeritus_status\" = 'Emeritus'\n    THEN 'EMERITUS'\n    ELSE 'NON-EMERITUS'\n  END AS \"assign\",\n  \"fclt_organization\".\"organization_number\" AS \"organization_number\",\n  \"fclt_organization\".\"organization_level\" AS \"organization_level\",\n  (\n    SELECT\n      COUNT(DISTINCT hr_faculty_roster.\"mit_id\") AS \"employer_count\"\n    FROM \"hr_faculty_roster\" AS \"hfr2\"\n    WHERE\n      hr_faculty_roster.\"hr_org_unit_title\" = hr_org_unit.\"hr_org_unit_title\"\n  ) AS \"_col_7\",\n  \"master_dept_hierarchy\".\"hierarchy_type\" AS \"hierarchy_type\",\n  \"fclt_organization\".\"organization_sort\" AS \"organization_sort\"\nFROM \"fclt_organization\" AS \"fclt_organization\"\nJOIN \"master_dept_hierarchy\" AS \"master_dept_hierarchy\"\n  ON \"fclt_organization\".\"dlc_key\" = \"master_dept_hierarchy\".\"dlc_key\"\nJOIN \"hr_org_unit\" AS \"hou\"\n  ON hr_org_unit.\"dlc_key\" = \"fclt_organization\".\"dlc_key\"\nJOIN \"hr_faculty_roster\" AS \"hfr\"\n  ON hr_faculty_roster.\"hr_org_unit_title\" = hr_org_unit.\"hr_org_unit_title\"\nWHERE\n  \"fclt_organization\".\"organization_level\" IN ('3', '4', '5', '6')\n  AND NOT \"fclt_organization\".\"organization_id\" IN ('139', '250')\nORDER BY\n  \"hierarchy_type\""
+  },
+  {
+    "question": "For each course, list its title, name of the building of the course location, duration in terms of days, and a running average of the duration using a window of two preceding and two following courses (partitioned by academic year and sorted by course start date).",
+    "sql": "select distinct ccso.subject_title, building_name, ccso.duration, avg(duration) over (partition by ccso.academic_year order by ccso.term_start_date rows between 2 preceding and 2 following) from (select distinct subject_title, term_start_date, term_end_date-term_start_date as duration, cis.academic_year, meet_place from academic_terms join COURSE_CATALOG_SUBJECT_OFFERED cis on cis.effective_term_code=academic_terms.term_code) ccso JOIN FCLT_ROOMS fr ON ccso.MEET_PLACE = fr.FCLT_ROOM_KEY JOIN FCLT_BUILDING fb ON fb.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY",
+    "topics": [
+      "course title",
+      "building name",
+      "duration",
+      "academic year",
+      "course start date"
+    ],
+    "mapping": {
+      "title": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "name of the building": ["FCLT_BUILDING.BUILDING_NAME"],
+      "duration": [
+        "ACADEMIC_TERMS.TERM_END_DATE",
+        "ACADEMIC_TERMS.TERM_START_DATE"
+      ]
+    },
+    "columns": [
+      "ACADEMIC_TERMS.TERM_END_DATE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.MEET_PLACE",
+      "FCLT_BUILDING.BUILDING_NAME",
+      "ACADEMIC_TERMS.TERM_START_DATE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+    ],
+    "qualified": "SELECT DISTINCT\n  \"ccso\".\"subject_title\" AS \"subject_title\",\n  fclt_building.\"building_name\" AS \"building_name\",\n  \"ccso\".\"duration\" AS \"duration\",\n  AVG(\"ccso\".\"duration\") OVER (PARTITION BY \"ccso\".\"academic_year\" ORDER BY \"ccso\".\"term_start_date\" rows BETWEEN 2 preceding AND 2 following) AS \"_col_3\"\nFROM (\n  SELECT DISTINCT\n    course_catalog_subject_offered.\"subject_title\" AS \"subject_title\",\n    \"academic_terms\".\"term_start_date\" AS \"term_start_date\",\n    \"academic_terms\".\"term_end_date\" - \"academic_terms\".\"term_start_date\" AS \"duration\",\n    course_catalog_subject_offered.\"academic_year\" AS \"academic_year\",\n    course_catalog_subject_offered.\"meet_place\" AS \"meet_place\"\n  FROM \"academic_terms\" AS \"academic_terms\"\n  JOIN \"course_catalog_subject_offered\" AS \"cis\"\n    ON course_catalog_subject_offered.\"effective_term_code\" = \"academic_terms\".\"term_code\"\n) AS \"ccso\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON \"ccso\".\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building\" AS \"fb\"\n  ON fclt_building.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\""
+  },
+  {
+    "question": "For each course, list its name, name of the building of the course location, the start date, the name of the course before it, and the name of the course after it, access level of the building, and the assignable area of the room used for the course, sorted by the ascending order start date and course name.",
+    "sql": "SELECT \r\n    ccso.subject_title,\r\n    fb.BUILDING_NAME_LONG AS building_name,\r\n    at.TERM_START_DATE AS term_start_date,\r\n    lag(ccso.subject_title) OVER (\r\n        ORDER BY at.TERM_START_DATE ASC, ccso.subject_title ASC\r\n    ) AS previous_subject_title,\r\n    lead(ccso.subject_title) OVER (\r\n        ORDER BY at.TERM_START_DATE ASC, ccso.subject_title ASC\r\n    ) AS next_subject_title,\r\n    fb.ACCESS_LEVEL_NAME AS access_level,\r\n    fr.AREA AS room_assignable_area\r\nFROM (\r\n    SELECT DISTINCT \r\n        subject_id, \r\n        subject_title, \r\n        effective_term_code, \r\n        meet_place \r\n    FROM COURSE_CATALOG_SUBJECT_OFFERED\r\n) ccso\r\nJOIN ACADEMIC_TERMS at ON at.TERM_CODE = ccso.effective_term_code\r\nJOIN FCLT_ROOMS fr ON ccso.MEET_PLACE = fr.FCLT_ROOM_KEY\r\nJOIN FCLT_BUILDING fb ON fb.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY\r\nORDER BY \r\n    at.TERM_START_DATE ASC, \r\n    ccso.subject_title ASC;\r",
+    "topics": [
+      "course name",
+      "building name",
+      "start date",
+      "previous course name",
+      "next course name",
+      "building access level",
+      "room assignable area"
+    ],
+    "mapping": {
+      "name": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "name of the building": ["FCLT_BUILDING.BUILDING_NAME_LONG"],
+      "start date": ["ACADEMIC_TERMS.TERM_START_DATE"],
+      "name of the course before it": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+      ],
+      "name of the course after it": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+      ],
+      "access level": ["FCLT_BUILDING.ACCESS_LEVEL_NAME"],
+      "area": ["FCLT_ROOMS.AREA"]
+    },
+    "columns": [
+      "FCLT_BUILDING.ACCESS_LEVEL_NAME",
+      "FCLT_BUILDING.BUILDING_NAME_LONG",
+      "COURSE_CATALOG_SUBJECT_OFFERED.MEET_PLACE",
+      "FCLT_ROOMS.AREA",
+      "ACADEMIC_TERMS.TERM_START_DATE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.EFFECTIVE_TERM_CODE"
+    ],
+    "qualified": "SELECT\n  \"ccso\".\"subject_title\" AS \"subject_title\",\n  fclt_building.\"building_name_long\" AS \"building_name\",\n  academic_terms.\"term_start_date\" AS \"term_start_date\",\n  LAG(\"ccso\".\"subject_title\") OVER (ORDER BY academic_terms.\"term_start_date\" ASC, \"ccso\".\"subject_title\" ASC) AS \"previous_subject_title\",\n  LEAD(\"ccso\".\"subject_title\") OVER (ORDER BY academic_terms.\"term_start_date\" ASC, \"ccso\".\"subject_title\" ASC) AS \"next_subject_title\",\n  fclt_building.\"access_level_name\" AS \"access_level\",\n  fclt_rooms.\"area\" AS \"room_assignable_area\"\nFROM (\n  SELECT DISTINCT\n    \"course_catalog_subject_offered\".\"subject_id\" AS \"subject_id\",\n    \"course_catalog_subject_offered\".\"subject_title\" AS \"subject_title\",\n    \"course_catalog_subject_offered\".\"effective_term_code\" AS \"effective_term_code\",\n    \"course_catalog_subject_offered\".\"meet_place\" AS \"meet_place\"\n  FROM \"course_catalog_subject_offered\" AS \"course_catalog_subject_offered\"\n) AS \"ccso\"\nJOIN \"academic_terms\" AS \"at\"\n  ON academic_terms.\"term_code\" = \"ccso\".\"effective_term_code\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON \"ccso\".\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building\" AS \"fb\"\n  ON fclt_building.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\"\nORDER BY\n  academic_terms.\"term_start_date\" ASC,\n  \"ccso\".\"subject_title\" ASC"
+  },
+  {
+    "question": "For each course, list its name, name of the building of the course location, and the cumulative number of courses, including the course itself, that took place in the same year as the course and before (partitioned by academic year and sorted in the ascending order of course start date).",
+    "sql": "select distinct subject_title, building_name, count(ccso.subject_id) over (partition by ccso.academic_year order by term_start_date asc range between unbounded preceding and current row) from COURSE_CATALOG_SUBJECT_OFFERED ccso join academic_terms on ccso.effective_term_code =academic_terms.term_code  JOIN FCLT_ROOMS fr ON ccso.MEET_PLACE = fr.FCLT_ROOM_KEY JOIN FCLT_BUILDING fb ON fb.FCLT_BUILDING_KEY = fr.FCLT_BUILDING_KEY",
+    "topics": [
+      "course name",
+      "building name",
+      "academic year",
+      "course start date"
+    ],
+    "mapping": {
+      "name": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"],
+      "name of the building": ["FCLT_BUILDING.BUILDING_NAME"],
+      "courses": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+        "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR",
+        "ACADEMIC_TERMS.TERM_START_DATE"
+      ]
+    },
+    "columns": [
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "FCLT_BUILDING.BUILDING_NAME",
+      "ACADEMIC_TERMS.TERM_START_DATE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.ACADEMIC_YEAR",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
+    ],
+    "qualified": "SELECT DISTINCT\n  course_catalog_subject_offered.\"subject_title\" AS \"subject_title\",\n  fclt_building.\"building_name\" AS \"building_name\",\n  COUNT(course_catalog_subject_offered.\"subject_id\") OVER (PARTITION BY course_catalog_subject_offered.\"academic_year\" ORDER BY \"academic_terms\".\"term_start_date\" ASC range BETWEEN UNBOUNDED preceding AND CURRENT ROW) AS \"_col_2\"\nFROM \"course_catalog_subject_offered\" AS \"ccso\"\nJOIN \"academic_terms\" AS \"academic_terms\"\n  ON course_catalog_subject_offered.\"effective_term_code\" = \"academic_terms\".\"term_code\"\nJOIN \"fclt_rooms\" AS \"fr\"\n  ON course_catalog_subject_offered.\"meet_place\" = fclt_rooms.\"fclt_room_key\"\nJOIN \"fclt_building\" AS \"fb\"\n  ON fclt_building.\"fclt_building_key\" = fclt_rooms.\"fclt_building_key\""
+  },
+  {
+    "question": "Group courses in the biology and chemistry department by whether they are current or not and the cluster type. For each group, list the current status ('CURRENT' if yes and 'NON-CURRENT' otherwise), cluster type, the maximum duration of courses, the maximum units, average duration, and average units. Include subtotals for each current status (the corresponding current status field is 'SUBTOTAL') and a grand total across all current status (the corresponding current status field is 'TOTAL'). Do not repeat the current status if it is the same as the previous row. Sort the table by current status and cluster type.",
+    "sql": "SELECT CASE WHEN LAG(assign) OVER (ORDER BY IS_CURRENT_TERM DESC, assign, CLUSTER_TYPE ASC) = assign THEN NULL ELSE assign END AS assign, CLUSTER_TYPE, max_duration, max_units, avg_dur, avg_unit FROM (SELECT CASE WHEN GROUPING(CLUSTER_TYPE) = 1 AND GROUPING(IS_CURRENT_TERM) = 0 THEN 'SUBTOTAL' WHEN GROUPING(CLUSTER_TYPE) = 1 AND GROUPING(IS_CURRENT_TERM) = 1 THEN 'TOTAL' ELSE CASE WHEN IS_CURRENT_TERM = 'Y' THEN 'CURRENT' ELSE 'NON-CURRENT' END END AS assign, IS_CURRENT_TERM, CLUSTER_TYPE, max(term_end_date-term_start_date) AS max_duration, MAX(TOTAL_UNITS) AS max_units, AVG(term_end_date-term_start_date) AS avg_dur, AVG(TOTAL_UNITS) AS avg_unit FROM SUBJECT_SUMMARY ss JOIN ACADEMIC_TERMS_ALL ata ON ata.TERM_CODE = ss.TERM_CODE WHERE CLUSTER_TYPE IS  NOT NULL and ss.department_name in ('Chemistry', 'Biology') GROUP BY ROLLUP(IS_CURRENT_TERM, CLUSTER_TYPE) ORDER BY IS_CURRENT_TERM DESC, assign, CLUSTER_TYPE ASC) tbltmp",
+    "topics": [
+      "courses",
+      "department",
+      "current",
+      "cluster",
+      "duration",
+      "units"
+    ],
+    "mapping": {
+      "department": ["SUBJECT_SUMMARY.DEPARTMENT_NAME"],
+      "current status": ["ACADEMIC_TERMS_ALL.IS_CURRENT_TERM"],
+      "cluster type": ["SUBJECT_SUMMARY.CLUSTER_TYPE"],
+      "duration": [
+        "ACADEMIC_TERMS_ALL.TERM_END_DATE",
+        "ACADEMIC_TERMS_ALL.TERM_START_DATE"
+      ],
+      "units": ["SUBJECT_SUMMARY.TOTAL_UNITS"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_END_DATE",
+      "SUBJECT_SUMMARY.DEPARTMENT_NAME",
+      "SUBJECT_SUMMARY.TOTAL_UNITS",
+      "SUBJECT_SUMMARY.CLUSTER_TYPE",
+      "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM",
+      "ACADEMIC_TERMS_ALL.TERM_START_DATE"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"assign\") OVER (ORDER BY \"tbltmp\".\"is_current_term\" DESC, \"tbltmp\".\"assign\", \"tbltmp\".\"cluster_type\" ASC) = \"tbltmp\".\"assign\"\n    THEN NULL\n    ELSE \"tbltmp\".\"assign\"\n  END AS \"assign\",\n  \"tbltmp\".\"cluster_type\" AS \"cluster_type\",\n  \"tbltmp\".\"max_duration\" AS \"max_duration\",\n  \"tbltmp\".\"max_units\" AS \"max_units\",\n  \"tbltmp\".\"avg_dur\" AS \"avg_dur\",\n  \"tbltmp\".\"avg_unit\" AS \"avg_unit\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(subject_summary.\"cluster_type\") = 1\n      AND GROUPING(academic_terms_all.\"is_current_term\") = 0\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(subject_summary.\"cluster_type\") = 1\n      AND GROUPING(academic_terms_all.\"is_current_term\") = 1\n      THEN 'TOTAL'\n      ELSE CASE\n        WHEN academic_terms_all.\"is_current_term\" = 'Y'\n        THEN 'CURRENT'\n        ELSE 'NON-CURRENT'\n      END\n    END AS \"assign\",\n    academic_terms_all.\"is_current_term\" AS \"is_current_term\",\n    subject_summary.\"cluster_type\" AS \"cluster_type\",\n    MAX(academic_terms_all.\"term_end_date\" - academic_terms_all.\"term_start_date\") AS \"max_duration\",\n    MAX(subject_summary.\"total_units\") AS \"max_units\",\n    AVG(academic_terms_all.\"term_end_date\" - academic_terms_all.\"term_start_date\") AS \"avg_dur\",\n    AVG(subject_summary.\"total_units\") AS \"avg_unit\"\n  FROM \"subject_summary\" AS \"ss\"\n  JOIN \"academic_terms_all\" AS \"ata\"\n    ON academic_terms_all.\"term_code\" = subject_summary.\"term_code\"\n  WHERE\n    NOT subject_summary.\"cluster_type\" IS NULL\n    AND subject_summary.\"department_name\" IN ('Chemistry', 'Biology')\n  GROUP BY\n    ROLLUP (\n      academic_terms_all.\"is_current_term\",\n      subject_summary.\"cluster_type\"\n    )\n  ORDER BY\n    \"is_current_term\" DESC,\n    \"assign\",\n    \"cluster_type\" ASC\n) AS \"tbltmp\""
+  },
+  {
+    "question": "Group courses in the biology and chemistry department by whether they are current or not and the department name. For each group, list the current status ('CURRENT' if yes and 'NON-CURRENT' otherwise), department name, the maximum duration of courses, the maximum units, average duration, and average units. Include subtotals for each current status (the corresponding current status field is 'SUBTOTAL') and a grand total across all current status (the corresponding current status field is 'TOTAL'). Do not repeat the current status if it is the same as the previous row. Sort the table by current status and department.",
+    "sql": "SELECT CASE WHEN LAG(assign) OVER (ORDER BY IS_CURRENT_TERM DESC, assign, OFFER_DEPT_NAME ASC) = assign THEN NULL ELSE assign END AS assign, OFFER_DEPT_NAME, max_duration, max_units, avg_dur, avg_unit FROM (SELECT CASE WHEN GROUPING(OFFER_DEPT_NAME) = 1 AND GROUPING(IS_CURRENT_TERM) = 0 THEN 'SUBTOTAL' WHEN GROUPING(OFFER_DEPT_NAME) = 1 AND GROUPING(IS_CURRENT_TERM) = 1 THEN 'TOTAL' ELSE CASE WHEN IS_CURRENT_TERM = 'Y' THEN 'CURRENT' ELSE 'NON-CURRENT' END END AS assign, IS_CURRENT_TERM, OFFER_DEPT_NAME, max(term_end_date-term_start_date) AS max_duration, MAX(TOTAL_UNITS) AS max_units, AVG(term_end_date-term_start_date) AS avg_dur, AVG(TOTAL_UNITS) AS avg_unit FROM SUBJECT_SUMMARY ss JOIN ACADEMIC_TERMS_ALL ata ON ata.TERM_CODE = ss.TERM_CODE JOIN SUBJECT_OFFERED so ON so.SUBJECT_ID = ss.SUBJECT_ID where so.offer_dept_name in ('Chemistry', 'Biology') GROUP BY ROLLUP(IS_CURRENT_TERM, OFFER_DEPT_NAME) ORDER BY IS_CURRENT_TERM DESC, assign, OFFER_DEPT_NAME ASC) tbltmp",
+    "topics": ["course", "department", "current status", "duration", "units"],
+    "mapping": {
+      "department": ["SUBJECT_OFFERED.OFFER_DEPT_NAME"],
+      "current status": ["ACADEMIC_TERMS_ALL.IS_CURRENT_TERM"],
+      "duration": [
+        "ACADEMIC_TERMS_ALL.TERM_END_DATE",
+        "ACADEMIC_TERMS_ALL.TERM_START_DATE"
+      ],
+      "units": ["SUBJECT_SUMMARY.TOTAL_UNITS"]
+    },
+    "columns": [
+      "SUBJECT_OFFERED.OFFER_DEPT_NAME",
+      "ACADEMIC_TERMS_ALL.TERM_END_DATE",
+      "SUBJECT_SUMMARY.TOTAL_UNITS",
+      "ACADEMIC_TERMS_ALL.IS_CURRENT_TERM",
+      "ACADEMIC_TERMS_ALL.TERM_START_DATE"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"assign\") OVER (ORDER BY \"tbltmp\".\"is_current_term\" DESC, \"tbltmp\".\"assign\", \"tbltmp\".\"offer_dept_name\" ASC) = \"tbltmp\".\"assign\"\n    THEN NULL\n    ELSE \"tbltmp\".\"assign\"\n  END AS \"assign\",\n  \"tbltmp\".\"offer_dept_name\" AS \"offer_dept_name\",\n  \"tbltmp\".\"max_duration\" AS \"max_duration\",\n  \"tbltmp\".\"max_units\" AS \"max_units\",\n  \"tbltmp\".\"avg_dur\" AS \"avg_dur\",\n  \"tbltmp\".\"avg_unit\" AS \"avg_unit\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(subject_offered.\"offer_dept_name\") = 1\n      AND GROUPING(academic_terms_all.\"is_current_term\") = 0\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(subject_offered.\"offer_dept_name\") = 1\n      AND GROUPING(academic_terms_all.\"is_current_term\") = 1\n      THEN 'TOTAL'\n      ELSE CASE\n        WHEN academic_terms_all.\"is_current_term\" = 'Y'\n        THEN 'CURRENT'\n        ELSE 'NON-CURRENT'\n      END\n    END AS \"assign\",\n    academic_terms_all.\"is_current_term\" AS \"is_current_term\",\n    subject_offered.\"offer_dept_name\" AS \"offer_dept_name\",\n    MAX(academic_terms_all.\"term_end_date\" - academic_terms_all.\"term_start_date\") AS \"max_duration\",\n    MAX(subject_summary.\"total_units\") AS \"max_units\",\n    AVG(academic_terms_all.\"term_end_date\" - academic_terms_all.\"term_start_date\") AS \"avg_dur\",\n    AVG(subject_summary.\"total_units\") AS \"avg_unit\"\n  FROM \"subject_summary\" AS \"ss\"\n  JOIN \"academic_terms_all\" AS \"ata\"\n    ON academic_terms_all.\"term_code\" = subject_summary.\"term_code\"\n  JOIN \"subject_offered\" AS \"so\"\n    ON subject_offered.\"subject_id\" = subject_summary.\"subject_id\"\n  WHERE\n    subject_offered.\"offer_dept_name\" IN ('Chemistry', 'Biology')\n  GROUP BY\n    ROLLUP (\n      academic_terms_all.\"is_current_term\",\n      subject_offered.\"offer_dept_name\"\n    )\n  ORDER BY\n    \"is_current_term\" DESC,\n    \"assign\",\n    \"offer_dept_name\" ASC\n) AS \"tbltmp\""
+  },
+  {
+    "question": "Group master courses by department. For each group, state the name of the department, the master course code, the number of subjects, the total new shelf price of associated TIP materials, and the number of unique TIP materials. Display the department and master course only if it differs from the previous entry. Include subtotals for each department and a grand total across all departments. All numerical values should be rounded to integers and formatted using commas as thousands separators.",
+    "sql": "SELECT CASE WHEN LAG(dept) OVER (ORDER BY dept, dept_sort, master) = dept THEN NULL ELSE dept END AS dept, CASE WHEN master = 'zzz' THEN NULL ELSE master END AS master, subcnt, totalprice, matcnt FROM ( SELECT CASE WHEN GROUPING(OFFER_DEPT_NAME) = 1 AND GROUPING(MASTER_COURSE_NUMBER) = 1 THEN 'zzz' ELSE OFFER_DEPT_NAME END AS dept_sort, CASE WHEN GROUPING(OFFER_DEPT_NAME) = 0 AND GROUPING(MASTER_COURSE_NUMBER) = 1 THEN 'SUBTOTAL' WHEN GROUPING(OFFER_DEPT_NAME) = 1 AND GROUPING(MASTER_COURSE_NUMBER) = 1 THEN 'TOTAL' ELSE OFFER_DEPT_NAME END AS dept, CASE WHEN GROUPING(OFFER_DEPT_NAME) = 0 AND GROUPING(MASTER_COURSE_NUMBER) = 1 THEN 'zzz' ELSE MASTER_COURSE_NUMBER END AS master, TO_CHAR(COUNT(distinct tso.SUBJECT_ID), '999,999,999') AS subcnt, TO_CHAR(SUM(NEW_SHELF_PRICE), '999,999,999') AS totalprice, TO_CHAR(COUNT(DISTINCT tm.ISBN), '999,999,999') AS matcnt FROM TIP_DETAIL td JOIN TIP_SUBJECT_OFFERED tso ON tso.TIP_SUBJECT_OFFERED_KEY = td. TIP_SUBJECT_OFFERED_KEY JOIN TIP_MATERIAL tm ON tm.TIP_MATERIAL_KEY = td.TIP_MATERIAL_KEY GROUP BY ROLLUP(OFFER_DEPT_NAME, MASTER_COURSE_NUMBER) ORDER BY dept_sort, master ) tbltmp",
+    "topics": [
+      "department",
+      "master course code",
+      "number of subjects",
+      "new shelf price",
+      "TIP materials"
+    ],
+    "mapping": {
+      "name of the department": ["TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"],
+      "master course code": ["TIP_SUBJECT_OFFERED.MASTER_COURSE_NUMBER"],
+      "subjects": ["TIP_SUBJECT_OFFERED.SUBJECT_ID"],
+      "new shelf price": ["TIP_MATERIAL.NEW_SHELF_PRICE"],
+      "TIP materials": ["TIP_MATERIAL.ISBN"]
+    },
+    "columns": [
+      "TIP_MATERIAL.ISBN",
+      "TIP_MATERIAL.NEW_SHELF_PRICE",
+      "TIP_SUBJECT_OFFERED.SUBJECT_ID",
+      "TIP_SUBJECT_OFFERED.MASTER_COURSE_NUMBER",
+      "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"dept\") OVER (ORDER BY \"tbltmp\".\"dept\", \"tbltmp\".\"dept_sort\", \"tbltmp\".\"master\") = \"tbltmp\".\"dept\"\n    THEN NULL\n    ELSE \"tbltmp\".\"dept\"\n  END AS \"dept\",\n  CASE WHEN \"tbltmp\".\"master\" = 'zzz' THEN NULL ELSE \"tbltmp\".\"master\" END AS \"master\",\n  \"tbltmp\".\"subcnt\" AS \"subcnt\",\n  \"tbltmp\".\"totalprice\" AS \"totalprice\",\n  \"tbltmp\".\"matcnt\" AS \"matcnt\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(tip_subject_offered.\"offer_dept_name\") = 1\n      AND GROUPING(tip_subject_offered.\"master_course_number\") = 1\n      THEN 'zzz'\n      ELSE tip_subject_offered.\"offer_dept_name\"\n    END AS \"dept_sort\",\n    CASE\n      WHEN GROUPING(tip_subject_offered.\"offer_dept_name\") = 0\n      AND GROUPING(tip_subject_offered.\"master_course_number\") = 1\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(tip_subject_offered.\"offer_dept_name\") = 1\n      AND GROUPING(tip_subject_offered.\"master_course_number\") = 1\n      THEN 'TOTAL'\n      ELSE tip_subject_offered.\"offer_dept_name\"\n    END AS \"dept\",\n    CASE\n      WHEN GROUPING(tip_subject_offered.\"offer_dept_name\") = 0\n      AND GROUPING(tip_subject_offered.\"master_course_number\") = 1\n      THEN 'zzz'\n      ELSE tip_subject_offered.\"master_course_number\"\n    END AS \"master\",\n    CAST(COUNT(DISTINCT tip_subject_offered.\"subject_id\") AS TEXT) AS \"subcnt\",\n    CAST(SUM(tip_material.\"new_shelf_price\") AS TEXT) AS \"totalprice\",\n    CAST(COUNT(DISTINCT tip_material.\"isbn\") AS TEXT) AS \"matcnt\"\n  FROM \"tip_detail\" AS \"td\"\n  JOIN \"tip_subject_offered\" AS \"tso\"\n    ON tip_subject_offered.\"tip_subject_offered_key\" = tip_detail.\"tip_subject_offered_key\"\n  JOIN \"tip_material\" AS \"tm\"\n    ON tip_material.\"tip_material_key\" = tip_detail.\"tip_material_key\"\n  GROUP BY\n    ROLLUP (\n      tip_subject_offered.\"offer_dept_name\",\n      tip_subject_offered.\"master_course_number\"\n    )\n  ORDER BY\n    \"dept_sort\",\n    \"master\"\n) AS \"tbltmp\""
+  },
+  {
+    "question": "For each term and department, list the term, department, the number of courses, average number of equivalent subjects, the school name, and department phone number. Include subtotals for each term (the corresponding term field is 'SUBTOTAL') and a grand total across all terms (the corresponding term field is 'TOTAL'). Do not repeat the term if it is the same as the previous row. Sort the table by term and department.",
+    "sql": "SELECT \r\n    CASE \r\n        WHEN LAG(term) OVER (ORDER BY term_sort, term, dept_sort) = term THEN NULL \r\n        ELSE term \r\n    END AS term,\r\n    dept,\r\n    subcnt,\r\n  avgeqisub,\r\n    sd.SCHOOL_NAME AS school_name,\r\n  ad.DEPARTMENT_PHONE_NUMBER AS department_phone\r\nFROM (\r\n    SELECT \r\n        CASE \r\n            WHEN GROUPING(TERM_CODE) = 1 AND GROUPING(DEPARTMENT_NAME) = 1 THEN 'zzz'\r\n            ELSE TERM_CODE \r\n        END AS term_sort,\r\n        CASE \r\n            WHEN GROUPING(TERM_CODE) = 0 AND GROUPING(DEPARTMENT_NAME) = 1 THEN 'SUBTOTAL'\r\n            WHEN GROUPING(TERM_CODE) = 1 AND GROUPING(DEPARTMENT_NAME) = 1 THEN 'TOTAL'\r\n            ELSE TERM_CODE \r\n        END AS term,\r\n        CASE \r\n            WHEN GROUPING(TERM_CODE) = 0 AND GROUPING(DEPARTMENT_NAME) = 1 THEN 'zzz'\r\n            ELSE DEPARTMENT_NAME \r\n        END AS dept_sort,\r\n        DEPARTMENT_NAME AS dept,\r\n        COUNT(DISTINCT SUBJECT_ID) AS subcnt,\r\n        MIN(MEET_TIME) AS mintime,\r\n        AVG(CASE \r\n                WHEN equivalent_subjects IS NULL THEN 0 \r\n                ELSE 1 + LENGTH(equivalent_subjects) - LENGTH(REPLACE(equivalent_subjects, ',', '')) \r\n            END) AS avgeqisub\r\n    FROM \r\n        COURSE_CATALOG_SUBJECT_OFFERED\r\n    GROUP BY \r\n        ROLLUP(TERM_CODE, DEPARTMENT_NAME)\r\n) tbltmp\r\nLEFT JOIN SIS_DEPARTMENT sd ON tbltmp.dept = sd.DEPARTMENT_NAME\r\nLEFT JOIN SIS_ADMIN_DEPARTMENT ad ON sd.DEPARTMENT_CODE = ad.SIS_ADMIN_DEPARTMENT_CODE\r\nORDER BY \r\n    term_sort, dept_sort;\r\n",
+    "topics": [
+      "term",
+      "department",
+      "courses",
+      "equivalent subjects",
+      "school name",
+      "department phone number"
+    ],
+    "mapping": {
+      "term": ["COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"],
+      "department": ["COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"],
+      "courses": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"],
+      "equivalent subjects": [
+        "COURSE_CATALOG_SUBJECT_OFFERED.EQUIVALENT_SUBJECTS"
+      ],
+      "school name": ["SIS_DEPARTMENT.SCHOOL_NAME"],
+      "department phone number": [
+        "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER"
+      ]
+    },
+    "columns": [
+      "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME",
+      "COURSE_CATALOG_SUBJECT_OFFERED.EQUIVALENT_SUBJECTS",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE",
+      "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
+      "SIS_DEPARTMENT.SCHOOL_NAME",
+      "COURSE_CATALOG_SUBJECT_OFFERED.MEET_TIME"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"term\") OVER (ORDER BY \"tbltmp\".\"term_sort\", \"tbltmp\".\"term\", \"tbltmp\".\"dept_sort\") = \"tbltmp\".\"term\"\n    THEN NULL\n    ELSE \"tbltmp\".\"term\"\n  END AS \"term\",\n  \"tbltmp\".\"dept\" AS \"dept\",\n  \"tbltmp\".\"subcnt\" AS \"subcnt\",\n  \"tbltmp\".\"avgeqisub\" AS \"avgeqisub\",\n  sis_department.\"school_name\" AS \"school_name\",\n  sis_admin_department.\"department_phone_number\" AS \"department_phone\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(\"course_catalog_subject_offered\".\"term_code\") = 1\n      AND GROUPING(\"course_catalog_subject_offered\".\"department_name\") = 1\n      THEN 'zzz'\n      ELSE \"course_catalog_subject_offered\".\"term_code\"\n    END AS \"term_sort\",\n    CASE\n      WHEN GROUPING(\"course_catalog_subject_offered\".\"term_code\") = 0\n      AND GROUPING(\"course_catalog_subject_offered\".\"department_name\") = 1\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(\"course_catalog_subject_offered\".\"term_code\") = 1\n      AND GROUPING(\"course_catalog_subject_offered\".\"department_name\") = 1\n      THEN 'TOTAL'\n      ELSE \"course_catalog_subject_offered\".\"term_code\"\n    END AS \"term\",\n    CASE\n      WHEN GROUPING(\"course_catalog_subject_offered\".\"term_code\") = 0\n      AND GROUPING(\"course_catalog_subject_offered\".\"department_name\") = 1\n      THEN 'zzz'\n      ELSE \"course_catalog_subject_offered\".\"department_name\"\n    END AS \"dept_sort\",\n    \"course_catalog_subject_offered\".\"department_name\" AS \"dept\",\n    COUNT(DISTINCT \"course_catalog_subject_offered\".\"subject_id\") AS \"subcnt\",\n    MIN(\"course_catalog_subject_offered\".\"meet_time\") AS \"mintime\",\n    AVG(\n      CASE\n        WHEN \"course_catalog_subject_offered\".\"equivalent_subjects\" IS NULL\n        THEN 0\n        ELSE 1 + LENGTH(\"course_catalog_subject_offered\".\"equivalent_subjects\") - LENGTH(REPLACE(\"course_catalog_subject_offered\".\"equivalent_subjects\", ',', ''))\n      END\n    ) AS \"avgeqisub\"\n  FROM \"course_catalog_subject_offered\" AS \"course_catalog_subject_offered\"\n  GROUP BY\n    ROLLUP (\n      \"course_catalog_subject_offered\".\"term_code\",\n      \"course_catalog_subject_offered\".\"department_name\"\n    )\n) AS \"tbltmp\"\nLEFT JOIN \"sis_department\" AS \"sd\"\n  ON \"tbltmp\".\"dept\" = sis_department.\"department_name\"\nLEFT JOIN \"sis_admin_department\" AS \"ad\"\n  ON sis_department.\"department_code\" = sis_admin_department.\"sis_admin_department_code\"\nORDER BY\n  \"tbltmp\".\"term_sort\",\n  \"tbltmp\".\"dept_sort\""
+  },
+  {
+    "question": "Group sessions by their current term status. For each group, state the status ('CURRENT' if is current term and 'NOT CURRENT' otherwise), name of the session, number of IAP sessions, total IAP session time, and average IAP session time. Show a subtotal for each current status and a grand total row across all status. Order the results by current status and cluster type. Display the the current status only if it differs from the previous entry.",
+    "sql": "SELECT CASE WHEN LAG(assign) OVER (ORDER BY assign) = assign THEN NULL ELSE assign END AS assign, muse, session_count, total_time, avg_time FROM (SELECT CASE WHEN  GROUPING(IAP_CATEGORY_NAME) = 1 AND GROUPING(IS_CURRENT_TERM) = 0 THEN 'SUBTOTAL' WHEN GROUPING(IAP_CATEGORY_NAME) = 1 AND  GROUPING(IAP_CATEGORY_NAME) = 1 THEN 'TOTAL' ELSE CASE WHEN IS_CURRENT_TERM = 'Y' THEN 'CURRENT' ELSE 'NOT CURRENT' END END AS assign, IAP_CATEGORY_NAME AS muse, COUNT(SESSION_DATE) AS session_count, SUM(COALESCE(TO_DATE(SESSION_END_TIME, 'HHMIPM') - TO_DATE(SESSION_START_TIME, 'HHMIPM'), 0)) AS total_time, AVG(COALESCE(TO_DATE(SESSION_END_TIME, 'HHMIPM') - TO_DATE(SESSION_START_TIME, 'HHMIPM'), 0)) AS avg_time FROM IAP_SUBJECT_DETAIL ss JOIN ACADEMIC_TERMS at ON at.TERM_CODE = ss.TERM_CODE JOIN IAP_SUBJECT_SESSION iss ON iss.IAP_SUBJECT_SESSION_KEY =ss.IAP_SUBJECT_SESSION_KEY JOIN IAP_SUBJECT_CATEGORY isc ON isc.IAP_SUBJECT_CATEGORY_KEY=ss.IAP_SUBJECT_CATEGORY_KEY GROUP BY ROLLUP(IS_CURRENT_TERM, IAP_CATEGORY_NAME) ORDER BY assign, muse) tbltmp",
+    "topics": [
+      "term status",
+      "session name",
+      "IAP sessions",
+      "IAP session time"
+    ],
+    "mapping": {
+      "term status": ["ACADEMIC_TERMS.IS_CURRENT_TERM"],
+      "name of the session": ["IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME"],
+      "sessions": ["IAP_SUBJECT_SESSION.SESSION_DATE"],
+      "session time": [
+        "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+        "IAP_SUBJECT_SESSION.SESSION_END_TIME"
+      ]
+    },
+    "columns": [
+      "IAP_SUBJECT_CATEGORY.IAP_CATEGORY_NAME",
+      "ACADEMIC_TERMS.IS_CURRENT_TERM",
+      "IAP_SUBJECT_SESSION.SESSION_START_TIME",
+      "IAP_SUBJECT_SESSION.SESSION_END_TIME",
+      "IAP_SUBJECT_SESSION.SESSION_DATE"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(\"tbltmp\".\"assign\") OVER (ORDER BY \"tbltmp\".\"assign\") = \"tbltmp\".\"assign\"\n    THEN NULL\n    ELSE \"tbltmp\".\"assign\"\n  END AS \"assign\",\n  \"tbltmp\".\"muse\" AS \"muse\",\n  \"tbltmp\".\"session_count\" AS \"session_count\",\n  \"tbltmp\".\"total_time\" AS \"total_time\",\n  \"tbltmp\".\"avg_time\" AS \"avg_time\"\nFROM (\n  SELECT\n    CASE\n      WHEN GROUPING(iap_subject_category.\"iap_category_name\") = 1\n      AND GROUPING(academic_terms.\"is_current_term\") = 0\n      THEN 'SUBTOTAL'\n      WHEN GROUPING(iap_subject_category.\"iap_category_name\") = 1\n      AND GROUPING(iap_subject_category.\"iap_category_name\") = 1\n      THEN 'TOTAL'\n      ELSE CASE\n        WHEN academic_terms.\"is_current_term\" = 'Y'\n        THEN 'CURRENT'\n        ELSE 'NOT CURRENT'\n      END\n    END AS \"assign\",\n    iap_subject_category.\"iap_category_name\" AS \"muse\",\n    COUNT(iap_subject_session.\"session_date\") AS \"session_count\",\n    SUM(\n      COALESCE(\n        TO_DATE(iap_subject_session.\"session_end_time\", 'HHMIPM') - TO_DATE(iap_subject_session.\"session_start_time\", 'HHMIPM'),\n        0\n      )\n    ) AS \"total_time\",\n    AVG(\n      COALESCE(\n        TO_DATE(iap_subject_session.\"session_end_time\", 'HHMIPM') - TO_DATE(iap_subject_session.\"session_start_time\", 'HHMIPM'),\n        0\n      )\n    ) AS \"avg_time\"\n  FROM \"iap_subject_detail\" AS \"ss\"\n  JOIN \"academic_terms\" AS \"at\"\n    ON academic_terms.\"term_code\" = iap_subject_detail.\"term_code\"\n  JOIN \"iap_subject_session\" AS \"iss\"\n    ON iap_subject_session.\"iap_subject_session_key\" = iap_subject_detail.\"iap_subject_session_key\"\n  JOIN \"iap_subject_category\" AS \"isc\"\n    ON iap_subject_category.\"iap_subject_category_key\" = iap_subject_detail.\"iap_subject_category_key\"\n  GROUP BY\n    ROLLUP (\n      academic_terms.\"is_current_term\",\n      iap_subject_category.\"iap_category_name\"\n    )\n  ORDER BY\n    \"assign\",\n    \"muse\"\n) AS \"tbltmp\""
+  }
+]
+

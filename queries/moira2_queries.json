@@ -1,451 +1,88 @@
 [
   {
-    "db": "dw",
     "question": "For each active mailing list, list the owner, the name and phone number of the department that contributes the largest number of students to the list, and the total number of students subscribed to the mailing list from that department.",
     "sql": "WITH StudentMemberCounts AS (\r\n    SELECT\r\n        mld.MOIRA_LIST_KEY,\r\n        ml.MOIRA_LIST_NAME,\r\n        mo.OWNER AS list_owner,\r\n        ml.IS_PUBLIC AS visibility, \r\n        ad.DEPARTMENT_PHONE_NUMBER AS department_phone,\r\n        ad.SIS_ADMIN_DEPARTMENT_NAME AS department_name,\r\n        COUNT(DISTINCT msd.FULL_NAME) AS student_members  \r\n    FROM MOIRA_LIST_DETAIL mld\r\n    JOIN MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\r\n    JOIN MOIRA_LIST_OWNER mo ON mld.MOIRA_LIST_OWNER_KEY = mo.MOIRA_LIST_OWNER_KEY\r\n    JOIN WAREUSER.SE_PERSON se ON upper(mld.MOIRA_LIST_MEMBER) = se.KRB_NAME  \r\n    JOIN MIT_STUDENT_DIRECTORY msd ON se.FULL_NAME = msd.FULL_NAME \r\n    LEFT JOIN SIS_ADMIN_DEPARTMENT ad ON msd.DEPARTMENT = ad.SIS_ADMIN_DEPARTMENT_CODE\r\n    WHERE ml.IS_ACTIVE = 'Y' AND ml.IS_MOIRA_MAILING_LIST = 'Y'\r\n    GROUP BY mld.MOIRA_LIST_KEY, ml.MOIRA_LIST_NAME, mo.OWNER, ml.IS_PUBLIC, \r\n             ad.DEPARTMENT_PHONE_AREA_CODE, ad.DEPARTMENT_PHONE_NUMBER, ad.SIS_ADMIN_DEPARTMENT_NAME\r\n),\r\nRankedDepartments AS (\r\n    SELECT\r\n        list_owner,\r\n        department_name,\r\n        department_phone,\r\n        SUM(student_members) AS total_student_members,\r\n        RANK() OVER (PARTITION BY list_owner ORDER BY SUM(student_members) DESC) AS department_rank\r\n    FROM StudentMemberCounts\r\n    GROUP BY list_owner, department_name, department_phone\r\n)\r\nSELECT\r\n    list_owner,\r\n    department_name AS most_prominent_dpt,\r\n    department_phone AS most_prominent_dpt_phone,\r\n    total_student_members\r\nFROM RankedDepartments\r\nWHERE department_rank = 1  \r\nORDER BY list_owner;",
-    "mapping": {
-      "name": [
-        "SIS_ADMIN_DEPARTMENT.SIS_ADMIN_DEPARTMENT_NAME"
-      ],
-      "owner": [
-        "MOIRA_LIST_OWNER.OWNER"
-      ],
-      "students": [
-        "MIT_STUDENT_DIRECTORY.FULL_NAME"
-      ],
-      "phone number": [
-        "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_NUMBER",
-        "SIS_ADMIN_DEPARTMENT.DEPARTMENT_PHONE_AREA_CODE"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each mailing list, list its owner, owner type, the member visibility ('Public Members' if public, and 'Hidden Members' otherwise), and the number of members of this type of visibility. For each owner and owner type, include a grand total for all members in the format of (owner, owner type, null, total members).",
     "sql": "WITH MemberVisibility AS (\n    SELECT\n        mo.OWNER,\n        mo.OWNER_TYPE,\n        CASE \n            WHEN ml.IS_PUBLIC = 'Y' THEN 'Public Members' \n            WHEN ml.IS_PUBLIC = 'N' THEN 'Hidden Members' \n            ELSE NULL \n        END AS member_visibility,\n        COUNT(DISTINCT mld.MOIRA_LIST_MEMBER) AS total_members \n    FROM MOIRA_LIST_DETAIL mld\n    JOIN MOIRA_LIST ml ON mld.MOIRA_LIST_KEY = ml.MOIRA_LIST_KEY\n    JOIN MOIRA_LIST_OWNER mo ON mld.MOIRA_LIST_OWNER_KEY = mo.MOIRA_LIST_OWNER_KEY\n    WHERE ml.IS_MOIRA_GROUP = 'Y'\n    GROUP BY mo.OWNER, mo.OWNER_TYPE, ml.IS_PUBLIC\n),\nRollupResults AS (\n    SELECT\n        OWNER,\n        member_visibility,\n        SUM(total_members) AS total_members\n    FROM MemberVisibility\n    GROUP BY ROLLUP(OWNER, member_visibility)\n    HAVING SUM(total_members) > 0 \n)\nSELECT\n    rr.OWNER,\n    mv.OWNER_TYPE, -- Join to get OWNER_TYPE\n    rr.member_visibility,\n    rr.total_members\nFROM RollupResults rr\nLEFT JOIN (\n    SELECT DISTINCT OWNER, OWNER_TYPE FROM MemberVisibility\n) mv ON rr.OWNER = mv.OWNER\nORDER BY rr.OWNER, rr.member_visibility;",
-    "mapping": {
-      "members": [
-        "MOIRA_LIST_DETAIL.MOIRA_LIST_MEMBER"
-      ],
-      "owner": [
-        "MOIRA_LIST_OWNER.OWNER"
-      ],
-      "owner type": [
-        "MOIRA_LIST_OWNER.OWNER_TYPE"
-      ],
-      "member visibility": [
-        "MOIRA_LIST.IS_PUBLIC"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "Group biology courses by cluster type and course level. For each group, list the name of the department, the course title, cluster type, total enrollments, average enrollment within its cluster, course level, number of unique course materials, average new and used prices for TIP materials, total material record count for TIP materials, number of unique library titles, and number of unique library ISBNs.",
     "sql": "WITH EnrollmentWithAnalytics AS (\r\n    SELECT\r\n        sos.SUBJECT_ID,\r\n        sos.SUBJECT_TITLE,\r\n        sos.OFFER_DEPT_NAME AS DEPARTMENT,\r\n        sos.CLUSTER_TYPE,\r\n        sos.NUM_ENROLLED_STUDENTS,\r\n        AVG(sos.NUM_ENROLLED_STUDENTS) OVER (PARTITION BY sos.CLUSTER_TYPE) AS avg_enrollment_in_cluster,\r\n        scd.COURSE_LEVEL\r\n    FROM SUBJECT_OFFERED_SUMMARY sos\r\n    LEFT JOIN SIS_COURSE_DESCRIPTION scd ON sos.COURSE_NUMBER = scd.COURSE\r\n    WHERE sos.OFFER_DEPT_NAME = 'Biology' -- Restrict to Biology department\r\n),\r\nEnrollmentWithTIP AS (\r\n    SELECT\r\n        ewa.SUBJECT_ID,\r\n        ewa.SUBJECT_TITLE,\r\n        ewa.DEPARTMENT,\r\n        ewa.CLUSTER_TYPE,\r\n        ewa.NUM_ENROLLED_STUDENTS,\r\n        ewa.avg_enrollment_in_cluster,\r\n        ewa.COURSE_LEVEL,\r\n        tm.TITLE AS material_title,\r\n        tm.NEW_SHELF_PRICE,\r\n        tm.USED_SHELF_PRICE,\r\n        td.RECORD_COUNT AS material_record_count\r\n    FROM EnrollmentWithAnalytics ewa\r\n    LEFT JOIN TIP_DETAIL td ON ewa.SUBJECT_ID = td.SUBJECT_ID\r\n    LEFT JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY\r\n),\r\nEnrollmentWithLibrary AS (\r\n    SELECT\r\n        ewt.SUBJECT_ID,\r\n        ewt.SUBJECT_TITLE,\r\n        ewt.DEPARTMENT,\r\n        ewt.CLUSTER_TYPE,\r\n        ewt.NUM_ENROLLED_STUDENTS,\r\n        ewt.avg_enrollment_in_cluster,\r\n        ewt.COURSE_LEVEL,\r\n        ewt.material_title,\r\n        ewt.NEW_SHELF_PRICE,\r\n        ewt.USED_SHELF_PRICE,\r\n        ewt.material_record_count,\r\n        lrc.CATALOG_TITLE AS library_title,\r\n        lrc.CATALOG_AUTHOR_NAME AS library_author,\r\n        lrc.CATALOG_ISBN AS library_isbn\r\n    FROM EnrollmentWithTIP ewt\r\n    LEFT JOIN LIBRARY_RESERVE_CATALOG lrc ON ewt.SUBJECT_ID = lrc.CATALOG_SYSTEM_NUMBER\r\n)\r\nSELECT\r\n    DEPARTMENT,\r\n    SUBJECT_TITLE,\r\n    CLUSTER_TYPE,\r\n    SUM(NUM_ENROLLED_STUDENTS) AS total_enrollment,\r\n    AVG(avg_enrollment_in_cluster) AS avg_enrollment_in_cluster,\r\n    COURSE_LEVEL,\r\n    COUNT(DISTINCT material_title) AS num_unique_materials,\r\n    AVG(NEW_SHELF_PRICE) AS avg_new_material_price,\r\n    AVG(USED_SHELF_PRICE) AS avg_used_material_price,\r\n    SUM(material_record_count) AS total_material_records,\r\n    COUNT(DISTINCT library_title) AS num_unique_library_titles,\r\n    COUNT(DISTINCT library_isbn) AS num_unique_library_isbns\r\nFROM EnrollmentWithLibrary\r\nGROUP BY DEPARTMENT, SUBJECT_TITLE, CLUSTER_TYPE, COURSE_LEVEL\r\nORDER BY DEPARTMENT, SUBJECT_TITLE, CLUSTER_TYPE;\r",
-    "mapping": {
-      "name of the department": [
-        "SUBJECT_OFFERED_SUMMARY.OFFER_DEPT_NAME"
-      ],
-      "course title": [
-        "SUBJECT_OFFERED_SUMMARY.SUBJECT_TITLE"
-      ],
-      "cluster type": [
-        "SUBJECT_OFFERED_SUMMARY.CLUSTER_TYPE"
-      ],
-      "enrollment": [
-        "SUBJECT_OFFERED_SUMMARY.NUM_ENROLLED_STUDENTS"
-      ],
-      "course level": [
-        "SIS_COURSE_DESCRIPTION.COURSE_LEVEL"
-      ],
-      "course materials": [
-        "TIP_MATERIAL.TITLE"
-      ],
-      "new price": [
-        "TIP_MATERIAL.NEW_SHELF_PRICE"
-      ],
-      "use price": [
-        "TIP_MATERIAL.USED_SHELF_PRICE"
-      ],
-      "TIP materials": [
-        "TIP_DETAIL.RECORD_COUNT"
-      ],
-      "library titles": [
-        "LIBRARY_RESERVE_CATALOG.CATALOG_TITLE"
-      ],
-      "library ISBNs": [
-        "LIBRARY_RESERVE_CATALOG.CATALOG_ISBN"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For subjects offered this year in either the Fall or Spring term, list its department name, school name, subject ID, subject title, course level, total units, the term it is offered ('Spring' for Spring term and 'Fall' for Fall term), term description, the number of distinct instructors teaching in the Fall, and the number of distinct instructors teaching in the Spring.",
     "sql": "WITH SubjectsByTerm AS (\n    SELECT\n        cc.SUBJECT_ID,\n        cc.SUBJECT_TITLE,\n        cc.TOTAL_UNITS,\n        cc.DEPARTMENT_NAME,\n        CASE \n            WHEN cc.TERM_CODE LIKE '%FA' THEN 'Fall'\n            WHEN cc.TERM_CODE LIKE '%SP' THEN 'Spring'\n        END AS offered_term, -- Map TERM_CODE to Fall or Spring\n        at.TERM_DESCRIPTION AS term_description,\n        sd.SCHOOL_NAME,\n        scd.COURSE_LEVEL,\n        cc.FALL_INSTRUCTORS,\n        cc.SPRING_INSTRUCTORS\n    FROM COURSE_CATALOG_SUBJECT_OFFERED cc\n    JOIN ACADEMIC_TERMS at ON cc.TERM_CODE = at.TERM_CODE \n    LEFT JOIN SIS_DEPARTMENT sd ON cc.DEPARTMENT_CODE = sd.DEPARTMENT_CODE \n    LEFT JOIN SIS_COURSE_DESCRIPTION scd ON cc.SUBJECT_CODE = scd.COURSE \n    WHERE cc.IS_OFFERED_THIS_YEAR = 'Y'\n      AND (cc.TERM_CODE LIKE '%FA' OR cc.TERM_CODE LIKE '%SP')  \n),\nSubjectsAggregated AS (\n    SELECT\n        SUBJECT_ID,\n        SUBJECT_TITLE,\n        DEPARTMENT_NAME,\n        SCHOOL_NAME,\n        COURSE_LEVEL,\n        TOTAL_UNITS,\n        offered_term,\n        term_description,\n        COUNT(DISTINCT FALL_INSTRUCTORS) AS num_fall_instructors,\n        COUNT(DISTINCT SPRING_INSTRUCTORS) AS num_spring_instructors\n    FROM SubjectsByTerm\n    GROUP BY \n        SUBJECT_ID, SUBJECT_TITLE, DEPARTMENT_NAME, \n        SCHOOL_NAME, COURSE_LEVEL, TOTAL_UNITS, \n        offered_term, term_description\n)\nSELECT\n    DEPARTMENT_NAME,\n    SCHOOL_NAME,\n    SUBJECT_ID,\n    SUBJECT_TITLE,\n    COURSE_LEVEL,\n    TOTAL_UNITS,\n    offered_term,\n    term_description,\n    num_fall_instructors,\n    num_spring_instructors\nFROM SubjectsAggregated\nORDER BY DEPARTMENT_NAME, SUBJECT_ID, SUBJECT_TITLE, offered_term;",
-    "mapping": {
-      "subjects": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.IS_OFFERED_THIS_YEAR"
-      ],
-      "department name": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.DEPARTMENT_NAME"
-      ],
-      "school name": [
-        "SIS_DEPARTMENT.SCHOOL_NAME"
-      ],
-      "subject ID": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
-      ],
-      "subject title": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_TITLE"
-      ],
-      "course level": [
-        "SIS_COURSE_DESCRIPTION.COURSE_LEVEL"
-      ],
-      "total units": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.TOTAL_UNITS"
-      ],
-      "term": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
-      ],
-      "term description": [
-        "ACADEMIC_TERMS.TERM_DESCRIPTION"
-      ],
-      "instructors": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.FALL_INSTRUCTORS",
-        "COURSE_CATALOG_SUBJECT_OFFERED.SPRING_INSTRUCTORS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For Political Science courses with HASS attributes, for each attribute, list the name and description of the attribute, the number of unique subjects, average units, and the total enrollment.",
     "sql": "WITH HASSAttributes AS (\r\n    SELECT \r\n        cc.HASS_ATTRIBUTE,\r\n        cc.HASS_ATTRIBUTE_DESC,\r\n        cc.SUBJECT_ID,\r\n        cc.SUBJECT_TITLE,\r\n        cc.TOTAL_UNITS,\r\n        sc.SUBJECT_CODE_DESC,\r\n        sos.NUM_ENROLLED_STUDENTS,\r\n        sd.DEPARTMENT_NAME\r\n    FROM \r\n        CIS_COURSE_CATALOG cc\r\n    JOIN \r\n        SIS_SUBJECT_CODE sc ON cc.SUBJECT_CODE = sc.SUBJECT_CODE\r\n    JOIN \r\n        SUBJECT_OFFERED_SUMMARY sos ON cc.SUBJECT_ID = sos.SUBJECT_ID\r\n    LEFT JOIN \r\n        SIS_DEPARTMENT sd ON sc.DEPARTMENT_CODE = sd.DEPARTMENT_CODE\r\n    WHERE \r\n        cc.HASS_ATTRIBUTE IS NOT NULL\r\n        AND sd.DEPARTMENT_NAME = 'Political Science' \r\n)\r\nSELECT \r\n    HASS_ATTRIBUTE,\r\n    HASS_ATTRIBUTE_DESC,\r\n    COUNT(DISTINCT SUBJECT_ID) AS num_subjects,\r\n    AVG(TOTAL_UNITS) AS avg_units,\r\n    SUM(NUM_ENROLLED_STUDENTS) AS total_enrollment\r\nFROM \r\n    HASSAttributes\r\nGROUP BY \r\n    HASS_ATTRIBUTE, HASS_ATTRIBUTE_DESC\r\nORDER BY \r\n    HASS_ATTRIBUTE, HASS_ATTRIBUTE_DESC;",
-    "mapping": {
-      "name": [
-        "CIS_COURSE_CATALOG.HASS_ATTRIBUTE"
-      ],
-      "description": [
-        "CIS_COURSE_CATALOG.HASS_ATTRIBUTE_DESC"
-      ],
-      "subjects": [
-        "CIS_COURSE_CATALOG.SUBJECT_ID"
-      ],
-      "units": [
-        "CIS_COURSE_CATALOG.TOTAL_UNITS"
-      ],
-      "enrollment": [
-        "SUBJECT_OFFERED_SUMMARY.NUM_ENROLLED_STUDENTS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "Group subjects by cluster type, department offering the subject, and the school name. For each group, list the cluster type, name of the department, school name, total number of subjects, total enrollment, and average enrollment. Exclude clusters or schools with no student data.",
     "sql": "WITH ClusterSummary AS (\r\n    SELECT\r\n        sos.CLUSTER_TYPE,\r\n        sos.OFFER_DEPT_NAME AS DEPARTMENT,\r\n        sd.SCHOOL_NAME,\r\n        COUNT(DISTINCT sos.SUBJECT_ID) AS num_subjects, \r\n        SUM(sos.NUM_ENROLLED_STUDENTS) AS total_enrollment, \r\n        AVG(sos.NUM_ENROLLED_STUDENTS) AS avg_enrollment\r\n    FROM \r\n        SUBJECT_OFFERED_SUMMARY sos\r\n    LEFT JOIN \r\n        SIS_COURSE_DESCRIPTION scd \r\n        ON sos.COURSE_NUMBER = scd.COURSE  \r\n    LEFT JOIN \r\n        SIS_DEPARTMENT sd \r\n        ON sos.OFFER_DEPT_CODE = sd.DEPARTMENT_CODE  \r\n    WHERE \r\n        sos.CLUSTER_TYPE IS NOT NULL\r\n        AND sos.NUM_ENROLLED_STUDENTS > 0 \r\n        AND sd.SCHOOL_NAME IS NOT NULL \r\n    GROUP BY \r\n        sos.CLUSTER_TYPE, sos.OFFER_DEPT_NAME, sd.SCHOOL_NAME\r\n)\r\nSELECT\r\n    CLUSTER_TYPE,\r\n    DEPARTMENT,\r\n    SCHOOL_NAME,\r\n    num_subjects,\r\n    total_enrollment,\r\n    avg_enrollment\r\nFROM \r\n    ClusterSummary\r\nORDER BY \r\n    CLUSTER_TYPE, DEPARTMENT, SCHOOL_NAME;\r",
-    "mapping": {
-      "cluster type": [
-        "SUBJECT_OFFERED_SUMMARY.CLUSTER_TYPE"
-      ],
-      "department": [
-        "SUBJECT_OFFERED_SUMMARY.OFFER_DEPT_NAME"
-      ],
-      "school name": [
-        "SIS_DEPARTMENT.SCHOOL_NAME"
-      ],
-      "subjects": [
-        "SUBJECT_OFFERED_SUMMARY.SUBJECT_ID"
-      ],
-      "enrollment": [
-        "SUBJECT_OFFERED_SUMMARY.NUM_ENROLLED_STUDENTS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "Group classes that take place in buildings at MIT by the building name and course level. For each group, provide the name of the building, the course level ('Graduate' or 'Undergraduate'), the total number of unique courses of such level, and total instructors for these courses. Include subtotals for each building and course level and a grand total across all buildings and course levels.",
     "sql": "WITH BuildingSubjectDetails AS (\n    SELECT\n        b.FAC_BUILDING_KEY,  \n        b.BUILDING_NAME,\n        s.SUBJECT_ID,\n        CASE\n            WHEN scd.COURSE_LEVEL = 'G' THEN 'Graduate'\n            WHEN scd.COURSE_LEVEL = 'U' THEN 'Undergraduate'\n            ELSE 'Other'\n        END AS course_level,\n        COUNT(DISTINCT s.RESPONSIBLE_FACULTY_NAME) AS num_instructors\n    FROM FAC_BUILDING b\n    JOIN SUBJECT_OFFERED_SUMMARY s ON b.FAC_BUILDING_KEY = s.OFFER_DEPT_CODE  \n    JOIN SIS_COURSE_DESCRIPTION scd ON s.COURSE_NUMBER = scd.COURSE\n    JOIN FAC_BUILDING_ADDRESS ba ON b.FAC_BUILDING_KEY = ba.BUILDING_KEY \n    WHERE b.SITE = 'MIT'\n    GROUP BY b.FAC_BUILDING_KEY, b.BUILDING_NAME, s.SUBJECT_ID, scd.COURSE_LEVEL\n),\nBuildingAggregates AS (\n    SELECT\n        BUILDING_NAME,\n        course_level,\n        COUNT(DISTINCT SUBJECT_ID) AS unique_courses,\n        SUM(num_instructors) AS total_instructors\n    FROM BuildingSubjectDetails\n    GROUP BY ROLLUP(BUILDING_NAME, course_level)\n)\nSELECT\n    BUILDING_NAME,\n    course_level,\n    unique_courses,\n    total_instructors\nFROM BuildingAggregates\nORDER BY unique_courses DESC, BUILDING_NAME;\n",
-    "mapping": {
-      "name of the building": [
-        "FAC_BUILDING.BUILDING_NAME"
-      ],
-      "course level": [
-        "SIS_COURSE_DESCRIPTION.COURSE_LEVEL"
-      ],
-      "courses": [
-        "SUBJECT_OFFERED_SUMMARY.SUBJECT_ID"
-      ],
-      "instructors": [
-        "SUBJECT_OFFERED_SUMMARY.RESPONSIBLE_FACULTY_NAME"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each course, provide the room number of course location, building name, building number, building city, building state, area, organization name, room usage, term code, course level, the total number of subjects, unique meeting times, and total units. Do not include meet place or meet times with NULL values.",
     "sql": "WITH MeetingPlaceDetails AS (\r\n    SELECT\r\n        c.MEET_PLACE AS room_number,\r\n        c.MEET_TIME,\r\n        c.TERM_CODE,\r\n        c.SUBJECT_ID,\r\n        c.TOTAL_UNITS,\r\n        b.BUILDING_NAME,\r\n        b.BUILDING_NUMBER,\r\n        ba.CITY AS building_city,\r\n        ba.STATE AS building_state,\r\n        fr.AREA,\r\n        fr.ORGANIZATION_NAME,\r\n        fmu.MAJOR_USE,\r\n        scd.COURSE_LEVEL AS course_level,\r\n        scd.COURSE_DESCRIPTION AS course_description\r\n    FROM \r\n        COURSE_CATALOG_SUBJECT_OFFERED c\r\n    JOIN \r\n        FAC_ROOMS fr ON c.MEET_PLACE = fr.ROOM \r\n    JOIN \r\n        FAC_BUILDING b ON fr.BUILDING_KEY = b.FAC_BUILDING_KEY  \r\n    JOIN \r\n        FAC_MAJOR_USE fmu ON fr.MAJOR_USE_KEY = fmu.MAJOR_USE_KEY \r\n    LEFT JOIN \r\n        FAC_BUILDING_ADDRESS ba ON b.FAC_BUILDING_KEY = ba.BUILDING_KEY\r\n    LEFT JOIN \r\n        SIS_COURSE_DESCRIPTION scd ON c.SUBJECT_ID = scd.COURSE\r\n    WHERE \r\n        c.MEET_PLACE IS NOT NULL\r\n        AND c.MEET_TIME IS NOT NULL\r\n),\r\nMeetingPlaceAggregates AS (\r\n    SELECT\r\n        room_number,\r\n        BUILDING_NAME,\r\n        BUILDING_NUMBER,\r\n        building_city,\r\n        building_state,\r\n        AREA,\r\n        ORGANIZATION_NAME,\r\n        MAJOR_USE,\r\n        TERM_CODE,\r\n        course_level,\r\n        COUNT(DISTINCT SUBJECT_ID) AS num_subjects,\r\n        COUNT(DISTINCT MEET_TIME) AS unique_meet_times,\r\n        SUM(TOTAL_UNITS) AS total_units\r\n    FROM \r\n        MeetingPlaceDetails\r\n    GROUP BY \r\n        room_number, BUILDING_NAME, BUILDING_NUMBER, building_city, \r\n        building_state, AREA, ORGANIZATION_NAME, MAJOR_USE, TERM_CODE, course_level\r\n)\r\nSELECT\r\n  room_number,\r\n    BUILDING_NAME,\r\n    BUILDING_NUMBER,\r\n    building_city,\r\n    building_state,\r\n    AREA,\r\n    ORGANIZATION_NAME,\r\n    MAJOR_USE,\r\n    TERM_CODE,\r\n    course_level,\r\n    num_subjects,\r\n    unique_meet_times,\r\n    total_units\r\nFROM \r\n    MeetingPlaceAggregates\r\nORDER BY \r\n    TERM_CODE, total_units DESC, room_number;\r",
-    "mapping": {
-      "room number": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.MEET_PLACE"
-      ],
-      "building name": [
-        "FAC_BUILDING.BUILDING_NAME"
-      ],
-      "building number": [
-        "FAC_BUILDING.BUILDING_NUMBER"
-      ],
-      "building city": [
-        "FAC_BUILDING_ADDRESS.CITY"
-      ],
-      "building state": [
-        "FAC_BUILDING_ADDRESS.STATE"
-      ],
-      "area": [
-        "FAC_ROOMS.AREA"
-      ],
-      "organization name": [
-        "FAC_ROOMS.ORGANIZATION_NAME"
-      ],
-      "room usage": [
-        "FAC_MAJOR_USE.MAJOR_USE"
-      ],
-      "term code": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.TERM_CODE"
-      ],
-      "course level": [
-        "SIS_COURSE_DESCRIPTION.COURSE_LEVEL"
-      ],
-      "subjects": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"
-      ],
-      "meeting times": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.MEET_TIME"
-      ],
-      "units": [
-        "COURSE_CATALOG_SUBJECT_OFFERED.TOTAL_UNITS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "Consider only books cataloged on and after 2000. For each library material status and department, list the material status, department name, number of associated catalog items, and the total number of enrolled students in courses using those materials. Include subtotals for each material status and a grand total across all status (the corresponding status field is 'Grand Total').",
     "sql": "WITH MaterialUsage AS (\r\n    SELECT\r\n        lms.LIBRARY_MATERIAL_STATUS,\r\n        sc.SUBJECT_CODE_DESC AS department,\r\n        COUNT(DISTINCT lrc.LIBRARY_RESERVE_CATALOG_KEY) AS num_catalog_items,\r\n        SUM(lso.NUM_ENROLLED_STUDENTS) AS total_students\r\n    FROM LIBRARY_RESERVE_MATRL_DETAIL lrd\r\n    JOIN LIBRARY_MATERIAL_STATUS lms ON lrd.LIBRARY_MATERIAL_STATUS_KEY = lms.LIBRARY_MATERIAL_STATUS_KEY\r\n    JOIN LIBRARY_RESERVE_CATALOG lrc ON lrd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY\r\n    JOIN LIBRARY_SUBJECT_OFFERED lso ON lrd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY\r\n    LEFT JOIN SIS_SUBJECT_CODE sc ON lso.COURSE_NUMBER = sc.COURSE_NUMBER\r\n    WHERE lrc.CATALOG_YEAR >= 2000\r\n    GROUP BY lms.LIBRARY_MATERIAL_STATUS, sc.SUBJECT_CODE_DESC\r\n),\r\nMaterialSubtotals AS (\r\n    SELECT\r\n        LIBRARY_MATERIAL_STATUS,\r\n        NULL AS department,\r\n        SUM(num_catalog_items) AS total_catalog_items,\r\n        SUM(total_students) AS total_students\r\n    FROM MaterialUsage\r\n    GROUP BY LIBRARY_MATERIAL_STATUS\r\n),\r\nMaterialGrandTotal AS (\r\n    SELECT\r\n        'Grand Total' AS LIBRARY_MATERIAL_STATUS,\r\n        NULL AS department,\r\n        SUM(num_catalog_items) AS total_catalog_items,\r\n        SUM(total_students) AS total_students\r\n    FROM MaterialUsage\r\n),\r\nMaterialCombined AS (\r\n    SELECT \r\n        LIBRARY_MATERIAL_STATUS,\r\n        department,\r\n        num_catalog_items,\r\n        total_students\r\n    FROM MaterialUsage\r\n    UNION ALL\r\n    SELECT \r\n        LIBRARY_MATERIAL_STATUS,\r\n        department,\r\n        total_catalog_items,\r\n        total_students\r\n    FROM MaterialSubtotals\r\n    UNION ALL\r\n    SELECT \r\n        LIBRARY_MATERIAL_STATUS,\r\n        department,\r\n        total_catalog_items,\r\n        total_students\r\n    FROM MaterialGrandTotal\r\n)\r\nSELECT\r\n    COALESCE(LIBRARY_MATERIAL_STATUS, 'Subtotal') AS library_material_status,\r\n    department,\r\n    num_catalog_items,\r\n    total_students\r\nFROM MaterialCombined\r\nORDER BY \r\n    CASE \r\n        WHEN LIBRARY_MATERIAL_STATUS = 'Grand Total' THEN 1 \r\n        WHEN department IS NULL THEN 2\r\n        ELSE 0 \r\n    END,\r\n    LIBRARY_MATERIAL_STATUS,\r\n    department;\r",
-    "mapping": {
-      "material status": [
-        "LIBRARY_MATERIAL_STATUS.LIBRARY_MATERIAL_STATUS"
-      ],
-      "department name": [
-        "SIS_SUBJECT_CODE.SUBJECT_CODE_DESC"
-      ],
-      "catalog items": [
-        "LIBRARY_RESERVE_CATALOG.LIBRARY_RESERVE_CATALOG_KEY"
-      ],
-      "enrolled students": [
-        "LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each department in the library system, list the name of the department, total number of courses using library materials, the number of catalog items associated with those courses, and the average enrollment per course. Include a grand total across all departments (the corresponding department field should be 'Grand Total').",
     "sql": "WITH DepartmentLibraryUsage AS (\r\n    SELECT\r\n        lci.DEPARTMENT,\r\n        lci.COURSE_NAME,\r\n        COUNT(DISTINCT lrc.LIBRARY_RESERVE_CATALOG_KEY) AS num_catalog_items,\r\n        SUM(lso.NUM_ENROLLED_STUDENTS) AS total_students\r\n    FROM LIBRARY_RESERVE_MATRL_DETAIL lrd\r\n    JOIN LIBRARY_COURSE_INSTRUCTOR lci ON lrd.LIBRARY_COURSE_INSTRUCTOR_KEY = lci.LIBRARY_COURSE_INSTRUCTOR_KEY\r\n    JOIN LIBRARY_RESERVE_CATALOG lrc ON lrd.LIBRARY_RESERVE_CATALOG_KEY = lrc.LIBRARY_RESERVE_CATALOG_KEY\r\n    JOIN LIBRARY_SUBJECT_OFFERED lso ON lrd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY\r\n    WHERE lso.NUM_ENROLLED_STUDENTS > 0 \r\n    GROUP BY lci.DEPARTMENT, lci.COURSE_NAME\r\n),\r\nDepartmentAggregates AS (\r\n    SELECT\r\n        DEPARTMENT,\r\n        COUNT(DISTINCT COURSE_NAME) AS total_courses,  \r\n        SUM(num_catalog_items) AS total_catalog_items,\r\n        AVG(total_students) AS avg_students_per_course\r\n    FROM DepartmentLibraryUsage\r\n    GROUP BY DEPARTMENT\r\n),\r\nGrandTotal AS (\r\n    SELECT\r\n        'Grand Total' AS DEPARTMENT,\r\n        SUM(total_courses) AS total_courses,\r\n        SUM(total_catalog_items) AS total_catalog_items,\r\n        AVG(avg_students_per_course) AS avg_students_per_course\r\n    FROM DepartmentAggregates\r\n)\r\nSELECT *\r\nFROM (\r\n    SELECT * FROM GrandTotal\r\n    UNION ALL\r\n    SELECT * FROM DepartmentAggregates\r\n) CombinedResults\r\nORDER BY \r\n    CASE WHEN DEPARTMENT = 'Grand Total' THEN 0 ELSE 1 END, \r\n    DEPARTMENT;",
-    "mapping": {
-      "name of the department": [
-        "LIBRARY_COURSE_INSTRUCTOR.DEPARTMENT"
-      ],
-      "courses": [
-        "LIBRARY_COURSE_INSTRUCTOR.COURSE_NAME"
-      ],
-      "catalog items": [
-        "LIBRARY_RESERVE_CATALOG.LIBRARY_RESERVE_CATALOG_KEY"
-      ],
-      "enrollment": [
-        "LIBRARY_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each department and school offering courses with materials, list the department name, school name, number of unique course materials, number of courses, average new and used shelf prices of materials, total material records, and number of distinct material statuses. Include a grand total across all schools and departments (the corresponding school and department fields should be null).",
     "sql": "WITH MaterialCostDetails AS (\r\n    SELECT\r\n        tso.OFFER_DEPT_NAME AS department_name,\r\n        tso.SUBJECT_TITLE,\r\n        tm.TITLE AS material_title,\r\n        tm.NEW_SHELF_PRICE,\r\n        tm.USED_SHELF_PRICE,\r\n        tso.NUM_ENROLLED_STUDENTS,\r\n        tms.TIP_MATERIAL_STATUS AS material_status,\r\n        tms.TIP_MATERIAL_STATUS_CODE AS material_status_code,\r\n        td.RECORD_COUNT AS material_record_count,\r\n        ts.SCHOOL_NAME AS school_name \r\n    FROM TIP_DETAIL td\r\n    JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY\r\n    JOIN TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY\r\n    JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY\r\n    JOIN SIS_DEPARTMENT ts ON tso.OFFER_DEPT_CODE = ts.DEPARTMENT_CODE\r\n    WHERE tso.IS_NO_COURSE_MATERIAL = 'N' \r\n),\r\nMaterialCostAggregates AS (\r\n    SELECT\r\n        department_name,\r\n        school_name, -- Added SCHOOL_NAME for aggregation\r\n        COUNT(DISTINCT material_title) AS num_unique_materials,\r\n        COUNT(DISTINCT SUBJECT_TITLE) AS num_courses,\r\n        AVG(NEW_SHELF_PRICE) AS avg_new_price,\r\n        AVG(USED_SHELF_PRICE) AS avg_used_price,\r\n        SUM(material_record_count) AS total_material_records,\r\n        COUNT(DISTINCT material_status) AS num_material_statuses\r\n    FROM MaterialCostDetails\r\n    GROUP BY department_name, school_name\r\n),\r\nGrandTotal AS (\r\n    SELECT\r\n        NULL AS department_name,\r\n        NULL AS school_name,\r\n        COUNT(DISTINCT material_title) AS num_unique_materials,\r\n        COUNT(DISTINCT SUBJECT_TITLE) AS num_courses,\r\n        AVG(NEW_SHELF_PRICE) AS avg_new_price,\r\n        AVG(USED_SHELF_PRICE) AS avg_used_price,\r\n        SUM(material_record_count) AS total_material_records,\r\n        COUNT(DISTINCT material_status) AS num_material_statuses\r\n    FROM MaterialCostDetails\r\n)\r\nSELECT\r\n    department_name,\r\n    school_name,\r\n    num_unique_materials,\r\n    num_courses,\r\n    avg_new_price,\r\n    avg_used_price,\r\n    total_material_records,\r\n    num_material_statuses\r\nFROM MaterialCostAggregates\r\nUNION ALL\r\nSELECT\r\n    department_name,\r\n    school_name,\r\n    num_unique_materials,\r\n    num_courses,\r\n    avg_new_price,\r\n    avg_used_price,\r\n    total_material_records,\r\n    num_material_statuses\r\nFROM GrandTotal\r\nORDER BY school_name, department_name;",
-    "mapping": {
-      "department name": [
-        "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"
-      ],
-      "school name": [
-        "SIS_DEPARTMENT.SCHOOL_NAME"
-      ],
-      "course materials": [
-        "TIP_MATERIAL.TITLE"
-      ],
-      "courses": [
-        "TIP_SUBJECT_OFFERED.SUBJECT_TITLE"
-      ],
-      "new": [
-        "TIP_MATERIAL.NEW_SHELF_PRICE"
-      ],
-      "used": [
-        "TIP_MATERIAL.USED_SHELF_PRICE"
-      ],
-      "material records": [
-        "TIP_DETAIL.RECORD_COUNT"
-      ],
-      "material statuses": [
-        "TIP_MATERIAL_STATUS.TIP_MATERIAL_STATUS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each TIP material status, list the total number of unique materials associated with the status, the total number of records associated with the status, and the total student enrollment associated with the status. Any material status with null values should be displayed as 'No material status'. Additionally, include a grand total across all material status (the material status for this row should be displayed as 'Grand Total').",
     "sql": "WITH MaterialStatusDetails AS (\n    SELECT\n        tms.TIP_MATERIAL_STATUS AS material_status,\n        tm.TITLE AS material_title,\n        td.RECORD_COUNT,\n        tso.NUM_ENROLLED_STUDENTS\n    FROM TIP_DETAIL td\n    JOIN TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY\n    JOIN TIP_MATERIAL tm ON td.TIP_MATERIAL_KEY = tm.TIP_MATERIAL_KEY\n    JOIN TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY\n    WHERE td.RECORD_COUNT > 0 \n),\nMaterialStatusAggregates AS (\n    SELECT\n        CASE\n            WHEN GROUPING(material_status) = 1 THEN NULL  \n            WHEN material_status IS NULL THEN 'No material status'\n            ELSE material_status\n        END AS material_status,\n        COUNT(DISTINCT material_title) AS num_materials,\n        SUM(RECORD_COUNT) AS total_record_count,\n        SUM(NUM_ENROLLED_STUDENTS) AS total_enrollment\n    FROM MaterialStatusDetails\n    GROUP BY ROLLUP(material_status)\n)\nSELECT\n    COALESCE(material_status, 'Grand Total') AS material_status,\n    num_materials,\n    total_record_count,\n    total_enrollment\nFROM MaterialStatusAggregates\nORDER BY \n    CASE WHEN material_status = 'Grand Total' THEN 1 ELSE 0 END, \n    total_record_count DESC, \n    material_status;",
-    "mapping": {
-      "materials": [
-        "TIP_MATERIAL.TITLE"
-      ],
-      "records": [
-        "TIP_DETAIL.RECORD_COUNT"
-      ],
-      "student enrollment": [
-        "TIP_SUBJECT_OFFERED.NUM_ENROLLED_STUDENTS"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each room, list its associated building name, floor number, room number, ownership type, number of rooms, area, and percentage of area relative to the building. Include subtotals across floors, subtotals across all floors for each building, and a grand total across all buildings. For the subtotal for each building and the grand total, the percentage of area should be relative to area of all buildings. All numeric values should be rounded to integers and formatted using commas as thousands separators except the relative percentages which should be rounded to two decimal places.",
     "sql": "WITH FloorStats AS (\r\n    SELECT\r\n        f.FCLT_BUILDING_KEY,\r\n        b.BUILDING_NAME_LONG AS Building_Name,\r\n        f.FLOOR,\r\n        r.BUILDING_ROOM AS Room,\r\n        COUNT(r.FCLT_ROOM_KEY) AS Room_Count,\r\n        SUM(r.AREA) AS Total_Floor_Area,\r\n        SUM(SUM(r.AREA)) OVER (PARTITION BY f.FCLT_BUILDING_KEY) AS Building_Total_Area,\r\n        SUM(SUM(r.AREA)) OVER () AS Overall_Total_Area,\r\n        b.OWNERSHIP_TYPE\r\n    FROM\r\n        FCLT_FLOOR f\r\n    LEFT JOIN\r\n        FCLT_ROOMS r ON f.FCLT_FLOOR_KEY = r.FCLT_FLOOR_KEY\r\n    LEFT JOIN\r\n        FCLT_BUILDING b ON f.FCLT_BUILDING_KEY = b.FCLT_BUILDING_KEY\r\n    LEFT JOIN\r\n        FCLT_ORGANIZATION o ON b.COST_COLLECTOR_KEY = o.FCLT_ORGANIZATION_KEY\r\n    GROUP BY\r\n        f.FCLT_BUILDING_KEY, b.BUILDING_NAME_LONG, f.FLOOR, r.BUILDING_ROOM, b.OWNERSHIP_TYPE\r\n),\r\nRollupWithPercentages AS (\r\n    SELECT\r\n        Building_Name,\r\n        FLOOR,\r\n        CASE \r\n            WHEN GROUPING(Room) = 0 THEN Room \r\n            ELSE NULL \r\n        END AS Room,\r\n        CASE \r\n            WHEN GROUPING_ID(Building_Name, FLOOR, Room) > 0 THEN NULL\r\n            ELSE OWNERSHIP_TYPE\r\n        END AS OWNERSHIP_TYPE,\r\n        SUM(Room_Count) AS Total_Rooms,\r\n        SUM(Total_Floor_Area) AS Total_Area,\r\n        MAX(Building_Total_Area) AS Building_Total_Area,\r\n        MAX(Overall_Total_Area) AS Overall_Total_Area\r\n    FROM\r\n        FloorStats\r\n    GROUP BY\r\n        ROLLUP(Building_Name, FLOOR, Room),\r\n        OWNERSHIP_TYPE\r\n),\r\nGrandTotal AS (\r\n    SELECT\r\n        NULL AS Building_Name,\r\n        NULL AS FLOOR,\r\n        NULL AS Room,\r\n        NULL AS OWNERSHIP_TYPE,\r\n        SUM(Total_Rooms) AS Total_Rooms,\r\n        SUM(Total_Area) AS Total_Area,\r\n        NULL AS Building_Total_Area,\r\n        MAX(Overall_Total_Area) AS Overall_Total_Area,\r\n        0 AS SortOrder,\r\n        100 AS Percent_Of_Total -- Explicitly set the grand total percentage to 100\r\n    FROM\r\n        RollupWithPercentages\r\n    WHERE\r\n        Building_Name IS NOT NULL\r\n),\r\nAllData AS (\r\n    SELECT \r\n        0 AS SortOrder,\r\n        Building_Name,\r\n        FLOOR,\r\n        Room,\r\n        NULL AS OWNERSHIP_TYPE,\r\n        Total_Rooms,\r\n        Total_Area,\r\n        Percent_Of_Total\r\n    FROM GrandTotal\r\n    UNION ALL\r\n    SELECT \r\n        1 AS SortOrder,\r\n        Building_Name,\r\n        FLOOR,\r\n        Room,\r\n        CASE \r\n            WHEN Building_Name IS NOT NULL THEN OWNERSHIP_TYPE\r\n            ELSE NULL\r\n        END AS OWNERSHIP_TYPE,\r\n        Total_Rooms,\r\n        Total_Area,\r\n        CASE\r\n            WHEN FLOOR IS NOT NULL AND Building_Total_Area > 0 THEN ROUND(Total_Area * 100.0 / Building_Total_Area, 2)\r\n            WHEN FLOOR IS NULL AND Building_Name IS NOT NULL AND Overall_Total_Area > 0 THEN ROUND(Total_Area * 100.0 / Overall_Total_Area, 2)\r\n            ELSE NULL\r\n        END AS Percent_Of_Total\r\n    FROM RollupWithPercentages\r\n)\r\nSELECT \r\n    Building_Name,\r\n    FLOOR,\r\n    Room,\r\n    OWNERSHIP_TYPE,\r\n    TO_CHAR(Total_Rooms, '999,999') AS Total_Rooms,\r\n    TO_CHAR(Total_Area, '999,999,999') AS Total_Area,\r\n    Percent_Of_Total\r\nFROM \r\n    AllData\r\nORDER BY \r\n    SortOrder,\r\n    Building_Name,\r\n    FLOOR,\r\n    Room;\r",
-    "mapping": {
-      "room": [
-        "FCLT_ROOMS.FCLT_ROOM_KEY"
-      ],
-      "building name": [
-        "FCLT_BUILDING.BUILDING_NAME_LONG"
-      ],
-      "floor number": [
-        "FCLT_FLOOR.FLOOR"
-      ],
-      "room number": [
-        "FCLT_ROOMS.BUILDING_ROOM"
-      ],
-      "ownership type": [
-        "FCLT_BUILDING.OWNERSHIP_TYPE"
-      ],
-      "number of rooms": [
-        "FCLT_ROOMS.FCLT_ROOM_KEY"
-      ],
-      "area": [
-        "FCLT_ROOMS.AREA"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each financial aid year and academic year, list the number of fiscal periods, quarters, the first and last term date, and number of distinct department-level term parameters.",
     "sql": "WITH FinancialAidDetails AS (\r\n    SELECT \r\n        at.TERM_CODE,\r\n        at.TERM_DESCRIPTION,\r\n        at.ACADEMIC_YEAR,\r\n        at.FINANCIAL_AID_YEAR,\r\n        td.START_DATE AS Term_Start_Date,\r\n        td.END_DATE AS Term_End_Date,\r\n        tm.FISCAL_PERIOD,\r\n        tm.FISCAL_YEAR,\r\n        tq.FY_QUARTER_CODE,\r\n        tq.QUARTER_START_DATE,\r\n        tq.QUARTER_END_DATE,\r\n        tp.TERM_PARAMETER AS Dept_Term_Param\r\n    FROM \r\n        ACADEMIC_TERMS at\r\n    JOIN \r\n        TIME_DAY td ON at.TERM_START_DATE = td.CALENDAR_DATE\r\n    JOIN \r\n        TIME_MONTH tm ON td.FISCAL_PERIOD = tm.FISCAL_PERIOD AND td.FISCAL_YEAR = tm.FISCAL_YEAR\r\n    JOIN \r\n        TIME_QUARTER tq ON tm.FISCAL_YEAR = tq.FISCAL_YEAR AND tm.FY_QUARTER_CODE = tq.FY_QUARTER_CODE\r\n    LEFT JOIN \r\n        ACADEMIC_TERM_PARAMETER tp ON at.TERM_CODE = tp.TERM_CODE\r\n    WHERE \r\n        at.FINANCIAL_AID_YEAR IS NOT NULL\r\n)\r\nSELECT \r\n    FINANCIAL_AID_YEAR,\r\n    ACADEMIC_YEAR,\r\n    COUNT(DISTINCT FISCAL_PERIOD) AS Total_Fiscal_Periods,\r\n    COUNT(DISTINCT FY_QUARTER_CODE) AS Total_Quarters,\r\n    MIN(Term_Start_Date) AS First_Term_Start_Date,\r\n    MAX(Term_End_Date) AS Last_Term_End_Date,\r\n    COUNT(DISTINCT Dept_Term_Param) AS Distinct_Term_Params\r\nFROM \r\n    FinancialAidDetails\r\nGROUP BY \r\n    FINANCIAL_AID_YEAR, ACADEMIC_YEAR\r\nORDER BY \r\n    FINANCIAL_AID_YEAR DESC, ACADEMIC_YEAR ASC;\r",
-    "mapping": {
-      "financial aid year": [
-        "ACADEMIC_TERMS.FINANCIAL_AID_YEAR"
-      ],
-      "academic year": [
-        "ACADEMIC_TERMS.ACADEMIC_YEAR"
-      ],
-      "fiscal periods": [
-        "TIME_MONTH.FISCAL_PERIOD"
-      ],
-      "quarters": [
-        "TIME_QUARTER.FY_QUARTER_CODE"
-      ],
-      "term date": [
-        "TIME_QUARTER.QUARTER_START_DATE",
-        "TIME_DAY.START_DATE",
-        "TIME_DAY.END_DATE",
-        "TIME_QUARTER.QUARTER_END_DATE"
-      ],
-      "department-level term parameters": [
-        "ACADEMIC_TERM_PARAMETER.TERM_PARAMETER"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "Group buildings by campus sectors. For each group, list the campus sector, name of the building, city and state where the building is located, total number of floors, total assignable area, total number of rooms, total number of organizations, ownership type, and a rank column indicating the order (1-indexed) of this row within each sector based on the descending order of assignable area. Include subtotals for each sector and a grand total across all sectors. The subtotal and grand total only need to computed over the total number of floors and assignable area.",
     "sql": "WITH BuildingArea AS (\r\n    SELECT \r\n        b.CAMPUS_SECTOR,\r\n        b.BUILDING_NAME_LONG AS Building_Name,\r\n        f.FLOOR AS Floor_Number,\r\n        b.ASSIGNABLE_AREA,\r\n        ba.CITY AS Building_City,\r\n        ba.STATE AS Building_State\r\n    FROM \r\n        FCLT_BUILDING b\r\n    LEFT JOIN \r\n        FCLT_FLOOR f ON b.FCLT_BUILDING_KEY = f.FCLT_BUILDING_KEY\r\n    LEFT JOIN \r\n        FCLT_BUILDING_ADDRESS ba ON b.FCLT_BUILDING_KEY = ba.FCLT_BUILDING_KEY\r\n),\r\nTotalRooms AS (\r\n    SELECT \r\n        b.BUILDING_NAME_LONG AS Building_Name,\r\n        COUNT(r.FCLT_ROOM_KEY) AS Total_Rooms\r\n    FROM \r\n        FCLT_BUILDING b\r\n    LEFT JOIN \r\n        FCLT_ROOMS r ON b.FCLT_BUILDING_KEY = r.FCLT_BUILDING_KEY\r\n    GROUP BY \r\n        b.BUILDING_NAME_LONG\r\n),\r\nTotalOrganizations AS (\r\n    SELECT \r\n        b.BUILDING_NAME_LONG AS Building_Name,\r\n        COUNT(DISTINCT o.FCLT_ORGANIZATION_KEY) AS Total_Organizations\r\n    FROM \r\n        FCLT_BUILDING b\r\n    LEFT JOIN \r\n        FCLT_ROOMS r ON b.FCLT_BUILDING_KEY = r.FCLT_BUILDING_KEY\r\n    LEFT JOIN \r\n        FCLT_ORGANIZATION o ON r.FCLT_ORGANIZATION_KEY = o.FCLT_ORGANIZATION_KEY\r\n    GROUP BY \r\n        b.BUILDING_NAME_LONG\r\n),\r\nBuildingDetails AS (\r\n    SELECT \r\n        b.BUILDING_NAME_LONG AS Building_Name,\r\n        b.OWNERSHIP_TYPE AS Ownership_Type\r\n    FROM \r\n        FCLT_BUILDING b\r\n),\r\nRollupRows AS (\r\n    SELECT \r\n        CASE WHEN GROUPING(CAMPUS_SECTOR) = 1 THEN NULL ELSE CAMPUS_SECTOR END AS Campus_Sector,\r\n        CASE WHEN GROUPING(Building_Name) = 1 THEN NULL ELSE Building_Name END AS Building_Name,\r\n        CASE WHEN GROUPING(Building_Name) = 1 THEN NULL ELSE MAX(Building_City) END AS Building_City,\r\n        CASE WHEN GROUPING(Building_Name) = 1 THEN NULL ELSE MAX(Building_State) END AS Building_State,\r\n        COUNT(DISTINCT Floor_Number) AS Total_Floors,\r\n        SUM(ASSIGNABLE_AREA) AS Assignable_Area\r\n    FROM \r\n        BuildingArea\r\n    GROUP BY \r\n        ROLLUP(CAMPUS_SECTOR, Building_Name)\r\n),\r\nRankedRows AS (\r\n    SELECT \r\n        rr.Campus_Sector,\r\n        rr.Building_Name,\r\n        rr.Building_City,\r\n        rr.Building_State,\r\n        rr.Total_Floors,\r\n        rr.Assignable_Area,\r\n        tr.Total_Rooms,\r\n        toz.Total_Organizations,\r\n        bd.Ownership_Type,\r\n        CASE \r\n            WHEN rr.Building_Name IS NOT NULL THEN \r\n                RANK() OVER (PARTITION BY rr.Campus_Sector ORDER BY rr.Assignable_Area DESC) - 1\r\n            ELSE NULL\r\n        END AS Adjusted_Sector_Rank\r\n    FROM \r\n        RollupRows rr\r\n    LEFT JOIN \r\n        TotalRooms tr ON rr.Building_Name = tr.Building_Name\r\n    LEFT JOIN \r\n        TotalOrganizations toz ON rr.Building_Name = toz.Building_Name\r\n    LEFT JOIN \r\n        BuildingDetails bd ON rr.Building_Name = bd.Building_Name\r\n    WHERE rr.Campus_Sector IS NOT NULL\r\n),\r\nGrandTotal AS (\r\n    SELECT \r\n        NULL AS Campus_Sector,\r\n        NULL AS Building_Name,\r\n        NULL AS Building_City,\r\n        NULL AS Building_State,\r\n        SUM(Total_Floors) AS Total_Floors,\r\n        SUM(Assignable_Area) AS Assignable_Area,\r\n        NULL AS Total_Rooms,\r\n        NULL AS Total_Organizations,\r\n        NULL AS Ownership_Type,\r\n        1 AS Adjusted_Sector_Rank\r\n    FROM \r\n        RankedRows\r\n)\r\nSELECT \r\n    Campus_Sector,\r\n    Building_Name,\r\n    Building_City,\r\n    Building_State,\r\n    Total_Floors,\r\n    TO_CHAR(Assignable_Area, '999,999,999') AS Assignable_Area,\r\n    Total_Rooms,\r\n    Total_Organizations,\r\n    Ownership_Type,\r\n    Adjusted_Sector_Rank\r\nFROM \r\n    RankedRows\r\nUNION ALL\r\nSELECT \r\n    Campus_Sector,\r\n    Building_Name,\r\n    NULL AS Building_City,\r\n    NULL AS Building_State,\r\n    Total_Floors,\r\n    TO_CHAR(Assignable_Area, '999,999,999') AS Assignable_Area,\r\n    NULL AS Total_Rooms,  \r\n    NULL AS Total_Organizations, \r\n    Ownership_Type,\r\n    Adjusted_Sector_Rank\r\nFROM \r\n    GrandTotal\r\nORDER BY \r\n    Campus_Sector,\r\n    Adjusted_Sector_Rank,\r\n    Building_Name;",
-    "mapping": {
-      "campus sector": [
-        "FCLT_BUILDING.CAMPUS_SECTOR"
-      ],
-      "name of the building": [
-        "FCLT_BUILDING.BUILDING_NAME_LONG"
-      ],
-      "city": [
-        "FCLT_BUILDING_ADDRESS.CITY"
-      ],
-      "state": [
-        "FCLT_BUILDING_ADDRESS.STATE"
-      ],
-      "floors": [
-        "FCLT_FLOOR.FLOOR"
-      ],
-      "area": [
-        "FCLT_BUILDING.ASSIGNABLE_AREA"
-      ],
-      "rooms": [
-        "FCLT_ROOMS.FCLT_ROOM_KEY"
-      ],
-      "organizations": [
-        "FCLT_ORGANIZATION.FCLT_ORGANIZATION_KEY"
-      ],
-      "ownership type": [
-        "FCLT_BUILDING.OWNERSHIP_TYPE"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each department, list the name of the department, the title of the TIP material associated with the department, author, ISBN, and whether it is available in the library reserves ('Available in Library' if yes and 'Not Available in Library' otherwise), the total number of materials available in the library for the department, and the total number of available materials across all departments.",
     "sql": "WITH TIPMaterials AS (\n    SELECT\n        tm.TIP_MATERIAL_KEY,\n        tm.TITLE AS TIP_Title,\n        tm.AUTHOR AS TIP_Author,\n        tm.ISBN AS TIP_ISBN,\n        tso.OFFER_DEPT_NAME AS Department\n    FROM\n        TIP_MATERIAL tm\n    JOIN\n        TIP_DETAIL td ON tm.TIP_MATERIAL_KEY = td.TIP_MATERIAL_KEY\n    JOIN\n        TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY\n),\nLibraryReserves AS (\n    SELECT\n        lrc.LIBRARY_RESERVE_CATALOG_KEY,\n        lrc.CATALOG_TITLE AS Library_Title,\n        lrc.CATALOG_AUTHOR_NAME AS Library_Author,\n        lrc.CATALOG_ISBN AS Library_ISBN,\n        lrmd.LIBRARY_MATERIAL_STATUS_KEY,\n        lrmd.TERM_CODE,\n        lso.OFFER_DEPT_NAME AS Department\n    FROM\n        LIBRARY_RESERVE_CATALOG lrc\n    JOIN\n        LIBRARY_RESERVE_MATRL_DETAIL lrmd ON lrc.LIBRARY_RESERVE_CATALOG_KEY = lrmd.LIBRARY_RESERVE_CATALOG_KEY\n    JOIN\n        LIBRARY_SUBJECT_OFFERED lso ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY\n),\nCombinedData AS (\n    SELECT\n        tm.TIP_Title,\n        tm.TIP_Author,\n        tm.TIP_ISBN,\n        tm.Department AS TIP_Department,\n        lr.Library_Title,\n        lr.Library_Author,\n        lr.Library_ISBN,\n        lr.Department AS Library_Department,\n        CASE \n            WHEN lr.Library_ISBN IS NOT NULL THEN 'Available in Library'\n            ELSE 'Not Available in Library'\n        END AS Availability_Status\n    FROM\n        TIPMaterials tm\n    LEFT JOIN\n        LibraryReserves lr ON tm.TIP_ISBN = lr.Library_ISBN\n)\nSELECT\n    TIP_Department,\n    TIP_Title,\n    TIP_Author,\n    TIP_ISBN,\n    Availability_Status,\n    COUNT(CASE WHEN Availability_Status = 'Available in Library' THEN 1 END) OVER (PARTITION BY TIP_Department) AS Available_Materials_Per_Dept,\n    COUNT(CASE WHEN Availability_Status = 'Available in Library' THEN 1 END) OVER () AS Total_Available_Materials\nFROM\n    CombinedData\nORDER BY\n    TIP_Department, TIP_Title;\n",
-    "mapping": {
-      "name of the department": [
-        "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME",
-        "TIP_MATERIAL.DEPARTMENT"
-      ],
-      "title of the TIP material": [
-        "TIP_MATERIAL.TITLE",
-        "TIP_MATERIAL.TIP_TITLE"
-      ],
-      "author": [
-        "TIP_MATERIAL.TIP_AUTHOR",
-        "TIP_MATERIAL.AUTHOR"
-      ],
-      "ISBN": [
-        "TIP_MATERIAL.ISBN",
-        "TIP_MATERIAL.TIP_ISBN"
-      ],
-      "available": [
-        "TIP_MATERIAL.TIP_ISBN",
-        "LIBRARY_RESERVE_CATALOG.CATALOG_ISBN"
-      ]
-    }
+    "db_id": "dw"
   },
   {
-    "db": "dw",
     "question": "For each department and material status, list the name of the department, the material status, the number of TIP materials associated with this department and status, the number of library materials associated with this department and status, the total number of TIP and library materials associated with this department and status. Include a subtotal for each department and a grand total across all departments.",
     "sql": "WITH TIPMaterialStatuses AS (\n    SELECT\n        tso.OFFER_DEPT_NAME AS Department,\n        tms.TIP_MATERIAL_STATUS AS Status,\n        COUNT(td.TIP_MATERIAL_KEY) AS Total_TIP_Materials\n    FROM\n        TIP_DETAIL td\n    JOIN\n        TIP_SUBJECT_OFFERED tso ON td.TIP_SUBJECT_OFFERED_KEY = tso.TIP_SUBJECT_OFFERED_KEY\n    JOIN\n        TIP_MATERIAL_STATUS tms ON td.TIP_MATERIAL_STATUS_KEY = tms.TIP_MATERIAL_STATUS_KEY\n    GROUP BY\n        tso.OFFER_DEPT_NAME, tms.TIP_MATERIAL_STATUS\n),\nLibraryMaterialStatuses AS (\n    SELECT\n        lso.OFFER_DEPT_NAME AS Department,\n        lms.LIBRARY_MATERIAL_STATUS AS Status,\n        COUNT(lrmd.LIBRARY_RESERVE_CATALOG_KEY) AS Total_Library_Materials\n    FROM\n        LIBRARY_RESERVE_MATRL_DETAIL lrmd\n    JOIN\n        LIBRARY_SUBJECT_OFFERED lso ON lrmd.LIBRARY_SUBJECT_OFFERED_KEY = lso.LIBRARY_SUBJECT_OFFERED_KEY\n    JOIN\n        LIBRARY_MATERIAL_STATUS lms ON lrmd.LIBRARY_MATERIAL_STATUS_KEY = lms.LIBRARY_MATERIAL_STATUS_KEY\n    GROUP BY\n        lso.OFFER_DEPT_NAME, lms.LIBRARY_MATERIAL_STATUS\n),\nCombinedStatuses AS (\n    SELECT\n        COALESCE(tms.Department, lms.Department) AS Department,\n        COALESCE(tms.Status, lms.Status) AS Status,\n        COALESCE(tms.Total_TIP_Materials, 0) AS Total_TIP_Materials,\n        COALESCE(lms.Total_Library_Materials, 0) AS Total_Library_Materials\n    FROM\n        TIPMaterialStatuses tms\n    FULL OUTER JOIN\n        LibraryMaterialStatuses lms ON tms.Department = lms.Department AND tms.Status = lms.Status\n)\nSELECT\n    Department,\n    Status,\n    SUM(Total_TIP_Materials) AS Total_TIP_Materials,\n    SUM(Total_Library_Materials) AS Total_Library_Materials,\n    SUM(Total_TIP_Materials + Total_Library_Materials) AS Total_All_Materials\nFROM\n    CombinedStatuses\nGROUP BY\n    ROLLUP(Department, Status)\nORDER BY\n    Department, Status;\n",
-    "mapping": {
-      "name of the department": [
-        "TIP_SUBJECT_OFFERED.OFFER_DEPT_NAME"
-      ],
-      "material status": [
-        "TIP_MATERIAL_STATUS.STATUS",
-        "LIBRARY_MATERIAL_STATUS.STATUS"
-      ],
-      "TIP materials": [
-        "TIP_DETAIL.TIP_MATERIAL_KEY",
-        "TIP_MATERIAL_STATUS.TOTAL_TIP_MATERIALS"
-      ],
-      "library materials": [
-        "LIBRARY_MATERIAL_STATUS.TOTAL_LIBRARY_MATERIALS"
-      ]
-    }
+    "db_id": "dw"
   }
 ]
+

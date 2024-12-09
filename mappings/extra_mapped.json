@@ -1,0 +1,19 @@
+[
+  {
+    "question": "List each academic year, the term code, and the number of newly introduced subjects in this term. Display the academic year only if it differs from the previous entry. Include a grand total (the corresponding year field should be 'TOTAL') stating the total number of subjects across all academic years.",
+    "sql": "select CASE WHEN Lag(ACADEMIC_YEAR)over (order by ata.TERM_CODE) =ACADEMIC_YEAR THEN NULL ELSE ACADEMIC_YEAR end AS ACADEMIC_YEAR,ata.TERM_CODE, COUNT(distinct si) from ACADEMIC_TERMS_ALL ata LEFT OUTER JOIN (select * from (select CASE WHEN LAG(subject_id) over(ORDER BY SUBJECT_ID, TERM_CODE ASC, ACADEMIC_YEAR ASC) = subject_id then NULL else subject_id end as si, case when LAG(TERM_CODE) over (ORDER BY SUBJECT_ID, TERM_CODE ASC, ACADEMIC_YEAR ASC) =TERM_CODE then null else term_code end as term_code from course_catalog_subject_offered) where si is not null) a ON ata.TERM_CODE=a.TERM_CODE GROUP BY ata.TERM_CODE, ACADEMIC_YEAR UNION ALL SELECT 'TOTAL', NULL, COUNT(DISTINCT SUBJECT_ID) FROM COURSE_CATALOG_SUBJECT_OFFERED",
+    "topics": ["academic year", "term code", "subjects"],
+    "mapping": {
+      "academic year": ["ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"],
+      "term code": ["ACADEMIC_TERMS_ALL.TERM_CODE"],
+      "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"]
+    },
+    "columns": [
+      "ACADEMIC_TERMS_ALL.TERM_CODE",
+      "COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID",
+      "ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"
+    ],
+    "qualified": "SELECT\n  CASE\n    WHEN LAG(academic_terms_all.\"academic_year\") OVER (ORDER BY academic_terms_all.\"term_code\") = academic_terms_all.\"academic_year\"\n    THEN NULL\n    ELSE academic_terms_all.\"academic_year\"\n  END AS \"academic_year\",\n  academic_terms_all.\"term_code\" AS \"term_code\",\n  COUNT(DISTINCT \"a\".\"si\") AS \"_col_2\"\nFROM \"academic_terms_all\" AS \"ata\"\nLEFT OUTER JOIN (\n  SELECT\n    \"_q_0\".\"si\" AS \"si\",\n    \"_q_0\".\"term_code\" AS \"term_code\"\n  FROM (\n    SELECT\n      CASE\n        WHEN LAG(\"course_catalog_subject_offered\".\"subject_id\") OVER (ORDER BY \"course_catalog_subject_offered\".\"subject_id\", \"course_catalog_subject_offered\".\"term_code\" ASC, \"course_catalog_subject_offered\".\"academic_year\" ASC) = \"course_catalog_subject_offered\".\"subject_id\"\n        THEN NULL\n        ELSE \"course_catalog_subject_offered\".\"subject_id\"\n      END AS \"si\",\n      CASE\n        WHEN LAG(\"course_catalog_subject_offered\".\"term_code\") OVER (ORDER BY \"course_catalog_subject_offered\".\"subject_id\", \"course_catalog_subject_offered\".\"term_code\" ASC, \"course_catalog_subject_offered\".\"academic_year\" ASC) = \"course_catalog_subject_offered\".\"term_code\"\n        THEN NULL\n        ELSE \"course_catalog_subject_offered\".\"term_code\"\n      END AS \"term_code\"\n    FROM \"course_catalog_subject_offered\" AS \"course_catalog_subject_offered\"\n  ) AS \"_q_0\"\n  WHERE\n    NOT \"_q_0\".\"si\" IS NULL\n) AS \"a\"\n  ON academic_terms_all.\"term_code\" = \"a\".\"term_code\"\nGROUP BY\n  academic_terms_all.\"term_code\",\n  academic_terms_all.\"academic_year\"\nUNION ALL\nSELECT\n  'TOTAL' AS \"TOTAL\",\n  NULL AS \"_col_1\",\n  COUNT(DISTINCT \"course_catalog_subject_offered\".\"subject_id\") AS \"_col_2\"\nFROM \"course_catalog_subject_offered\" AS \"course_catalog_subject_offered\""
+  }
+]
+

@@ -198,6 +198,15 @@
         "IAP_SUBJECT_SESSION.SESSION_END_TIME"
       ]
     }
+  },
+  {
+    "db": "dw",
+    "question": "List each academic year, the term code, and the number of newly introduced subjects in this term. Display the academic year only if it differs from the previous entry. Include a grand total (the corresponding year field should be 'TOTAL') stating the total number of subjects across all academic years.",
+    "sql": "select CASE WHEN Lag(ACADEMIC_YEAR)over (order by ata.TERM_CODE) =ACADEMIC_YEAR THEN NULL ELSE ACADEMIC_YEAR end AS ACADEMIC_YEAR,ata.TERM_CODE, COUNT(distinct si) from ACADEMIC_TERMS_ALL ata LEFT OUTER JOIN (select * from (select CASE WHEN LAG(subject_id) over(ORDER BY SUBJECT_ID, TERM_CODE ASC, ACADEMIC_YEAR ASC) = subject_id then NULL else subject_id end as si, case when LAG(TERM_CODE) over (ORDER BY SUBJECT_ID, TERM_CODE ASC, ACADEMIC_YEAR ASC) =TERM_CODE then null else term_code end as term_code from course_catalog_subject_offered) where si is not null) a ON ata.TERM_CODE=a.TERM_CODE GROUP BY ata.TERM_CODE, ACADEMIC_YEAR UNION ALL SELECT 'TOTAL', NULL, COUNT(DISTINCT SUBJECT_ID) FROM COURSE_CATALOG_SUBJECT_OFFERED",
+    "mapping": {
+      "academic year": ["ACADEMIC_TERMS_ALL.ACADEMIC_YEAR"],
+      "term code": ["ACADEMIC_TERMS_ALL.TERM_CODE"],
+      "subjects": ["COURSE_CATALOG_SUBJECT_OFFERED.SUBJECT_ID"]
+    }
   }
 ]
-
